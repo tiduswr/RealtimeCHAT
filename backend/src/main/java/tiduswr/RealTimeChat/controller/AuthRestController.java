@@ -1,14 +1,13 @@
 package tiduswr.RealTimeChat.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+import tiduswr.RealTimeChat.model.UserDTO;
 import tiduswr.RealTimeChat.model.security.AuthRequest;
 import tiduswr.RealTimeChat.model.security.AuthResponse;
 import tiduswr.RealTimeChat.model.security.RefreshTokenRequest;
-import tiduswr.RealTimeChat.model.User;
 import tiduswr.RealTimeChat.services.AuthService;
 import tiduswr.RealTimeChat.services.UserService;
 
@@ -19,14 +18,11 @@ public class AuthRestController {
     private UserService userService;
     @Autowired
     private AuthService authService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @PostMapping("/signin")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    public UserDTO createUser(@Valid @RequestBody UserDTO user) {
+        return userService.createUser(user);
     }
 
     @PostMapping("/auth")

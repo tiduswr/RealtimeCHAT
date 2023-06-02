@@ -3,24 +3,34 @@ package tiduswr.RealTimeChat.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-public record PrivateMessageDTO(
+@Data @Builder
+public class PrivateMessageDTO{
 
         @NotNull(message = "{receiver.NotNull}")
-        String receiver,
+        private String receiver;
 
         @NotNull(message = "{message.NotNull}")
         @NotBlank(message = "{message.NotBlank}")
-        String message,
+        private String message;
 
         @NotNull(message = "{read.NotNull}")
-        Boolean read,
+        private Boolean read;
 
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        LocalDateTime createdAt
+        private LocalDateTime createdAt;
 
-){
+        public static PrivateMessageDTO from(Message message){
+                return PrivateMessageDTO.builder()
+                        .message(message.getMessage())
+                        .receiver(message.getReceiver().getUserName())
+                        .read(message.getRead())
+                        .createdAt(message.getCreatedAt())
+                        .build();
+        }
 
 }
