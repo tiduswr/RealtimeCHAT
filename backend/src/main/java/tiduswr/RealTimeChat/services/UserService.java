@@ -7,8 +7,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.server.ResponseStatusException;
+import tiduswr.RealTimeChat.exceptions.UsernameAlreadyExists;
 import tiduswr.RealTimeChat.model.User;
+import tiduswr.RealTimeChat.model.UserDTO;
 import tiduswr.RealTimeChat.repository.UserRepository;
 
 import java.util.List;
@@ -19,20 +24,32 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    public User createUser(User user) {
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        return userRepository.save(user);
+    @Transactional
+    public UserDTO createUser(UserDTO dto) {
+        if(userRepository.existsByUsername(dto.getUserName()))
+            throw new UsernameAlreadyExists("Esse username ja está sendo usado");
+
+        var user = User.builder()
+                .userName(dto.getUserName())
+                .formalName(dto.getFormalName())
+                .password(new BCryptPasswordEncoder().encode(dto.getPassword()))
+                .build();
+
+        return UserDTO.from(userRepository.save(user));
     }
 
+    @Transactional
     public User updateUser(Long id, User updatedUser) {
         User user = getUserById(id);
         user.setUserName(updatedUser.getUserName());
@@ -41,6 +58,7 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }

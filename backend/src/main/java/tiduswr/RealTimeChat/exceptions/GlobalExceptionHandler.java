@@ -21,14 +21,26 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(error -> {
-                    if (errors.containsKey(error.getField())) {
-                        errors.put(error.getField(), String.format("%s, %s", errors.get(error.getField()), error.getDefaultMessage()));
-                    } else {
-                        errors.put(error.getField(), error.getDefaultMessage());
-                    }
+                if (errors.containsKey(error.getField())) {
+                    errors.put(error.getField(), String.format("%s, %s", errors.get(error.getField()), error.getDefaultMessage()));
+                } else {
+                    errors.put(error.getField(), error.getDefaultMessage());
                 }
+            }
         );
 
         return new ErrorResponse(errors, "VALIDATION_FAILED");
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsernameAlreadyExists.class)
+    public ErrorResponse handleUsernameAlreadyExists(UsernameAlreadyExists ex) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        errors.put("userName", ex.getMessage());
+
+        return new ErrorResponse(errors, "VALIDATION_FAILED");
+    }
+
 }

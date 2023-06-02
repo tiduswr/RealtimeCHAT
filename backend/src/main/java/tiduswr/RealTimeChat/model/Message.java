@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Message implements Serializable {
 
     @EqualsAndHashCode.Include
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id() @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -28,7 +28,7 @@ public class Message implements Serializable {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
-    @Column(nullable = false)
+    @Column
     private Boolean read;
 
     @Column(nullable = false)
