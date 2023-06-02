@@ -6,14 +6,14 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity @Table(name = "messages")
 @Getter @Setter @NoArgsConstructor
 @AllArgsConstructor @ToString
-@Builder
+@Builder @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Message implements Serializable {
 
+    @EqualsAndHashCode.Include
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -22,32 +22,19 @@ public class Message implements Serializable {
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
+    @JoinColumn(name = "receiver_id")
     private User receiver;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
     @Column(nullable = false)
     private Boolean read;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Message message = (Message) o;
-        return Objects.equals(id, message.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
