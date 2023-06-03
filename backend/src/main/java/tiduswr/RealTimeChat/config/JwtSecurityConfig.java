@@ -23,6 +23,7 @@ import tiduswr.RealTimeChat.services.UserService;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@SuppressWarnings("unused")
 public class JwtSecurityConfig {
 
     @Autowired
@@ -55,12 +56,10 @@ public class JwtSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/auth", "/signin", "/refreshtoken").permitAll();
+                auth.requestMatchers("/auth", "/signup", "/refresh_token").permitAll();
                 auth.anyRequest().authenticated();
             })
-            .sessionManagement(session -> {
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-            })
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .build();

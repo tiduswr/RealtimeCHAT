@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import tiduswr.RealTimeChat.model.UserDTO;
+import tiduswr.RealTimeChat.model.dto.UserDTO;
 import tiduswr.RealTimeChat.model.security.AuthRequest;
 import tiduswr.RealTimeChat.model.security.AuthResponse;
 import tiduswr.RealTimeChat.model.security.RefreshTokenRequest;
@@ -12,6 +12,7 @@ import tiduswr.RealTimeChat.services.AuthService;
 import tiduswr.RealTimeChat.services.UserService;
 
 @RestController
+@SuppressWarnings("unused")
 public class AuthRestController {
 
     @Autowired
@@ -19,7 +20,7 @@ public class AuthRestController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/signin")
+    @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDTO createUser(@Valid @RequestBody UserDTO user) {
         return userService.createUser(user);
@@ -31,7 +32,7 @@ public class AuthRestController {
         return authService.authUser(authRequest);
     }
 
-    @PostMapping("/refreshtoken")
+    @PostMapping("/refresh_token")
     @ResponseStatus(HttpStatus.OK)
     public AuthResponse refreshToken(@RequestBody RefreshTokenRequest request){
         return authService.refreshToken(request);

@@ -1,10 +1,11 @@
-package tiduswr.RealTimeChat.model;
+package tiduswr.RealTimeChat.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import tiduswr.RealTimeChat.model.Message;
 
 import java.time.LocalDateTime;
 

@@ -8,6 +8,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+@SuppressWarnings("unused")
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override

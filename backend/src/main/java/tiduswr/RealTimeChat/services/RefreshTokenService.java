@@ -10,6 +10,7 @@ import tiduswr.RealTimeChat.model.User;
 import tiduswr.RealTimeChat.repository.TokenRepository;
 
 @Service
+@SuppressWarnings("unused")
 public class RefreshTokenService {
 
     @Autowired

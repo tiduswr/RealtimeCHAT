@@ -7,15 +7,14 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestHeader;
-import tiduswr.RealTimeChat.model.PrivateMessageDTO;
-import tiduswr.RealTimeChat.model.PublicMessageDTO;
+import tiduswr.RealTimeChat.model.dto.PrivateMessageDTO;
+import tiduswr.RealTimeChat.model.dto.PublicMessageDTO;
 import tiduswr.RealTimeChat.services.JwtService;
 import tiduswr.RealTimeChat.services.MessageService;
 
 @Controller
-@Validated
+@SuppressWarnings("unused")
 public class ChatController {
 
     @Autowired
@@ -41,8 +40,10 @@ public class ChatController {
                                                    @RequestHeader("Authorization") String authorizationHeader){
 
         String username = jwtService.extractUsername(authorizationHeader);
+        PrivateMessageDTO persistedMessage = messageService.createPrivateMessage(message, username);
         simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private", message);
-        return messageService.createPrivateMessage(message, username);
+
+        return persistedMessage;
     }
 
 }
