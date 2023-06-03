@@ -8,17 +8,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.server.ResponseStatusException;
 import tiduswr.RealTimeChat.exceptions.UsernameAlreadyExists;
 import tiduswr.RealTimeChat.model.User;
-import tiduswr.RealTimeChat.model.UserDTO;
+import tiduswr.RealTimeChat.model.dto.UserDTO;
 import tiduswr.RealTimeChat.repository.UserRepository;
 
 import java.util.List;
 
 @Service
+@SuppressWarnings("unused")
 public class UserService implements UserDetailsService {
 
     @Autowired

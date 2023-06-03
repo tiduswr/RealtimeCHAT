@@ -5,14 +5,15 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 import tiduswr.RealTimeChat.model.Message;
-import tiduswr.RealTimeChat.model.PrivateMessageDTO;
-import tiduswr.RealTimeChat.model.PublicMessageDTO;
+import tiduswr.RealTimeChat.model.dto.PrivateMessageDTO;
+import tiduswr.RealTimeChat.model.dto.PublicMessageDTO;
 import tiduswr.RealTimeChat.model.Status;
 import tiduswr.RealTimeChat.repository.MessageRepository;
 
 import java.util.List;
 
 @Service
+@SuppressWarnings("unused")
 public class MessageService {
 
     @Autowired
@@ -21,7 +22,7 @@ public class MessageService {
     @Autowired
     private UserService userService;
 
-    @Transactional(readOnly = false)
+    @Transactional
     public PublicMessageDTO createPublicMessage(PublicMessageDTO message, String username) {
         var sender = userService.findUserByUsername(username);
         var newMessage = new Message();
@@ -35,7 +36,7 @@ public class MessageService {
         return PublicMessageDTO.from(newMessage);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     public PrivateMessageDTO createPrivateMessage(PrivateMessageDTO message, String username) {
         var receiver = userService.findUserByUsername(message.getReceiver());
         var sender = userService.findUserByUsername(username);

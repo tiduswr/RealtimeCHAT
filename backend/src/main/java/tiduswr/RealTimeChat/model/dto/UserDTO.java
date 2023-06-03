@@ -1,4 +1,4 @@
-package tiduswr.RealTimeChat.model;
+package tiduswr.RealTimeChat.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+import tiduswr.RealTimeChat.model.User;
 import tiduswr.RealTimeChat.model.validation.anotation.ValidPassword;
 
 
@@ -16,7 +17,7 @@ public class UserDTO {
         private Long id;
 
         @NotNull(message = "{user_name.notnull}")
-        @Size(min = 3, max = 30, message = "{username.size}")
+        @Size(min = 3, max = 30, message = "{user_name.size}")
         private String userName;
 
         @NotNull(message = "{password.notnull}")

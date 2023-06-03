@@ -1,5 +1,6 @@
 package tiduswr.RealTimeChat.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,5 +24,10 @@ public class User implements Serializable {
 
     @Column(nullable = false, length = 100)
     private String formalName;
+
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "profile_image_id")
+    private ProfileImage profileImage;
 
 }

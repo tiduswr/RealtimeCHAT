@@ -33,6 +33,8 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
+        if(token.startsWith("Bearer "))
+            token = token.replace("Bearer ", "");
         return extractClaim(token, Claims::getSubject);
     }
 

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+@SuppressWarnings("unused")
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
 
     @Override
