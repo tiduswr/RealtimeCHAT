@@ -1,13 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import ChatRoom from './component/ChatRoom';
-import Header from './component/Header';
-import { createTheme, ThemeProvider } from '@mui/material';
+import React, { useEffect, useState, useCallback, createContext } from 'react';
+import ChatRoom from '../../component/ChatRoom';
+import Header from '../../component/Header';
 
-const theme = createTheme({
-  typography: {
-    fontFamily: 'Roboto, sans-serif',
-  },
-});
+const Context = createContext();
 
 const App = () => {
   const [unreadMessagesCount, setUnreadMessageCount] = useState(0);
@@ -32,8 +27,7 @@ const App = () => {
         newCount += count;
       });
       setUnreadMessageCount(newCount);
-    },
-    []
+    },[]
   );
 
   useEffect(() => {
@@ -87,33 +81,21 @@ const App = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Header
-        toggleMenu={toggleMenu}
-        closeMenu={closeMenu}
-        isMenuOpen={isMenuOpen}
-        unreadMessagesCount={unreadMessagesCount}
-      />
-      <ChatRoom
-        toggleMenu={toggleMenu}
-        closeMenu={closeMenu}
-        isMenuOpen={isMenuOpen}
-        updateUnreadMessageCount={updateUnreadMessageCount}
-        messageCount={messageCount}
-        showAlert={showAlert}
-        publicChats={publicChats}
-        privateChats={privateChats}
-        tab={tab}
-        userData={userData}
-        setPrivateChats={setPrivateChats}
-        setTab={setTab}
-        setShowAlert={setShowAlert}
-        setMessageCount={setMessageCount}
-        setUserData={setUserData}
-        setPublicChats={setPublicChats}
-      />
-    </ThemeProvider>
+    
+      <Context.Provider
+        value={{ 
+          toggleMenu, closeMenu, isMenuOpen, unreadMessagesCount,
+          updateUnreadMessageCount, messageCount, showAlert,
+          publicChats, privateChats, tab, userData, setPrivateChats,
+          setTab, setShowAlert, setMessageCount, setUserData, setPublicChats
+        }}>
+
+        <Header/>
+        <ChatRoom/>
+
+      </Context.Provider>
+
   );
 };
 
-export default App;
+export { App, Context };

@@ -17,8 +17,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import tiduswr.RealTimeChat.config.filter.JwtAuthFilter;
 import tiduswr.RealTimeChat.services.UserService;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -54,9 +58,21 @@ public class JwtSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(AbstractHttpConfigurer::disable)
+        return http
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(config -> {
+                config.configurationSource(request -> {
+                    CorsConfiguration corsConfig = new CorsConfiguration();
+                    corsConfig.setAllowedOrigins(List.of("http://localhost:3000"));
+                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                    corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                    corsConfig.setAllowCredentials(true);
+                    corsConfig.setMaxAge(3600L);
+                    return corsConfig;
+                });
+            })
             .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/auth", "/signup", "/refresh_token").permitAll();
+                auth.requestMatchers("/auth", "/signup", "/refresh_token", "/quit").permitAll();
                 auth.anyRequest().authenticated();
             })
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

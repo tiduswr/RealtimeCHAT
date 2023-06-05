@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {over} from 'stompjs';
 import SockJS from 'sockjs-client';
 import ChatRegister from './ChatRegister';
@@ -6,27 +6,18 @@ import ChatContent from './ChatContent';
 import MemberList from './MemberList';
 import { Container } from '@mui/material';
 import MessageReceivedAlert from './MessageReceivedAlert';
+import { Context } from '../pages/App/index.js'
 
 var stompClient = null;
 
-const ChatRoom = ({ 
-  closeMenu, 
-  isMenuOpen, 
-  updateUnreadMessageCount,
-  messageCount,
-  showAlert,
-  publicChats,
-  privateChats,
-  tab,
-  userData,
-  setPrivateChats,
-  setTab,
-  setShowAlert,
-  setMessageCount,
-  setUserData,
-  setPublicChats
+const ChatRoom = () => {
 
-}) => {
+  const { closeMenu, isMenuOpen, updateUnreadMessageCount,
+    messageCount, showAlert, publicChats, privateChats,
+    tab, userData, setPrivateChats, setTab,
+    setShowAlert, setMessageCount, setUserData,
+    setPublicChats 
+  } = useContext(Context); 
 
   const handleUsername=(event)=>{
     const {value}=event.target;
@@ -39,10 +30,13 @@ const ChatRoom = ({
   }
 
   const registerUser = () => {
+    const token = localStorage.getItem('access_token');
+    const headers = { Authorization: `Bearer ${token}` };
+
     let Sock = new SockJS(`http://${window.location.hostname}:8080/ws`);
     stompClient = over(Sock);
     stompClient.debug = null;
-    stompClient.connect({}, onConnected, onError);
+    stompClient.connect(headers, onConnected, onError);
   }
 
   const onConnected = () =>{

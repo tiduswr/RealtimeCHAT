@@ -38,7 +38,7 @@ public class AuthRestController {
         return authService.refreshToken(request);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/quit")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(@RequestBody RefreshTokenRequest request){
         authService.killRefreshToken(request);

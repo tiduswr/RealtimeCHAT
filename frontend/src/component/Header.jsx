@@ -1,7 +1,9 @@
-import React from 'react'
-import { AppBar, Toolbar, IconButton, Typography, Button, Badge } from '@mui/material'
+import React, { useContext } from 'react'
+import { Context } from '../pages/App/index.js'
+import { AppBar, Toolbar, IconButton, Typography, Badge, Button } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from '@mui/system'
+import { AuthContext } from '../providers/AuthProvider.jsx';
 
 const BadgeStyled = styled(Badge)({
     display: 'flex', 
@@ -11,8 +13,12 @@ const BadgeStyled = styled(Badge)({
     }
 })
 
-const Header = ({ toggleMenu, unreadMessagesCount }) => {
-  return (
+const Header = () => {
+    
+    const { logout } = useContext(AuthContext);
+    const { unreadMessagesCount, toggleMenu } = useContext(Context);
+
+    return (
     <React.Fragment>
         <AppBar position='static' sx={{background: '#00467F'}}>
             <Toolbar>
@@ -31,11 +37,11 @@ const Header = ({ toggleMenu, unreadMessagesCount }) => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
                     WebSocket CHAT
                 </Typography>
-                <Button color="inherit">Login</Button>
+                <Button onClick={logout}>Logout</Button>
             </Toolbar>
         </AppBar>
     </React.Fragment>
-  )
+    )
 }
 
 export default Header
