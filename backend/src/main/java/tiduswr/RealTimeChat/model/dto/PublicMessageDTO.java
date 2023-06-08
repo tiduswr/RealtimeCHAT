@@ -21,7 +21,7 @@ public class PublicMessageDTO{
 
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String sender;
-
+  
         private Boolean read;
 
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)

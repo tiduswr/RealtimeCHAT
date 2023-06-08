@@ -30,7 +30,7 @@ public class PrivateMessageDTO{
 
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private LocalDateTime createdAt;
-
+  
         @JsonFormat(shape = JsonFormat.Shape.STRING)
         private Status status;
 

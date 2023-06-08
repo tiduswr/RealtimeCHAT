@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-
     @Query("SELECT new tiduswr.RealTimeChat.model.dto.PrivateMessageDTO(m.sender.userName, m.receiver.userName, m.message, m.read, m.createdAt, m.status) " +
             "FROM Message m " +
             "WHERE m.sender.userName = :username AND m.receiver.userName = :receiver")
