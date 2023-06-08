@@ -12,12 +12,7 @@ const App = () => {
   const [publicChats, setPublicChats] = useState([]);
   const [privateChats, setPrivateChats] = useState(new Map());
   const [tab, setTab] = useState('CHATROOM');
-  const [userData, setUserData] = useState({
-    username: '',
-    recievername: '',
-    connected: false,
-    message: '',
-  });
+  
 
   //Sugerido pelo compilador
   const updateUnreadMessageCount = useCallback(
@@ -68,12 +63,7 @@ const App = () => {
   }, [showAlert]);
 
   const toggleMenu = () => {
-    setUserData(prevUD => {
-      if(prevUD.connected){
-        setMenuOpen(!isMenuOpen);
-      }
-      return prevUD;
-    })
+    setMenuOpen(!isMenuOpen);
   };
 
   const closeMenu = () => {
@@ -86,8 +76,8 @@ const App = () => {
         value={{ 
           toggleMenu, closeMenu, isMenuOpen, unreadMessagesCount,
           updateUnreadMessageCount, messageCount, showAlert,
-          publicChats, privateChats, tab, userData, setPrivateChats,
-          setTab, setShowAlert, setMessageCount, setUserData, setPublicChats
+          publicChats, privateChats, tab, setPrivateChats,
+          setTab, setShowAlert, setMessageCount, setPublicChats
         }}>
 
         <Header/>

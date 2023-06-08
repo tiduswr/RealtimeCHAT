@@ -25,6 +25,7 @@ public class MessagesRestController {
     @ResponseStatus(HttpStatus.OK)
     public List<PrivateMessageDTO> getMessageByReceiver(@PathVariable("receiver") String receiver,
                                                         @RequestHeader("Authorization") String auth){
+
         String username = jwtService.extractUsername(auth);
         return messageService.getPrivateMessagesBy(username, receiver);
     }

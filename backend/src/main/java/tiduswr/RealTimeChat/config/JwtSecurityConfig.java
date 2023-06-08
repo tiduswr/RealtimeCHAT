@@ -21,7 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import tiduswr.RealTimeChat.config.filter.JwtAuthFilter;
 import tiduswr.RealTimeChat.services.UserService;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -72,7 +71,7 @@ public class JwtSecurityConfig {
                 });
             })
             .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/auth", "/signup", "/refresh_token", "/quit").permitAll();
+                auth.requestMatchers("/auth", "/signup", "/refresh_token", "/quit", "/ws", "/ws/**").permitAll();
                 auth.anyRequest().authenticated();
             })
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

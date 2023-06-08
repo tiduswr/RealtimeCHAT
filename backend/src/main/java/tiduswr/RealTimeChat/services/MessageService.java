@@ -30,6 +30,7 @@ public class MessageService {
         newMessage.setMessage(message.getMessage());
         newMessage.setRead(null);
         newMessage.setSender(sender);
+        newMessage.setReceiver(null);
         newMessage.setStatus(Status.MESSAGE);
         newMessage = messageRepository.save(newMessage);
 

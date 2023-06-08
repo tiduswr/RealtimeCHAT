@@ -5,7 +5,7 @@ import MessageSentWithHeaders from './MessageSentWithHeader';
 const MessageSentProvider = ({ message, senderName, lastMessageSender }) => {
 
     const lastMessageIsFromTheSameUser = () =>{
-        return !lastMessageSender || (lastMessageSender.senderName !== senderName);
+        return !lastMessageSender || (lastMessageSender.sender !== senderName);
     }
 
     return (

@@ -63,16 +63,16 @@ const ChatContent = ({ chatMessages, username, message, handleMessage, sendMessa
                   key={index}
                   sx={{
                       display:'flex', 
-                      justifyContent:chat.senderName === username ? 'flex-end' : 'flex-start',
+                      justifyContent:chat.sender === username ? 'flex-end' : 'flex-start',
                       padding: 1, 
-                      paddingLeft: chat.senderName === username ? '10%' : '0%',
-                      paddingRight: chat.senderName === username ? '0%' : '10%',
+                      paddingLeft: chat.sender === username ? '10%' : '0%',
+                      paddingRight: chat.sender === username ? '0%' : '10%',
                       paddingTop: '1px',
                       paddingBottom: '1px'                      
                 }}>
                   <MessageSentProvider
                     message={chat.message}
-                    senderName={chat.senderName}
+                    senderName={chat.sender}
                     lastMessageSender={index > 0 ? chatMessages[index-1] : null}
                     showAlert={showAlert}
                   />

@@ -12,14 +12,14 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    @Query("SELECT new tiduswr.RealTimeChat.model.dto.PrivateMessageDTO(m.receiver.userName, m.message, m.read, m.createdAt) " +
+    @Query("SELECT new tiduswr.RealTimeChat.model.dto.PrivateMessageDTO(m.sender.userName, m.receiver.userName, m.message, m.read, m.createdAt, m.status) " +
             "FROM Message m " +
             "WHERE m.sender.userName = :username AND m.receiver.userName = :receiver")
     List<PrivateMessageDTO> filterByUsernameAndReceiver(String username, String receiver);
 
-    @Query("SELECT new tiduswr.RealTimeChat.model.dto.PublicMessageDTO(m.message, m.read, m.createdAt) " +
+    @Query("SELECT new tiduswr.RealTimeChat.model.dto.PublicMessageDTO(m.message, m.sender.userName, m.read, m.createdAt, m.status) " +
             "FROM Message m " +
-            "WHERE m.receiver.userName IS NULL")
+            "WHERE m.receiver IS NULL")
     List<PublicMessageDTO> filterPublicChatMessages();
 
 }

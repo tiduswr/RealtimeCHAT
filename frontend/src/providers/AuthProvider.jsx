@@ -4,7 +4,6 @@ import LoginAlert from '../component/LoginAlert';
 
 const AuthContext = createContext();
 
-
 const AuthProvider = ({ children }) => {
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
     const [ alert, setAlert ] = useState({title: 'Erro ao tentar logar', message: '', type: 'error', show: false});
@@ -83,7 +82,7 @@ const AuthProvider = ({ children }) => {
     };
 
     if(loading){
-        return (<div>LOADING</div>)
+        return null;
     }
 
     return (

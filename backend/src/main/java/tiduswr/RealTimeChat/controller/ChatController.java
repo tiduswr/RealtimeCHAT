@@ -7,11 +7,11 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestHeader;
 import tiduswr.RealTimeChat.model.dto.PrivateMessageDTO;
 import tiduswr.RealTimeChat.model.dto.PublicMessageDTO;
-import tiduswr.RealTimeChat.services.JwtService;
 import tiduswr.RealTimeChat.services.MessageService;
+
+import java.security.Principal;
 
 @Controller
 @SuppressWarnings("unused")
@@ -23,24 +23,19 @@ public class ChatController {
     @Autowired
     private MessageService messageService;
 
-    @Autowired
-    private JwtService jwtService;
-
     @MessageMapping("/message")
     @SendTo("/chatroom/public")
     public PublicMessageDTO receivePublicMessage(@Payload @Valid PublicMessageDTO message,
-                                                   @RequestHeader("Authorization") String authorizationHeader){
+                                                 Principal principal){
 
-        String username = jwtService.extractUsername(authorizationHeader);
-        return messageService.createPublicMessage(message, username);
+        return messageService.createPublicMessage(message, principal.getName());
     }
 
     @MessageMapping("/private-message")
     public PrivateMessageDTO receivePrivateMessage(@Payload @Valid PrivateMessageDTO message,
-                                                   @RequestHeader("Authorization") String authorizationHeader){
+                                                   Principal principal){
 
-        String username = jwtService.extractUsername(authorizationHeader);
-        PrivateMessageDTO persistedMessage = messageService.createPrivateMessage(message, username);
+        PrivateMessageDTO persistedMessage = messageService.createPrivateMessage(message, principal.getName());
         simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private", message);
 
         return persistedMessage;
