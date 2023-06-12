@@ -12,9 +12,7 @@ const App = () => {
   const [publicChats, setPublicChats] = useState([]);
   const [privateChats, setPrivateChats] = useState(new Map());
   const [tab, setTab] = useState('CHATROOM');
-  
 
-  //Sugerido pelo compilador
   const updateUnreadMessageCount = useCallback(
     (messageCount) => {
       let newCount = 0;
@@ -22,16 +20,17 @@ const App = () => {
         newCount += count;
       });
       setUnreadMessageCount(newCount);
-    },[]
+    },
+    []
   );
 
   useEffect(() => {
     if (tab !== 'CHATROOM') {
-      setPrivateChats((prevPrivChats) => {
-        const updatedPrivateChats = new Map(prevPrivChats);
+      setPrivateChats((prevPrivateChats) => {
+        const updatedPrivateChats = new Map(prevPrivateChats);
 
         if (updatedPrivateChats.has(tab)) {
-          const messages = prevPrivChats.get(tab);
+          const messages = prevPrivateChats.get(tab);
           const updatedMessages = messages.map((message) => ({
             ...message,
             read: true,
@@ -63,7 +62,7 @@ const App = () => {
   }, [showAlert]);
 
   const toggleMenu = () => {
-    setMenuOpen(!isMenuOpen);
+    setMenuOpen((prevIsMenuOpen) => !prevIsMenuOpen);
   };
 
   const closeMenu = () => {
@@ -71,20 +70,28 @@ const App = () => {
   };
 
   return (
-    
-      <Context.Provider
-        value={{ 
-          toggleMenu, closeMenu, isMenuOpen, unreadMessagesCount,
-          updateUnreadMessageCount, messageCount, showAlert,
-          publicChats, privateChats, tab, setPrivateChats,
-          setTab, setShowAlert, setMessageCount, setPublicChats
-        }}>
-
-        <Header/>
-        <ChatRoom/>
-
-      </Context.Provider>
-
+    <Context.Provider
+      value={{
+        toggleMenu,
+        closeMenu,
+        isMenuOpen,
+        unreadMessagesCount,
+        updateUnreadMessageCount,
+        messageCount,
+        showAlert,
+        publicChats,
+        privateChats,
+        tab,
+        setPrivateChats,
+        setTab,
+        setShowAlert,
+        setMessageCount,
+        setPublicChats,
+      }}
+    >
+      <Header />
+      <ChatRoom />
+    </Context.Provider>
   );
 };
 

@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 public class PrivateMessageDTO{
 
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        private Long id;
+
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
         private String sender;
 
         @NotNull(message = "{receiver.NotNull}")
@@ -36,6 +39,7 @@ public class PrivateMessageDTO{
 
         public static PrivateMessageDTO from(Message message){
                 return PrivateMessageDTO.builder()
+                        .id(message.getId())
                         .message(message.getMessage())
                         .receiver(message.getReceiver().getUserName())
                         .sender(message.getSender().getUserName())

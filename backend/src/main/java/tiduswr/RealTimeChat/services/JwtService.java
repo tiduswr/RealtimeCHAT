@@ -80,7 +80,7 @@ public class JwtService {
     public JwtToken generateRefreshToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("tokenType", JwtTokenType.REFRESH);
-        return createToken(claims, userName, (EXPIRATION * 6) * 24);
+        return createToken(claims, userName, ((EXPIRATION * 6) * 24));
     }
 
     private JwtToken createToken(Map<String, Object> claims, String userName, int expiration) {

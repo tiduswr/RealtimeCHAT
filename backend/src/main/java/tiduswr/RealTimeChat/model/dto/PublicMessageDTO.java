@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 @Data @Builder @AllArgsConstructor
 public class PublicMessageDTO{
 
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        private Long id;
+
         @NotNull(message = "{message.NotNull}")
         @NotBlank(message = "{message.NotBlank}")
         private String message;
@@ -32,6 +35,7 @@ public class PublicMessageDTO{
 
         public static PublicMessageDTO from(Message message){
                 return PublicMessageDTO.builder()
+                        .id(message.getId())
                         .message(message.getMessage())
                         .read(message.getRead())
                         .sender(message.getSender().getUserName())

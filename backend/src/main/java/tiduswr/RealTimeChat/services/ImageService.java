@@ -1,17 +1,16 @@
 package tiduswr.RealTimeChat.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import tiduswr.RealTimeChat.exceptions.ImageNotSupportedException;
 import tiduswr.RealTimeChat.model.ProfileImage;
 import tiduswr.RealTimeChat.repository.LocalImageRepository;
 import tiduswr.RealTimeChat.repository.ProfileImageRepository;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Optional;
@@ -28,6 +27,8 @@ public class ImageService {
 
     @Autowired
     private UserService userService;
+
+    private final int PROFILE_IMAGE_SIZE = 100;
 
     @Transactional
     public void saveProfileImage(String username, MultipartFile file) throws IOException, ImageNotSupportedException{
@@ -54,10 +55,14 @@ public class ImageService {
 
     @Transactional(readOnly = true)
     public byte[] retrieveProfileImageByUsername(String username) throws IOException {
-        ProfileImage profileImage = profileImageRepository.findByUserName(username).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND)
-        );
-        return localFileRepository.retrieveImage(profileImage.getId().toString(), "png");
+        Optional<ProfileImage> profileImage = profileImageRepository.findByUserName(username);
+
+        if(profileImage.isPresent()){
+            ProfileImage image = profileImage.get();
+            return localFileRepository.retrieveImage(image.getId().toString(), "png");
+        }else{
+            return new byte[0];
+        }
     }
 
     private Optional<BufferedImage> getImage(MultipartFile file) {
@@ -73,9 +78,17 @@ public class ImageService {
     }
 
     private BufferedImage convertToPng(BufferedImage image) {
-        BufferedImage convertedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        convertedImage.createGraphics().drawImage(image, 0, 0, null);
+
+        Image scaledImage = image.getScaledInstance(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE, Image.SCALE_SMOOTH);
+        BufferedImage convertedImage = new BufferedImage(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = convertedImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.drawImage(scaledImage, 0, 0, null);
+        g2d.dispose();
+
         return convertedImage;
+
     }
 
 }

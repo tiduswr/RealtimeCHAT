@@ -1,18 +1,21 @@
 import React from 'react';
-import { Typography, Avatar, ListItemAvatar, ListItemText, Paper, Grid } from '@mui/material';
+import { Typography, ListItemText, Paper, Grid } from '@mui/material';
+import AvatarWithInitial from './AvatarWithInitial'
 
-const MessageSent = ({ message, senderName, userImage }) => {
-    
+const MessageSentWithHeader = ({ message, senderName, image, formalName }) => {
+
     return (
         <Paper elevation={1} 
             sx={{padding : '10px', 
-                minWidth: '200px'
+                minWidth: '200px',
+                paddingTop: '10px'
         }}>
             <Grid container direction='row' alignItems='center'>
                 <Grid item>
-                    <ListItemAvatar>
-                        <Avatar alt={senderName} src={userImage} />
-                    </ListItemAvatar>
+                    <AvatarWithInitial 
+                        senderName={formalName} 
+                        image={image} 
+                    />
                 </Grid>
                 <Grid item>
                     <Typography 
@@ -21,7 +24,7 @@ const MessageSent = ({ message, senderName, userImage }) => {
                         sx={{fontSize:'16px', 
                             fontWeight:'bold', 
                             wordBreak: 'break-word'
-                        }}>{senderName}</Typography>
+                        }}>{formalName}</Typography>
                 </Grid>
             </Grid>
             <ListItemText
@@ -35,4 +38,4 @@ const MessageSent = ({ message, senderName, userImage }) => {
     );
   };
 
-export default MessageSent;
+export default MessageSentWithHeader;

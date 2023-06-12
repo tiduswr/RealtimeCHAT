@@ -2,11 +2,13 @@ package tiduswr.RealTimeChat.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.server.ResponseStatusException;
 import tiduswr.RealTimeChat.model.dto.PrivateMessageDTO;
 import tiduswr.RealTimeChat.model.dto.PublicMessageDTO;
 import tiduswr.RealTimeChat.services.MessageService;
@@ -27,6 +29,8 @@ public class ChatController {
     @SendTo("/chatroom/public")
     public PublicMessageDTO receivePublicMessage(@Payload @Valid PublicMessageDTO message,
                                                  Principal principal){
+        if(principal == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
         return messageService.createPublicMessage(message, principal.getName());
     }
@@ -34,6 +38,9 @@ public class ChatController {
     @MessageMapping("/private-message")
     public PrivateMessageDTO receivePrivateMessage(@Payload @Valid PrivateMessageDTO message,
                                                    Principal principal){
+
+        if(principal == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
         PrivateMessageDTO persistedMessage = messageService.createPrivateMessage(message, principal.getName());
         simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private", message);

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import tiduswr.RealTimeChat.exceptions.UsernameAlreadyExists;
 import tiduswr.RealTimeChat.model.User;
+import tiduswr.RealTimeChat.model.dto.PublicUserDTO;
 import tiduswr.RealTimeChat.model.dto.UserDTO;
 import tiduswr.RealTimeChat.repository.UserRepository;
 
@@ -74,8 +75,22 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public User findUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
     }
+
+    @Transactional(readOnly = true)
+    public UserDTO findUserDtoByUsername(String username) {
+        User user = findUserByUsername(username);
+        return UserDTO.from(user);
+    }
+
+    @Transactional(readOnly = true)
+    public PublicUserDTO findPublicUserDtoByUsername(String username) {
+        User user = findUserByUsername(username);
+        return new PublicUserDTO(user.getFormalName());
+    }
+
 }

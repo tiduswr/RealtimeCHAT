@@ -26,24 +26,24 @@ export default function Login() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     await login(data.get('username'), data.get('password'));
-    navigate('/chat');
   };
 
-  useEffect(() => {
+  useEffect(() => {    
     if (isAuthenticated) {
       navigate('/chat');
     } else {
       setComponentVisible(true);
     }
-  }, [isAuthenticated, navigate]);
+    // eslint-disable-next-line
+  }, [isAuthenticated]);
 
   if (!componentVisible) {
-    return null; // ou algum indicador de carregamento, como um spinner
+    return null;
   }
 
   return (
     <ThemeProvider theme={defaultTheme}>
-    <PublicHeader/>
+    <PublicHeader hideLoginButton={true}/>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

@@ -30,7 +30,7 @@ export default function Register() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <PublicHeader/>
+      <PublicHeader hideLoginButton={true}/>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
