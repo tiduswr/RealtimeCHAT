@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, createContext } from 'react';
-import ChatRoom from '../../component/ChatRoom';
+import ChatRoom from '../../component/chat/ChatRoom';
 import Header from '../../component/Header';
 
 const Context = createContext();

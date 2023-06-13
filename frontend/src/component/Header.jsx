@@ -3,7 +3,7 @@ import { Context } from '../pages/App/index.js'
 import { AppBar, Toolbar, IconButton, Typography, Badge, Button } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from '@mui/system'
-import { AuthContext } from '../providers/AuthProvider.jsx';
+import { AuthContext } from '../contexts/AuthProvider.jsx';
 
 const BadgeStyled = styled(Badge)({
     display: 'flex', 

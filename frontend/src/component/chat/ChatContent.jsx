@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import { Grid, Paper, Typography, Box } from '@mui/material'
 import { useMediaQuery } from '@mui/material';
 import MessageIcon from '@mui/icons-material/Message';
-import MessageBox from './MessageBox';
+import MessageBox from '../message/MessageBox';
 import ChatMessagesList from './ChatMessagesList';
 
 const ChatContent = ({ chatMessages, username, sendMessage, placeholder, tab, showAlert }) => {
