@@ -24,7 +24,7 @@ const ChatRoom = () => {
     setTab,
     setShowAlert,
     setMessageCount,
-    setPublicChats,
+    setPublicChats
   } = useContext(Context);
 
   const [userData, setUserData] = useState({
@@ -140,7 +140,7 @@ const ChatRoom = () => {
         stompClient.disconnect();
       }
     };
-  }, [privateChats, setPrivateChats, setPublicChats, setTab, setShowAlert, updateUnreadMessageCount]);
+  }, [privateChats, setPrivateChats, setMessageCount, setPublicChats, setTab, setShowAlert, updateUnreadMessageCount]);
 
   const sendPublicMessage = (message, username) => {
     if (stompClient) {
