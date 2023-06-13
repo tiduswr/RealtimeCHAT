@@ -8,6 +8,8 @@ import Register from '../pages/Register'
 import { createTheme, ThemeProvider } from '@mui/material';
 import { AuthContext, AuthProvider } from '../contexts/AuthProvider'
 import '@fontsource/roboto';
+import Perfil from '../pages/Perfil';
+import { UserProvider } from '../contexts/UserProvider';
 
 const theme = createTheme({
   typography: {
@@ -29,20 +31,20 @@ const Main = () => {
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path='/chat'
-             element={
-              <PrivateRoute>
-                <App/>
-              </PrivateRoute>}
-            />
-            <Route path='/' element={<Home/>}/>
-            <Route path='/login' element={<Login/>}/>
-            <Route path='/register' element={<Register/>}/>
-            <Route path='*' element={<NotFound/>} />
-          </Routes>
-        </Router>
+        <UserProvider>
+          <Router>
+            <Routes>
+              <Route path='/chat'
+              element={<PrivateRoute><App/></PrivateRoute>}/>
+              <Route path='/perfil'
+              element={<PrivateRoute><Perfil/></PrivateRoute>}/>
+              <Route path='/' element={<Home/>}/>
+              <Route path='/login' element={<Login/>}/>
+              <Route path='/register' element={<Register/>}/>
+              <Route path='*' element={<NotFound/>} />
+            </Routes>
+          </Router>
+        </UserProvider>
       </AuthProvider>
     </ThemeProvider>
     

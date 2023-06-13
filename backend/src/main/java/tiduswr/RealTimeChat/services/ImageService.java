@@ -61,7 +61,7 @@ public class ImageService {
             ProfileImage image = profileImage.get();
             return localFileRepository.retrieveImage(image.getId().toString(), "png");
         }else{
-            return new byte[0];
+            return null;
         }
     }
 

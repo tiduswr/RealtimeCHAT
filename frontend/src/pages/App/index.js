@@ -12,7 +12,7 @@ const App = () => {
   const [publicChats, setPublicChats] = useState([]);
   const [privateChats, setPrivateChats] = useState(new Map());
   const [tab, setTab] = useState('CHATROOM');
-
+  
   const updateUnreadMessageCount = useCallback(
     (messageCount) => {
       let newCount = 0;
@@ -72,10 +72,8 @@ const App = () => {
   return (
     <Context.Provider
       value={{
-        toggleMenu,
         closeMenu,
         isMenuOpen,
-        unreadMessagesCount,
         updateUnreadMessageCount,
         messageCount,
         showAlert,
@@ -86,10 +84,13 @@ const App = () => {
         setTab,
         setShowAlert,
         setMessageCount,
-        setPublicChats,
+        setPublicChats
       }}
     >
-      <Header />
+      <Header
+        unreadMessagesCount={unreadMessagesCount}
+        toggleMenu={toggleMenu}
+      />
       <ChatRoom />
     </Context.Provider>
   );
