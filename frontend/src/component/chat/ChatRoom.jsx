@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
 import ChatContent from './ChatContent';
-import MemberList from './MemberList';
+import MemberList from '../MemberList';
 import { Container } from '@mui/material';
-import MessageReceivedAlert from './MessageReceivedAlert';
-import { Context } from '../pages/App/index.js';
-import { Api } from '../api';
+import MessageReceivedAlert from '../message/MessageReceivedAlert';
+import { Context } from '../../pages/App/index.js';
+import { Api } from '../../api';
 
 var stompClient = null;
 
@@ -124,6 +124,7 @@ const ChatRoom = () => {
           stompClient.connect({ 'Authorization': `Bearer ${ACCESS_TOKEN.jwtToken}` }, onConnected, (err) => {
             console.log(err);
           });
+
         }
       } catch (error) {
         console.log(error);

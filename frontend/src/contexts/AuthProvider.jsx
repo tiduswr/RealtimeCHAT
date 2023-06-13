@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { Auth } from '../api';
-import LoginAlert from '../component/LoginAlert';
+import AuthAlert from '../component/AuthAlert';
 import moment from 'moment';
 
 const AuthContext = createContext();
@@ -83,12 +83,12 @@ const AuthProvider = ({ children }) => {
                 }
             }).catch(ex => {
                 setAlert(prevAlert => {
-                    return { ...prevAlert, show: true, message: 'Usuário não encontrado!', title: 'Erro ao tentar logar' };
+                    return { ...prevAlert, show: true, type: 'error', message: 'Usuário não encontrado!', title: 'Erro ao tentar logar' };
                 });
             })
         }else{
             setAlert(prevAlert => {
-                return { ...prevAlert, show: true, message: 'Preencha o login e Senha', title: 'Erro no formulário' };
+                return { ...prevAlert, show: true, type: 'error', message: 'Preencha o login e Senha', title: 'Erro no formulário' };
             });
         }
     };
@@ -113,10 +113,10 @@ const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, setAlert }}>
             {children}
             {alert.show && 
-                <LoginAlert message={alert.message} type={alert.type} title={alert.title}/>
+                <AuthAlert message={alert.message} type={alert.type} title={alert.title}/>
             }
         </AuthContext.Provider>
     );

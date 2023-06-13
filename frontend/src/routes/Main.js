@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import React, { useContext } from 'react'
-import Home from './pages/Home'
-import { App } from './pages/App'
-import NotFound from './pages/NotFound';
-import Login from './pages/Login'
-import Register from './pages/Register'
+import Home from '../pages/Home'
+import { App } from '../pages/App'
+import NotFound from '../pages/NotFound';
+import Login from '../pages/Login'
+import Register from '../pages/Register'
 import { createTheme, ThemeProvider } from '@mui/material';
-import { AuthContext, AuthProvider } from './providers/AuthProvider'
+import { AuthContext, AuthProvider } from '../contexts/AuthProvider'
 import '@fontsource/roboto';
 
 const theme = createTheme({

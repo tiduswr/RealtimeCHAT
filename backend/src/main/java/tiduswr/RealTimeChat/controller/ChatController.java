@@ -3,17 +3,24 @@ package tiduswr.RealTimeChat.controller;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
+import tiduswr.RealTimeChat.model.ErrorResponse;
 import tiduswr.RealTimeChat.model.dto.PrivateMessageDTO;
 import tiduswr.RealTimeChat.model.dto.PublicMessageDTO;
 import tiduswr.RealTimeChat.services.MessageService;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @SuppressWarnings("unused")
@@ -46,6 +53,26 @@ public class ChatController {
         simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private", message);
 
         return persistedMessage;
+    }
+
+    @MessageExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        if(ex.getBindingResult() != null){
+            ex.getBindingResult().getFieldErrors().forEach(error -> {
+                if (errors.containsKey(error.getField())) {
+                    errors.put(error.getField(), String.format("%s, %s", errors.get(error.getField()), error.getDefaultMessage()));
+                } else {
+                    errors.put(error.getField(), error.getDefaultMessage());
+                }
+            });
+        }else{
+            errors.put("message", "Mensagem inválida!");
+        }
+
+        return new ErrorResponse(errors, "VALIDATION_FAILED");
     }
 
 }

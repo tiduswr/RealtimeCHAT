@@ -12,7 +12,7 @@ const AlertStyled = styled(Alert)(({ theme }) => ({
   right: theme.spacing(2)
 }));
 
-const LoginAlert = ({ title, message, type }) => {
+const AuthAlert = ({ title, message, type }) => {
   
     const isMobile = useMediaQuery('(max-width: 600px')
   
@@ -24,4 +24,4 @@ const LoginAlert = ({ title, message, type }) => {
   );
 };
 
-export default LoginAlert;
+export default AuthAlert;

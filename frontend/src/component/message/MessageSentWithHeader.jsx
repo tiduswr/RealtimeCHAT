@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, ListItemText, Paper, Grid } from '@mui/material';
-import AvatarWithInitial from './AvatarWithInitial'
+import AvatarWithInitial from '../AvatarWithInitial'
 
 const MessageSentWithHeader = ({ message, senderName, image, formalName }) => {
 

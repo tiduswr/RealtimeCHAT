@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import MessageSentProvider from './MessageSentProvider';
+import MessageSentProvider from '../message/MessageSentProvider';
 import { List, ListItem } from '@mui/material';
-import { Api } from '../api';
+import { Api } from '../../api';
 
 const ChatMessagesList = ({ chatMessages, username, showAlert }) => {
     const [usersData, setUsersData] = useState(new Map());

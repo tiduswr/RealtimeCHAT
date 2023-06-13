@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PublicHeader from '../../component/PublicHeader';
-import { AuthContext } from '../../providers/AuthProvider';
+import { AuthContext } from '../../contexts/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
 const defaultTheme = createTheme();
