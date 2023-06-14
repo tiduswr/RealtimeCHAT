@@ -4,7 +4,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from '@mui/system';
 import { AuthContext } from '../contexts/AuthProvider.jsx';
 import { Link as RouterLink } from 'react-router-dom';
-import { UserContext } from '../contexts/UserProvider.jsx'
+import { UserContext } from '../contexts/UserProvider.jsx';
+import MessageIcon from '@mui/icons-material/Message';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import Divider from '@mui/material/Divider';
 
 const BadgeStyled = styled(Badge)({
     display: 'flex',
@@ -14,7 +18,18 @@ const BadgeStyled = styled(Badge)({
     }
 });
 
-const Header = ({ unreadMessagesCount, toggleMenu }) => {
+const HeaderLink = styled(Typography)({
+    display: 'flex',
+    alignItems: 'center',
+    padding: '10px',
+    paddingLeft: '15px',
+    paddingRight: '15px',
+    '&:hover': {
+        backgroundColor: 'rgba(245, 255, 255, 0.18)'
+    }
+});
+
+const Header = ({ unreadMessagesCount, toggleMenu, includeChatLink }) => {
     const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
 
     const { userData, userImage } = useContext(UserContext);
@@ -34,9 +49,9 @@ const Header = ({ unreadMessagesCount, toggleMenu }) => {
     return (
         <React.Fragment>
             <AppBar position='static' sx={{ background: '#00467F' }}>
-                <Toolbar>
-                    {toggleMenu ?
-                        <>
+                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Box display="flex" flexDirection="row" sx={{ alignItems: 'center' }}>
+                        {toggleMenu ?
                             <BadgeStyled badgeContent={unreadMessagesCount} color="secondary">
                                 <IconButton
                                     size="large"
@@ -49,22 +64,24 @@ const Header = ({ unreadMessagesCount, toggleMenu }) => {
                                     <MenuIcon />
                                 </IconButton>
                             </BadgeStyled>
-                            <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-                                <Link component={RouterLink} to="/" color="inherit" underline="none">
-                                    WebSocket CHAT
-                                </Link>
-                            </Typography>
-                        </>
-                        :
-                        <>
-                            <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-                                <Link component={RouterLink} to="/" color="inherit" underline="none">
-                                    WebSocket CHAT
-                                </Link>
-                            </Typography>
-                        </>
-                    }
-                    <Box>
+                            : null
+                        }
+                        <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', marginRight: '10px' }}>
+                            <Link component={RouterLink} to="/" color="inherit" underline="none">
+                                WebSocket CHAT
+                            </Link>
+                        </Typography>
+                        {includeChatLink && 
+                            <Link component={RouterLink} to="/chat" color="inherit" underline="none">
+                                <Box display="flex" flexDirection="row" sx={{ alignItems: 'center' }}>
+                                    <HeaderLink>
+                                        <MessageIcon sx={{paddingRight: '5px'}}/>Chats
+                                    </HeaderLink>
+                                </Box>
+                            </Link>
+                        }
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <IconButton
                             size="large"
                             edge="start"
@@ -73,18 +90,22 @@ const Header = ({ unreadMessagesCount, toggleMenu }) => {
                             sx={{ mr: 2 }}
                             onClick={handleUserMenuOpen}
                         >
-                            <Avatar sx={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)', border: '2px solid green' }} alt={userData?.formalName} src={userImage}/>
+                            <Avatar sx={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)', border: '2px solid green' }} alt={userData?.formalName} src={userImage} />
                         </IconButton>
                         <Menu
                             anchorEl={userMenuAnchorEl}
                             open={isUserMenuOpen}
                             onClose={handleUserMenuClose}
-                        >
+                        >   
+                            <Typography sx={{ fontWeight: 'bold', padding: '3px', textAlign: 'center' }}> 
+                                {userData?.userName}
+                            </Typography>
+                            <Divider/>
                             <MenuItem component={RouterLink} to="/perfil" onClick={handleUserMenuClose}>
-                                Perfil
+                                <AccountBoxIcon sx={{paddingRight: '3px'}}/> Perfil
                             </MenuItem>
                             <MenuItem onClick={logout}>
-                                Logout
+                                <LogoutIcon sx={{paddingRight: '3px'}}/> Logout
                             </MenuItem>
                         </Menu>
                     </Box>

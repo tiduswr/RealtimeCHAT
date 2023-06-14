@@ -4,7 +4,7 @@ import Header from '../../component/Header'
 const Perfil = () => {
   return (
     <>
-        <Header />
+        <Header includeChatLink={true}/>
     </>
   )
 }
