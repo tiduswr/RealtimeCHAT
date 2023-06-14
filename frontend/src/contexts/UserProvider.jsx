@@ -1,5 +1,6 @@
-import React, { createContext, useState, useEffect } from 'react'
+import React, { createContext, useState, useEffect, useContext } from 'react'
 import { Api } from '../api';
+import { AuthContext } from './AuthProvider';
 
 const UserContext = createContext();
 
@@ -7,9 +8,11 @@ const UserProvider = ({ children }) => {
 
     const [userData, setUserData] = useState(null);
     const [userImage, setUserImage] = useState(null);
+    const { isAuthenticated } = useContext(AuthContext);
 
     useEffect(() => {
-        Api.get('/users/retrieve_profile_info')
+        if(isAuthenticated){
+            Api.get('/users/retrieve_profile_info')
             .then(res => {
                 if (res.status === 200) {
                     const data = res.data;
@@ -23,7 +26,8 @@ const UserProvider = ({ children }) => {
                         })
                 }
             })
-    }, [])
+        }
+    }, [isAuthenticated])
 
     return (
         <UserContext.Provider value={{ userData, userImage }}>

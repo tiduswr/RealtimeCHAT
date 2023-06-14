@@ -1,14 +1,14 @@
-import React, { useContext, useState } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Badge, Link, Box, Menu, MenuItem, Avatar } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import { styled } from '@mui/system';
-import { AuthContext } from '../contexts/AuthProvider.jsx';
-import { Link as RouterLink } from 'react-router-dom';
-import { UserContext } from '../contexts/UserProvider.jsx';
-import MessageIcon from '@mui/icons-material/Message';
-import LogoutIcon from '@mui/icons-material/Logout';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import LogoutIcon from '@mui/icons-material/Logout';
+import MenuIcon from '@mui/icons-material/Menu';
+import MessageIcon from '@mui/icons-material/Message';
+import { AppBar, Avatar, Badge, Box, IconButton, Link, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
+import { styled } from '@mui/system';
+import React, { useContext, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthProvider.jsx';
+import { UserContext } from '../contexts/UserProvider.jsx';
 
 const BadgeStyled = styled(Badge)({
     display: 'flex',

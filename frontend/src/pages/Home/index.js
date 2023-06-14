@@ -1,9 +1,19 @@
 import React from 'react';
-import { Container, Typography, Grid, Paper } from '@mui/material';
+import { Container, Typography, Grid, Paper, Button } from '@mui/material';
 import PublicHeader from '../../component/PublicHeader';
 import HomeImage from '../../static/home_poster.jpeg';
+import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+
+const ChatButton = styled(Button)({
+  marginTop: '10px',
+  fontWeight: 'bold',
+  fontSize: '20px',
+});
 
 function Home() {
+  const navigate = useNavigate();
+  
   return (
     <>
       <PublicHeader />
@@ -13,7 +23,7 @@ function Home() {
             <Grid item xs={12} sm={6}>
               <img src={HomeImage} alt="Imagem de exemplo" style={{ width: '100%' }} />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} >
               <Typography variant="h4" gutterBottom>
                 Bem-vindo ao Chat em Tempo Real com WebSocket e Spring Boot!
               </Typography>
@@ -25,6 +35,9 @@ function Home() {
                 Com este aplicativo, você pode enviar e receber mensagens instantâneas em tempo real,
                 permitindo uma comunicação eficaz e dinâmica com pessoas de todo o mundo.
               </Typography>
+              <Grid sx={{ display: 'flex', justifyContent: 'flex-end', textAlign: 'right', alignItems: 'center' }}>
+                <ChatButton variant='outlined' color='primary' onClick={e => navigate('/chat')}>Acessar CHAT</ChatButton>
+              </Grid>
             </Grid>
           </Grid>
         </Paper>
