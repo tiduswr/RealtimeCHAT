@@ -82,4 +82,4 @@ Api.interceptors.request.use(
   }
 );
 
-export { Auth, Api };
+export { Auth, Api, refreshToken };

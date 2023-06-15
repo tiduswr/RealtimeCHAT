@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Home from '../pages/Home'
 import { App } from '../pages/App'
 import NotFound from '../pages/NotFound';
@@ -18,7 +18,11 @@ const theme = createTheme({
 });
 
 const PrivateRoute = ({ children }) => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, authLoading } = useContext(AuthContext);
+
+  useEffect(() => {}, [authLoading])
+
+  if(authLoading) return null;
 
   return isAuthenticated ? (
     children

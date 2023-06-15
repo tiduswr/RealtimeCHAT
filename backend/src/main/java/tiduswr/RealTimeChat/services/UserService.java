@@ -13,6 +13,8 @@ import tiduswr.RealTimeChat.exceptions.UsernameAlreadyExists;
 import tiduswr.RealTimeChat.model.User;
 import tiduswr.RealTimeChat.model.dto.PublicUserDTO;
 import tiduswr.RealTimeChat.model.dto.UserDTO;
+import tiduswr.RealTimeChat.model.dto.UserFormalNameRequestDTO;
+import tiduswr.RealTimeChat.model.dto.UserPasswordRequestDTO;
 import tiduswr.RealTimeChat.repository.UserRepository;
 
 import java.util.List;
@@ -93,4 +95,18 @@ public class UserService implements UserDetailsService {
         return new PublicUserDTO(user.getFormalName());
     }
 
+    @Transactional
+    public void updateFormalName(String username, UserFormalNameRequestDTO dto) {
+        User user = findUserByUsername(username);
+        user.setFormalName(dto.formalName());
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updatePassword(String username, UserPasswordRequestDTO dto) {
+        User user = findUserByUsername(username);
+        var encryptedPassword = new BCryptPasswordEncoder().encode(dto.getPassword());
+        user.setPassword(encryptedPassword);
+        userRepository.save(user);
+    }
 }

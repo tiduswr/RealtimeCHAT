@@ -1,6 +1,7 @@
 package tiduswr.RealTimeChat.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tiduswr.RealTimeChat.model.dto.PublicUserDTO;
 import tiduswr.RealTimeChat.model.dto.UserDTO;
+import tiduswr.RealTimeChat.model.dto.UserFormalNameRequestDTO;
+import tiduswr.RealTimeChat.model.dto.UserPasswordRequestDTO;
 import tiduswr.RealTimeChat.services.ImageService;
 import tiduswr.RealTimeChat.services.JwtService;
 import tiduswr.RealTimeChat.services.UserService;
@@ -53,6 +56,22 @@ public class UserRestController {
     public UserDTO retrieveOwnInformation(@RequestHeader("Authorization") String auth){
         var username = jwtService.extractUsername(auth);
         return userService.findUserDtoByUsername(username);
+    }
+
+    @PostMapping("/edit/formalname")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateFormalName(@RequestHeader("Authorization") String auth,
+                                    @RequestBody @Valid UserFormalNameRequestDTO dto){
+        var username = jwtService.extractUsername(auth);
+        userService.updateFormalName(username, dto);
+    }
+
+    @PostMapping("/edit/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updatePassword(@RequestHeader("Authorization") String auth,
+                                  @RequestBody @Valid UserPasswordRequestDTO dto){
+        var username = jwtService.extractUsername(auth);
+        userService.updatePassword(username, dto);
     }
 
 }
