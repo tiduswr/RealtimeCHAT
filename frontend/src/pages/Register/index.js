@@ -133,7 +133,7 @@ export default function Register() {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
+              <Grid item xs={12}>
                 <TextField
                   autoComplete="given-name"
                   name="formalName"
@@ -167,7 +167,7 @@ export default function Register() {
                   error={passwordError ? true : false}
                   name="password_01"
                   label="Senha"
-                  type="password_01"
+                  type="password"
                   id="password_01"
                   autoComplete="new-password"
                   onChange={cleanPasswordsOnChange}
@@ -181,7 +181,7 @@ export default function Register() {
                   helperText={passwordError ? passwordError : undefined}
                   name="password_02"
                   label="Repita a Senha"
-                  type="password_02"
+                  type="password"
                   id="password_02"
                   autoComplete="new-password"
                   onChange={cleanPasswordsOnChange}

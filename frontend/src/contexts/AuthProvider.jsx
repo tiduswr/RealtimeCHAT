@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { Auth } from '../api';
+import { Auth, refreshToken } from '../api';
 import AuthAlert from '../component/AuthAlert';
 import moment from 'moment';
 
@@ -8,13 +8,12 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
     const [ alert, setAlert ] = useState({title: 'Erro ao tentar logar', message: '', type: 'error', show: false});
-    const [loading, setLoading ] = useState(true);
+    const [ authLoading, setAuthLoading ] = useState(true);
 
     useEffect(() => {
-        const checkTokenValidity = async () => {
-            setIsAuthenticated(false);
-            setLoading(true);
+        setAuthLoading(true);
 
+        const checkTokenValidity = async () => {
             const accessTokenString = localStorage.getItem('access_token');
             if(accessTokenString){
                 let accessTk = JSON.parse(accessTokenString);
@@ -24,11 +23,10 @@ const AuthProvider = ({ children }) => {
                 if (isExpired) accessTk = await refreshToken();
                 if (accessTk) setIsAuthenticated(true);
             }
-            setLoading(false);
+            setAuthLoading(false);
         };
         
         checkTokenValidity();
-        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
@@ -40,33 +38,6 @@ const AuthProvider = ({ children }) => {
             }, 3000);
         }
     }, [alert]);
-    
-    const refreshToken = async () => {
-        let oldRefreshToken = localStorage.getItem('refresh_token');
-        oldRefreshToken = JSON.parse(oldRefreshToken).jwtToken;
-
-        if (oldRefreshToken) {
-            try {
-                const res = await Auth.post(`/refresh_token`, { 'refreshToken': oldRefreshToken });
-
-                if (res.status === 200) {
-                    const { refreshToken, token } = res.data;
-
-                    if(refreshToken?.jwtToken && token?.jwtToken){
-                        localStorage.setItem('refresh_token', JSON.stringify(refreshToken));
-                        localStorage.setItem('access_token', JSON.stringify(token));
-                    }
-
-                    return token;
-                }else{
-                    await logout();
-                }
-            } catch (error) {
-                await logout();
-            }
-            return undefined;
-        }
-    }
 
     const login = async (username, password) => {
         if(username !== '' && password !== ''){
@@ -108,12 +79,8 @@ const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
     };
 
-    if(loading){
-        return null;
-    }
-
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, setAlert }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, setAlert, authLoading }}>
             {children}
             {alert.show && 
                 <AuthAlert message={alert.message} type={alert.type} title={alert.title}/>

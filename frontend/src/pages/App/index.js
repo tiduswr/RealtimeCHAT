@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useCallback, createContext } from 'react';
+import React, { useEffect, useState, useCallback, createContext, useContext } from 'react';
 import ChatRoom from '../../component/chat/ChatRoom';
 import Header from '../../component/Header';
+import { AuthContext } from '../../contexts/AuthProvider';
+import { UserContext } from '../../contexts/UserProvider';
 
 const Context = createContext();
 
@@ -12,7 +14,9 @@ const App = () => {
   const [publicChats, setPublicChats] = useState([]);
   const [privateChats, setPrivateChats] = useState(new Map());
   const [tab, setTab] = useState('CHATROOM');
-  
+  const { authLoading } = useContext(AuthContext);
+  const { userLoading } = useContext(UserContext);
+
   const updateUnreadMessageCount = useCallback(
     (messageCount) => {
       let newCount = 0;
@@ -68,6 +72,8 @@ const App = () => {
   const closeMenu = () => {
     setMenuOpen(false);
   };
+
+  if(authLoading || userLoading) return null;
 
   return (
     <Context.Provider

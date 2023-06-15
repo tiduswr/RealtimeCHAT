@@ -77,7 +77,7 @@ export default function Login() {
               fullWidth
               name="password"
               label="Senha"
-              type="text"
+              type="password"
               id="password"
               autoComplete="current-password"
             />

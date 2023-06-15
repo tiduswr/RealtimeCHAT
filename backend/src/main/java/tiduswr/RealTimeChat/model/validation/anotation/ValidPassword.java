@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
 @Constraint(validatedBy = PasswordConstraintValidator.class)
-@Target({ TYPE, FIELD, ANNOTATION_TYPE })
+@Target({ TYPE, FIELD, ANNOTATION_TYPE, RECORD_COMPONENT })
 @Retention(RUNTIME)
 @SuppressWarnings("unused")
 public @interface ValidPassword {
