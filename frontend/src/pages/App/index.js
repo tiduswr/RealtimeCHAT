@@ -65,13 +65,13 @@ const App = () => {
     }
   }, [showAlert]);
 
-  const toggleMenu = () => {
+  const toggleMenu = useCallback(() => {
     setMenuOpen((prevIsMenuOpen) => !prevIsMenuOpen);
-  };
+  },[]);
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setMenuOpen(false);
-  };
+  }, []);
 
   if(authLoading || userLoading) return null;
 

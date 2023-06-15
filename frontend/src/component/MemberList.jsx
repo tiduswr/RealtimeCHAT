@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { List, ListItemButton, ListItemText, Drawer, IconButton, Box, Typography, ListItemAvatar, Avatar, Badge } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/system';
+import SearchIcon from '@mui/icons-material/Search';
+import BasicModal from './SearchModal';
 
 const ListButtonStyled = styled(ListItemButton)({
   "&.Mui-selected": {
@@ -20,6 +22,8 @@ const ListButtonStyled = styled(ListItemButton)({
 
 const MemberList = ({ setTab, tab, privateChats, closeMenu, isMenuOpen, userImage, messageCount }) => {
 
+  const [openSearchModal, setOpenSearchModal] = useState(false);
+
   return (
     <>
       <Drawer
@@ -29,10 +33,15 @@ const MemberList = ({ setTab, tab, privateChats, closeMenu, isMenuOpen, userImag
           PaperProps={{
           }}
         >
-          <Box sx={{ p: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Chats
-            </Typography>
+          <Box sx={{ p: 2, mb: 2 }}>
+            <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Chats
+              </Typography>
+              <IconButton onClick={(e) => setOpenSearchModal(!openSearchModal)}>
+                <SearchIcon/>
+              </IconButton>
+            </Box>
             <List sx={{minWidth:'300px'}} >
               <ListButtonStyled
                 onClick={() => setTab("CHATROOM")}
@@ -62,6 +71,7 @@ const MemberList = ({ setTab, tab, privateChats, closeMenu, isMenuOpen, userImag
             </IconButton>
           </Box>
         </Drawer>
+        {openSearchModal && <BasicModal closeFunc={setOpenSearchModal} />}
     </>
   );
 };
