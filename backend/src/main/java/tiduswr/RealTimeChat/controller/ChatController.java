@@ -45,8 +45,11 @@ public class ChatController {
     public PrivateMessageDTO receivePrivateMessage(@Payload @Valid PrivateMessageDTO message,
                                                    Principal principal){
 
-        if(principal == null)
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        if(principal == null){
+            simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private",
+                    new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+            return message;
+        }
 
         if(message.getStatus().equals(Status.READ)){
             simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private",  message);

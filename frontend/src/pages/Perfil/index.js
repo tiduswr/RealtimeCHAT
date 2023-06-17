@@ -129,7 +129,7 @@ const Perfil = () => {
                 />
               </label>
               <input
-                accept="image/png"
+                accept="image/*"
                 id="image-upload"
                 type="file"
                 style={{ display: 'none' }}

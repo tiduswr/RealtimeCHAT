@@ -23,9 +23,8 @@ const ChatRoom = () => {
 
   const [chatMessages, setChatMessages] = useState([]);
   const [tab, setTab] = useState(null);
-
- 
-
+  const [connecting, setConnecting] = useState(true);
+  
   const sendPrivateMessagesRead = useCallback((username, receiver) => {
     if (stompClient) {
       let chatMessage = {
@@ -51,7 +50,6 @@ const ChatRoom = () => {
 
       switch (payloadData.status) {
         case 'MESSAGE':
-          setChatMessages(prev => [...prev, payloadData]);
           if (userTabIsNotOpen(senderName)) {
             setMessageCount(prev => {
               const newMap = new Map(prev);
@@ -63,6 +61,7 @@ const ChatRoom = () => {
             setUnreadMessageCount(prev => ++prev);
             setShowAlert({ visible: true, sender: senderName })
           } else {
+            setChatMessages(prev => [...prev, payloadData]);
             let receiver = tab.userName;
             Api.put(`/api/v1/messages/mark_messages_as_read/${receiver}`)
               .then(res => {
@@ -126,6 +125,7 @@ const ChatRoom = () => {
       } catch (error) {
         console.log(error);
       }
+      setConnecting(false);
     };
 
     if (userData && !stompClient) connectToStompServer();
@@ -138,6 +138,8 @@ const ChatRoom = () => {
     };
 
   }, [userData, setShowAlert, sendPrivateMessagesRead, setMessageCount, setUnreadMessageCount, tab]);
+
+  if(connecting) return null;
 
   return (
     <React.Fragment>

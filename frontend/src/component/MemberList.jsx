@@ -64,6 +64,19 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, messageCount, setMessa
     getUsers();
 
   },[setMessageCount])
+    
+  useEffect(() => {
+    const retrieveMessagesCount = async () =>{
+      try{
+        const res = await Api.get('/api/v1/messages/retrieve_count/total')
+        const data = res.data.count;
+        setUnreadMessageCount(parseInt(data));
+      }catch(error){
+        console.log(error);
+      }
+    }
+    retrieveMessagesCount();
+  }, [messageCount, setUnreadMessageCount])
 
   const handleTabChange = (userName, formalName) => {
     Api.put(`/api/v1/messages/mark_messages_as_read/${userName}`)
@@ -72,9 +85,7 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, messageCount, setMessa
           sendPrivateMessagesRead(userData.userName, userName)
           setMessageCount(prev => {
             const newMap = new Map(prev);
-            const oldCount = newMap.get(userName);
             newMap.set(userName, 0);
-            setUnreadMessageCount(prev => prev - oldCount);
             return newMap;
           })
           setTab({ userName, formalName });

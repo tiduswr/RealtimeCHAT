@@ -36,14 +36,14 @@ const App = () => {
       try{
         const res = await Api.get('/api/v1/messages/retrieve_count/total');
         const data = res.data.count;
-        setUnreadMessageCount(data);
+        setUnreadMessageCount(parseInt(data));
       }catch(error){
         console.log(error);
       }
     }  
 
     countUnreadedMessages();
-  }, [])
+  }, [messageCount])
 
   if(authLoading || userLoading) return null;
 

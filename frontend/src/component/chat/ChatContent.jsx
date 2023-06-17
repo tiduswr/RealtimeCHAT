@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useContext } from 'react';
+import React, { useRef, useEffect, useState, useContext, useCallback } from 'react';
 
 import { Grid, Paper, Typography, Box } from '@mui/material'
 import { useMediaQuery } from '@mui/material';
@@ -15,6 +15,8 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
   const { userData } = useContext(UserContext);
 
   const messages = useRef('null');
+
+  console.log('renderizei')
 
   useEffect(() => {
     const pullPublicMessage = async () => {
@@ -48,7 +50,7 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
     }
   }, [tab, setChatMessages, setMessageCount])
 
-  const sendPublicMessage = (message, username) => {
+  const sendPublicMessage = useCallback((message, username) => {
     if (stompClient) {
       const chatMessage = {
         message: message,
@@ -59,9 +61,9 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
 
       stompClient.send('/app/message', {}, JSON.stringify(chatMessage));
     }
-  };
+  }, [stompClient]);
 
-  const sendPrivateMessage = (message, username) => {
+  const sendPrivateMessage = useCallback((message, username) => {
     if (stompClient) {
       let chatMessage = {
         message: message,
@@ -73,7 +75,7 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
 
       stompClient.send('/app/private-message', {}, JSON.stringify(chatMessage));
     }
-  };
+  }, [stompClient, tab]);
 
   const scroll = () => {
 
