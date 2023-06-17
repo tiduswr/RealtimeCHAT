@@ -16,6 +16,7 @@ import tiduswr.RealTimeChat.services.JwtService;
 import tiduswr.RealTimeChat.services.UserService;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -72,6 +73,15 @@ public class UserRestController {
                                   @RequestBody @Valid UserPasswordRequestDTO dto){
         var username = jwtService.extractUsername(auth);
         userService.updatePassword(username, dto);
+    }
+
+    @GetMapping("/find/{query}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PublicUserDTO> findUserByName(@RequestHeader("Authorization") String auth,
+                                              @PathVariable("query") String query){
+
+        var username = jwtService.extractUsername(auth);
+        return userService.getUsersByUsernameOrFormalname(query, username);
     }
 
 }

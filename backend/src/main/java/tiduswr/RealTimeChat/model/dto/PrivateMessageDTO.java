@@ -7,12 +7,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 import tiduswr.RealTimeChat.model.Message;
 import tiduswr.RealTimeChat.model.Status;
 
 import java.time.LocalDateTime;
 
-@Data @Builder @AllArgsConstructor
+@Data @Builder @AllArgsConstructor @ToString
 public class PrivateMessageDTO{
 
         @JsonProperty(access = JsonProperty.Access.READ_ONLY)

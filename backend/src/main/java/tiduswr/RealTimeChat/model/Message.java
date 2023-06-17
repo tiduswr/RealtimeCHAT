@@ -28,7 +28,7 @@ public class Message implements Serializable {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
-    @Column
+    @Column(name = "readed")
     private Boolean read;
 
     @Column(nullable = false)

@@ -10,10 +10,9 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 import tiduswr.RealTimeChat.model.ErrorResponse;
+import tiduswr.RealTimeChat.model.Status;
 import tiduswr.RealTimeChat.model.dto.PrivateMessageDTO;
 import tiduswr.RealTimeChat.model.dto.PublicMessageDTO;
 import tiduswr.RealTimeChat.services.MessageService;
@@ -49,9 +48,14 @@ public class ChatController {
         if(principal == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
-        PrivateMessageDTO persistedMessage = messageService.createPrivateMessage(message, principal.getName());
-        simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private", message);
+        if(message.getStatus().equals(Status.READ)){
+            simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private",  message);
+            return message;
+        }
 
+        PrivateMessageDTO persistedMessage = messageService.createPrivateMessage(message, principal.getName());
+        simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private", persistedMessage);
+        simpMessagingTemplate.convertAndSendToUser(persistedMessage.getSender(), "/private", persistedMessage);
         return persistedMessage;
     }
 

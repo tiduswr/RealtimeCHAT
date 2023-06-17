@@ -1,23 +1,38 @@
 import React from 'react';
-import { ListItemText, Paper, Typography } from '@mui/material';
+import { Box, ListItemText, Paper, Typography, Tooltip } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 
-const MessageSent = ({ message }) => {
+const MessageSent = ({ message, read, date, ownUsername, senderName }) => {
 
     return (
-        <Paper elevation={1} 
-            sx={{padding : '10px', 
-                minWidth: '200px'
-        }}>
-            <ListItemText
-                primary={
-                    <Typography variant="body2" sx={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
-                    {message}
-                    </Typography>
+        <Tooltip title={date} placement='top'>
+            <Paper elevation={1}
+                sx={{
+                    padding: '10px',
+                    minWidth: '200px'
+                }}>
+                <ListItemText
+                    primary={
+                        <>
+                            <Typography variant="body2" sx={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                                {message}
+                            </Typography>
+                        </>
+                    }
+                />
+                {ownUsername === senderName &&
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                        {read ? 
+                            <DoneAllIcon sx={{ fontSize: 14 }} />
+                        :
+                            <CheckIcon sx={{ fontSize: 14 }} />
+                        }
+                    </Box>
                 }
-            />
-        </Paper>
-      
+            </Paper>
+        </Tooltip>
     );
-  };
+};
 
 export default MessageSent;
