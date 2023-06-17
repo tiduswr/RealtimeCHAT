@@ -3,7 +3,7 @@ import MessageSentProvider from '../message/MessageSentProvider';
 import { List, ListItem } from '@mui/material';
 import { Api } from '../../api';
 
-const ChatMessagesList = ({ chatMessages, username, showAlert }) => {
+const ChatMessagesList = ({ chatMessages, username }) => {
     const [usersData, setUsersData] = useState(new Map());
     const [loading, setLoading] = useState(true);
 
@@ -63,7 +63,7 @@ const ChatMessagesList = ({ chatMessages, username, showAlert }) => {
         };
 
         loadUsersData();
-    }, [userImageApi, userFormalNameApi, chatMessages]);
+    }, [userImageApi, userFormalNameApi, chatMessages, usersData]);
     
     if (loading) {
         return null;
@@ -99,7 +99,8 @@ const ChatMessagesList = ({ chatMessages, username, showAlert }) => {
                             image={userData?.image}
                             formalName={userData?.formalName}
                             lastMessageSender={index > 0 ? chatMessages[index - 1].sender : null}
-                            showAlert={showAlert}
+                            read={chat.read}
+                            date={chat.createdAt}
                         />
                     </ListItem>
                 );

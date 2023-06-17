@@ -4,10 +4,11 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
 import { IconButton, InputAdornment, ListItemButton } from '@mui/material';
 import { styled } from '@mui/system'
 import SearchIcon from '@mui/icons-material/Search';
+import { Api } from '../api'
+import LoadingSpinner from './LoadingSpinner'
 
 const ModalCustom = styled(Box)({
   position: 'absolute',
@@ -22,10 +23,11 @@ const ModalCustom = styled(Box)({
   boxShadow: 24
 });
 
-export default function BasicModal({ closeFunc }) {
+export default function BasicModal({ closeFunc, setContacts }) {
   const [open, setOpen] = useState(true);
   const [searchValue, setSearchValue] = useState('');
-  const [options, setOptions] = useState(['Option 1', 'Option 2', 'Option 3']);
+  const [options, setOptions] = useState([]);
+  const [isLoading, setLoading] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -33,23 +35,37 @@ export default function BasicModal({ closeFunc }) {
   };
 
   const handleSearch = () => {
-    // Implement your search logic here
-    console.log('Searching for:', searchValue);
-    // Update the options list based on the search results
-    // For now, let's just filter the options based on the search value
-    const filteredOptions = options.filter(option =>
-      option.toLowerCase().includes(searchValue.toLowerCase())
-    );
-    console.log('Filtered options:', filteredOptions);
-    // Update the options state
-    setOptions(filteredOptions);
+
+    setLoading(true);
+    Api.get(`/users/find/${searchValue}`)
+    .then((res) => {
+      if(res.status === 200){
+        setOptions([...res.data]);
+      }
+      setLoading(false);
+    }).catch((error) => {
+      console.log(error);
+      setLoading(false);
+    })
+
   };
 
   const handleOptionClick = index => {
     const selectedOption = options[index];
-    console.log(selectedOption);
-    setOpen(false);
-    closeFunc(false);
+
+    setLoading(true);
+    Api.get(`/users/retrieve_profile_image/${selectedOption.userName}`, { responseType: 'arraybuffer' })
+      .then(res => {
+        if(res.status === 200){
+          const image = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }));
+          setContacts(prev => [...prev, {...selectedOption, image}])
+          handleClose();
+        }
+      }).catch((error) => {
+        console.log(error);
+        setLoading(false);
+      })
+
   };
 
   return (
@@ -65,7 +81,7 @@ export default function BasicModal({ closeFunc }) {
             Buscar usuário
           </Typography>
           <TextField
-            label="Buscar"
+            label="Username"
             variant="outlined"
             value={searchValue}
             onChange={event => setSearchValue(event.target.value)}
@@ -81,16 +97,21 @@ export default function BasicModal({ closeFunc }) {
                 )
             }}
           />
-          <List sx={{ marginTop: 2 }}>
-            {options.map((option, index) => (
-              <ListItemButton
-                key={index}
-                onClick={() => handleOptionClick(index)}
-              >
-                <ListItemText primary={option} />
-              </ListItemButton>
-            ))}
-          </List>
+          {!isLoading ? 
+            <List sx={{ marginTop: 2 }}>
+              {options.map((option, index) => (
+                <ListItemButton
+                  key={index}
+                  onClick={() => handleOptionClick(index)}
+                >
+                  <Typography>{option.formalName}</Typography>
+                  <Typography sx={{fontWeight: 'bold', marginLeft: '6px'}}>({option.userName})</Typography>
+                </ListItemButton>
+              ))}
+            </List>
+          :
+            <LoadingSpinner sx={{marginTop: 2}}/>
+          }
         </ModalCustom>
       </Modal>
     </div>

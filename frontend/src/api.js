@@ -1,8 +1,6 @@
 import axios from 'axios';
 import moment from 'moment';
 
-let refreshTokenPromise = undefined;
-
 const baseURL = `http://${window.location.hostname}:8080/`;
 
 axios.defaults.headers.common = {
@@ -18,63 +16,54 @@ const Api = axios.create({
 });
 
 const refreshToken = async () => {
-  if (refreshTokenPromise) {
-    return refreshTokenPromise;
-  }
-
-  refreshTokenPromise = Auth.post('/refresh_token', {
-    refreshToken: JSON.parse(localStorage.getItem('refresh_token')).jwtToken,
-  });
-
   try {
-    const res = await refreshTokenPromise;
+    const refreshToken = JSON.parse(localStorage.getItem('refresh_token'));
+    const response = await Auth.post('/refresh_token', {
+      refreshToken: refreshToken.jwtToken,
+    });
 
-    if (res.status === 200) {
-      const { refreshToken, token } = res.data;
+    if (response.status === 200) {
+      const { refreshToken, token } = response.data;
 
       if (refreshToken?.jwtToken && token?.jwtToken) {
         localStorage.setItem('refresh_token', JSON.stringify(refreshToken));
         localStorage.setItem('access_token', JSON.stringify(token));
       }
-      console.log('refreshed :D');
+      console.log('Token refreshed successfully');
     } else {
-      if (localStorage.getItem('refresh_token')) {
-        Auth.post('/quit', {
-          refreshToken: JSON.parse(localStorage.getItem('refresh_token')).jwtToken,
-        });
-      }
-
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('access_token');
+      handleTokenRefreshError();
     }
-
-    refreshTokenPromise = undefined;
   } catch (error) {
-    if (localStorage.getItem('refresh_token')) {
-      Auth.post('/quit', {
-        refreshToken: JSON.parse(localStorage.getItem('refresh_token')).jwtToken,
-      });
-    }
-
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('access_token');
-
-    refreshTokenPromise = undefined;
+    handleTokenRefreshError();
   }
+};
+
+const handleTokenRefreshError = () => {
+  if (localStorage.getItem('refresh_token')) {
+    Auth.post('/quit', {
+      refreshToken: JSON.parse(localStorage.getItem('refresh_token')).jwtToken,
+    });
+  }
+
+  localStorage.removeItem('refresh_token');
+  localStorage.removeItem('access_token');
 };
 
 Api.interceptors.request.use(
   async (config) => {
     const accessToken = localStorage.getItem('access_token');
-    let accessTk = JSON.parse(accessToken);
+    const accessTk = JSON.parse(accessToken);
 
     const isExpired = accessTk && moment(accessTk.expiration).isBefore(moment());
 
     if (isExpired) {
-      accessTk = await refreshToken();
+      await refreshToken();
     }
 
-    config.headers.Authorization = `Bearer ${accessTk?.jwtToken}`;
+    const updatedAccessToken = localStorage.getItem('access_token');
+    const updatedAccessTk = JSON.parse(updatedAccessToken);
+
+    config.headers.Authorization = `Bearer ${updatedAccessTk?.jwtToken}`;
     return config;
   },
   (error) => {

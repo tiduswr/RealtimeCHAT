@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
-import ChatContent from './ChatContent';
-import MemberList from '../MemberList';
 import { Container } from '@mui/material';
 import MessageReceivedAlert from '../message/MessageReceivedAlert';
 import { Context } from '../../pages/App/index.js';
+import { UserContext } from '../../contexts/UserProvider';
+import ChatPerspective from './ChatPerspective';
 import { Api } from '../../api';
 
 var stompClient = null;
@@ -14,86 +14,84 @@ const ChatRoom = () => {
   const {
     closeMenu,
     isMenuOpen,
-    updateUnreadMessageCount,
-    messageCount,
     showAlert,
-    publicChats,
-    privateChats,
-    tab,
-    setPrivateChats,
-    setTab,
     setShowAlert,
     setMessageCount,
-    setPublicChats
+    setUnreadMessageCount
   } = useContext(Context);
+  const { userData } = useContext(UserContext);
 
-  const [userData, setUserData] = useState({
-    id: 0,
-    username: '',
-    formalname: '',
-    connected: false,
-  });
+  const [chatMessages, setChatMessages] = useState([]);
+  const [tab, setTab] = useState(null);
+
+ 
+
+  const sendPrivateMessagesRead = useCallback((username, receiver) => {
+    if (stompClient) {
+      let chatMessage = {
+        message: 'READ',
+        sender: username,
+        read: false,
+        receiver: receiver,
+        status: 'READ',
+      };
+      stompClient.send('/app/private-message', {}, JSON.stringify(chatMessage));
+    }
+  }, []);
 
   useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const res = await Api.get('/users/retrieve_profile_info');
-        const u = res.data;
-        setUserData((prev) => ({ ...prev, id: u.id, username: u.userName, formalname: u.formalName }));
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
-    const pullPublicMessage = async () => {
-      try {
-        const res = await Api.get('/api/v1/messages/retrieve_messages/by/public');
-        setPublicChats(res.data);
-      } catch (error) {
-        console.log(error);
-      }
+    const userTabIsNotOpen = (senderName) => {
+      return senderName !== userData.userName && tab?.userName !== senderName;
     };
 
     const onPrivateMessageReceived = (payload) => {
       let payloadData = JSON.parse(payload.body);
-      const senderName = payloadData.senderName;
+      const senderName = payloadData.sender;
 
-      setPrivateChats((prevPrivateChats) => {
-        const updatedPrivateChats = new Map(prevPrivateChats);
-
-        if (updatedPrivateChats.has(senderName)) {
-          const messages = [...updatedPrivateChats.get(senderName), payloadData];
-          updatedPrivateChats.set(senderName, messages);
-        } else {
-          updatedPrivateChats.set(senderName, [payloadData]);
-        }
-
-        return updatedPrivateChats;
-      });
-
-      setTab((prevTab) => {
-        if (prevTab !== payloadData.senderName) {
-          setShowAlert({ visible: true, sender: payloadData.senderName });
-        }
-        return prevTab;
-      });
-
-      setMessageCount((prevCount) => {
-        const updateCount = new Map(prevCount);
-        const currentUpdate = updateCount.get(payloadData.senderName) || 0;
-        updateCount.set(payloadData.senderName, currentUpdate + 1);
-
-        updateUnreadMessageCount(updateCount);
-
-        return new Map(updateCount);
-      });
+      switch (payloadData.status) {
+        case 'MESSAGE':
+          setChatMessages(prev => [...prev, payloadData]);
+          if (userTabIsNotOpen(senderName)) {
+            setMessageCount(prev => {
+              const newMap = new Map(prev);
+              let count = newMap.get(senderName);
+              count++;
+              newMap.set(senderName, count);
+              return newMap;
+            })
+            setUnreadMessageCount(prev => ++prev);
+            setShowAlert({ visible: true, sender: senderName })
+          } else {
+            let receiver = tab.userName;
+            Api.put(`/api/v1/messages/mark_messages_as_read/${receiver}`)
+              .then(res => {
+                if (res.status === 204) {
+                  sendPrivateMessagesRead(userData.userName, receiver)
+                }
+              }).catch(error => {
+                console.log(error);
+              })
+          }
+          break;
+        case 'READ':
+          setChatMessages(prev => {
+            return prev.map(e => {
+              return e.sender === userData.userName ? { ...e, read: true } : e;
+            });
+          })
+          break;
+        default:
+          break;
+      }
     };
 
     const onPublicMessageReceived = (payload) => {
       let payloadData = JSON.parse(payload.body);
+
       switch (payloadData.status) {
         case 'MESSAGE':
-          setPublicChats((prevPublicChats) => prevPublicChats.concat(payloadData));
+          setChatMessages(prev => [...prev, payloadData]);
           break;
         default:
           break;
@@ -101,10 +99,7 @@ const ChatRoom = () => {
     };
 
     const onConnected = () => {
-      setUserData((prev) => {
-        stompClient.subscribe(`/user/${prev.username}/private`, onPrivateMessageReceived);
-        return { ...prev, connected: true };
-      });
+      stompClient.subscribe(`/user/${userData.userName}/private`, onPrivateMessageReceived);
       stompClient.subscribe('/chatroom/public', onPublicMessageReceived);
     };
 
@@ -121,6 +116,8 @@ const ChatRoom = () => {
             heartbeatOutgoing: 4000,
           });
 
+          stompClient.debug = null;
+
           stompClient.connect({ 'Authorization': `Bearer ${ACCESS_TOKEN.jwtToken}` }, onConnected, (err) => {
             console.log(err);
           });
@@ -131,77 +128,30 @@ const ChatRoom = () => {
       }
     };
 
-    getUserData();
-    pullPublicMessage();
-    connectToStompServer();
+    if (userData && !stompClient) connectToStompServer();
 
     return () => {
       if (stompClient !== null) {
         stompClient.disconnect();
+        stompClient = null;
       }
     };
-  }, [privateChats, setPrivateChats, setMessageCount, setPublicChats, setTab, setShowAlert, updateUnreadMessageCount]);
 
-  const sendPublicMessage = (message, username) => {
-    if (stompClient) {
-      const chatMessage = {
-        message: message,
-        sender: username,
-        read: false,
-        status: 'MESSAGE',
-      };
-
-      stompClient.send('/app/message', {}, JSON.stringify(chatMessage));
-    }
-  };
-
-  const sendPrivateMessage = (message, username) => {
-    if (stompClient) {
-      let chatMessage = {
-        message: message,
-        sender: username,
-        read: false,
-        receiver: tab,
-        status: 'MESSAGE',
-      };
-
-      if (userData.username !== tab) {
-        privateChats.get(tab).push(chatMessage);
-        setPrivateChats(new Map(privateChats));
-      }
-
-      stompClient.send('/app/private-message', {}, JSON.stringify(chatMessage));
-    }
-  };
+  }, [userData, setShowAlert, sendPrivateMessagesRead, setMessageCount, setUnreadMessageCount, tab]);
 
   return (
     <React.Fragment>
       <Container maxWidth="xl">
-        <MemberList
-          setTab={setTab}
-          tab={tab}
-          messageCount={messageCount}
-          privateChats={privateChats}
+        <ChatPerspective
           closeMenu={closeMenu}
           isMenuOpen={isMenuOpen}
+          stompClient={stompClient}
+          chatMessages={chatMessages}
+          setChatMessages={setChatMessages}
+          tab={tab}
+          setTab={setTab}
+          sendPrivateMessagesRead={sendPrivateMessagesRead}
         />
-        {tab === 'CHATROOM' ? (
-          <ChatContent
-            chatMessages={publicChats}
-            username={userData.username}
-            sendMessage={sendPublicMessage}
-            placeholder="Insira a mensagem..."
-            tab="SALA PÚBLICA"
-          />
-        ) : (
-          <ChatContent
-            chatMessages={[...privateChats.get(tab)]}
-            username={userData.username}
-            sendMessage={sendPrivateMessage}
-            placeholder="Insira a mensagem..."
-            tab={tab}
-          />
-        )}
       </Container>
       {showAlert.visible && <MessageReceivedAlert senderName={showAlert.sender} />}
     </React.Fragment>

@@ -92,7 +92,7 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public PublicUserDTO findPublicUserDtoByUsername(String username) {
         User user = findUserByUsername(username);
-        return new PublicUserDTO(user.getFormalName());
+        return new PublicUserDTO(user.getUserName(), user.getFormalName());
     }
 
     @Transactional
@@ -109,4 +109,10 @@ public class UserService implements UserDetailsService {
         user.setPassword(encryptedPassword);
         userRepository.save(user);
     }
+
+    @Transactional(readOnly = true)
+    public List<PublicUserDTO> getUsersByUsernameOrFormalname(String query, String username) {
+        return userRepository.findUsersByUsernameOrFormalname(query, username);
+    }
+
 }

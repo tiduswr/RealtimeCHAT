@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { List, ListItemButton, ListItemText, Drawer, IconButton, Box, Typography, ListItemAvatar, Avatar, Badge } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/system';
 import SearchIcon from '@mui/icons-material/Search';
 import BasicModal from './SearchModal';
+import { Api } from '../api';
+import GroupIcon from '@mui/icons-material/Group';
+import { UserContext } from '../contexts/UserProvider';
 
 const ListButtonStyled = styled(ListItemButton)({
   "&.Mui-selected": {
@@ -20,9 +23,66 @@ const ListButtonStyled = styled(ListItemButton)({
   }
 });
 
-const MemberList = ({ setTab, tab, privateChats, closeMenu, isMenuOpen, userImage, messageCount }) => {
+const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, messageCount, setMessageCount, setUnreadMessageCount, sendPrivateMessagesRead }) => {
 
   const [openSearchModal, setOpenSearchModal] = useState(false);
+  const [contacts, setContacts] = useState([])
+  const { userData } = useContext(UserContext);
+
+  useEffect(() => {
+
+    const getUsers = async () => {
+      try {
+        const usersResponse = await Api.get('/api/v1/messages/retrieve_users/talked');
+        const usersData = usersResponse.data;
+    
+        const modifiedUsersData = await Promise.all(usersData.map(async e => {
+          const imageResponse = await Api.get(`/users/retrieve_profile_image/${e.userName}`, { responseType: 'arraybuffer' });
+          const image = URL.createObjectURL(new Blob([imageResponse.data], { type: 'image/png' }));
+          return { ...e, image };
+        }));
+
+        const unreadedMessages = await Promise.all(modifiedUsersData.map(async e => {
+          const res = await Api.get(`/api/v1/messages/retrieve_count/by/${e.userName}`);
+          const data = res.data.count;
+          return {userName: e.userName, count: data};
+        }));
+
+        setMessageCount(prev => {
+          const newMap = new Map(prev);
+          unreadedMessages.forEach(e => {
+            newMap.set(e.userName, e.count)
+          })
+          return newMap;
+        })
+        setContacts(modifiedUsersData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getUsers();
+
+  },[setMessageCount])
+
+  const handleTabChange = (userName, formalName) => {
+    Api.put(`/api/v1/messages/mark_messages_as_read/${userName}`)
+      .then(res => {
+        if(res.status === 204){
+          sendPrivateMessagesRead(userData.userName, userName)
+          setMessageCount(prev => {
+            const newMap = new Map(prev);
+            const oldCount = newMap.get(userName);
+            newMap.set(userName, 0);
+            setUnreadMessageCount(prev => prev - oldCount);
+            return newMap;
+          })
+          setTab({ userName, formalName });
+        }
+      }).catch(error => {
+        console.log(error);
+      })
+  }
 
   return (
     <>
@@ -44,22 +104,23 @@ const MemberList = ({ setTab, tab, privateChats, closeMenu, isMenuOpen, userImag
             </Box>
             <List sx={{minWidth:'300px'}} >
               <ListButtonStyled
-                onClick={() => setTab("CHATROOM")}
-                selected={tab === "CHATROOM"}
+                onClick={() => setTab(null)}
+                selected={tab === null}
               >
+                <GroupIcon sx={{marginRight: 2, marginLeft: 1}}/>
                 <ListItemText primary="Chat Público" />
               </ListButtonStyled>
-              {[...privateChats.keys()].map((name, index) => (
-                <Badge key={index} badgeContent={messageCount.get(name) || 0} color="secondary" sx={{display: 'flex'}}>
+              {contacts.map((u, index) => (
+                <Badge key={index} badgeContent={messageCount.get(u.userName) || 0} color="secondary" sx={{display: 'flex'}}>
                   <ListButtonStyled
                     key={index}
-                    onClick={() => setTab(name)}
-                    selected={tab === name}
+                    onClick={() => handleTabChange(u.userName, u.formalName)}
+                    selected={tab && tab.userName === u.userName}
                   >
                     <ListItemAvatar>
-                      <Avatar src={userImage} alt={name} />
+                      <Avatar src={u.image} alt={u.formalName} />
                     </ListItemAvatar>
-                    <ListItemText primary={name} />
+                    <ListItemText primary={u.formalName} />
                   </ListButtonStyled>
                 </Badge>
               ))}
@@ -71,7 +132,7 @@ const MemberList = ({ setTab, tab, privateChats, closeMenu, isMenuOpen, userImag
             </IconButton>
           </Box>
         </Drawer>
-        {openSearchModal && <BasicModal closeFunc={setOpenSearchModal} />}
+        {openSearchModal && <BasicModal closeFunc={setOpenSearchModal} setContacts={setContacts} />}
     </>
   );
 };

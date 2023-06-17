@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 import tiduswr.RealTimeChat.model.Message;
+import tiduswr.RealTimeChat.model.dto.MessageReadCountDTO;
 import tiduswr.RealTimeChat.model.dto.PrivateMessageDTO;
 import tiduswr.RealTimeChat.model.dto.PublicMessageDTO;
 import tiduswr.RealTimeChat.model.Status;
+import tiduswr.RealTimeChat.model.dto.PublicUserDTO;
 import tiduswr.RealTimeChat.repository.MessageRepository;
 
 import java.util.List;
@@ -61,6 +63,33 @@ public class MessageService {
     @Transactional(readOnly = true)
     public List<PublicMessageDTO> getPublicChatMessages(){
         return messageRepository.filterPublicChatMessages();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PublicUserDTO> findAllTalkedUsers(String username) {
+        return messageRepository.findAllInteractedUsersByUsername(username);
+    }
+
+    @Transactional(readOnly = true)
+    public MessageReadCountDTO countUnreadedMessagesByUsernameAndReceiver(String username, String sender){
+        return new MessageReadCountDTO((long) messageRepository
+                .countUnreadedMessagesBySenderAndReceiver(sender, username).size());
+    }
+
+    @Transactional
+    public void markMessagesAsReadedBySenderAndReceiver(String receiver, String sender){
+        var messages = messageRepository
+                .countUnreadedMessagesBySenderAndReceiver(sender, receiver);
+        messages.forEach(e -> {
+            e.setRead(Boolean.TRUE);
+            messageRepository.save(e);
+        });
+    }
+
+    @Transactional(readOnly = true)
+    public MessageReadCountDTO countTotalUnreadedMessage(String username){
+        return new MessageReadCountDTO(messageRepository
+                .countUnreadedMessagesByReceiver(username));
     }
 
 }

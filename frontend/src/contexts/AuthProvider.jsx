@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { Auth, refreshToken } from '../api';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
+import { Auth } from '../api';
 import AuthAlert from '../component/AuthAlert';
 import moment from 'moment';
 
@@ -9,6 +9,33 @@ const AuthProvider = ({ children }) => {
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
     const [ alert, setAlert ] = useState({title: 'Erro ao tentar logar', message: '', type: 'error', show: false});
     const [ authLoading, setAuthLoading ] = useState(true);
+
+    const refreshToken = useCallback(async () => {
+        let oldRefreshToken = localStorage.getItem('refresh_token');
+        oldRefreshToken = JSON.parse(oldRefreshToken).jwtToken;
+
+        if (oldRefreshToken) {
+            try {
+                const res = await Auth.post(`/refresh_token`, { 'refreshToken': oldRefreshToken });
+
+                if (res.status === 200) {
+                    const { refreshToken, token } = res.data;
+
+                    if(refreshToken?.jwtToken && token?.jwtToken){
+                        localStorage.setItem('refresh_token', JSON.stringify(refreshToken));
+                        localStorage.setItem('access_token', JSON.stringify(token));
+                    }
+
+                    return token;
+                }else{
+                    await logout();
+                }
+            } catch (error) {
+                await logout();
+            }
+            return undefined;
+        }
+    }, []);
 
     useEffect(() => {
         setAuthLoading(true);
@@ -27,7 +54,7 @@ const AuthProvider = ({ children }) => {
         };
         
         checkTokenValidity();
-    }, []);
+    }, [refreshToken]);
 
     useEffect(() => {
         if (alert.show) {
