@@ -1,5 +1,6 @@
 package tiduswr.RealTimeChat.repository;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,8 @@ import java.io.IOException;
 @SuppressWarnings("unused")
 public class LocalImageRepositoryImpl implements LocalImageRepository {
 
-    private final String FOLDER = "./images/";
+    @Value("${IMAGES_PATH}")
+    private String FOLDER;
 
     @Override
     public void store(String filename, BufferedImage image, String format) throws IOException {

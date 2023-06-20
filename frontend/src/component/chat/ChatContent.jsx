@@ -16,8 +16,6 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
 
   const messages = useRef('null');
 
-  console.log('renderizei')
-
   useEffect(() => {
     const pullPublicMessage = async () => {
       try {
