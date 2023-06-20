@@ -26,13 +26,34 @@ git clone https://github.com/tiduswr/RealtimeCHAT.git
 cd RealTimeChat
 ```
 
-3. Construa e execute os contêineres Docker usando o Docker Compose:
+3. Atualize o arquivo "MODELO - docker-compose.override.yml" renomeando para "docker-compose.override.yml" e preenchendo com os dados sensíveis da aplicação.
+
+````
+version: '3.7'
+
+services:
+  database:
+    environment:
+      - MYSQL_DATABASE=seu_database
+      - MYSQL_USER=seu_database_user
+      - MYSQL_PASSWORD=seu_password
+      - MYSQL_ROOT_PASSWORD=seu_database_root_password
+
+  backend:
+    environment:
+      - DB_NAME=seu_database
+      - DB_USERNAME=seu_database_user
+      - DB_PASSWORD=seu_password
+      - JWT_SECRET=sua_chave_jwt_secret
+````
+
+4. Construa e execute os contêineres Docker usando o Docker Compose:
 
 ```
 docker-compose up -d
 ```
 
-4. Aguarde até que todos os contêineres sejam inicializados corretamente. Após a conclusão, você poderá acessar o frontend em `http://localhost` e começar a usar a aplicação de chat em tempo real.
+5. Aguarde até que todos os contêineres sejam inicializados corretamente. Após a conclusão, você poderá acessar o frontend em `http://localhost` e começar a usar a aplicação de chat em tempo real.
 
 ## Estrutura do projeto
 
