@@ -108,7 +108,7 @@ const ChatRoom = () => {
         const ACCESS_TOKEN = JSON.parse(token);
 
         if (ACCESS_TOKEN) {
-          const sock = new SockJS(`http://${window.location.hostname}:8080/ws`);
+          const sock = new SockJS(`http://${window.location.hostname}:80/backend/ws`);
           stompClient = over(sock, {
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
@@ -131,8 +131,8 @@ const ChatRoom = () => {
     if (userData && !stompClient) connectToStompServer();
 
     return () => {
-      if (stompClient !== null) {
-        stompClient.disconnect();
+      if (stompClient) {
+        if(stompClient.connected) stompClient.disconnect();
         stompClient = null;
       }
     };

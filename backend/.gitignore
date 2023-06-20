@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 *.db
 images/
+profile_images/
 
 ### STS ###
 .apt_generated

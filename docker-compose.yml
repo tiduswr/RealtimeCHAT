@@ -1,0 +1,66 @@
+version: '3.7'
+
+networks:
+  internal:
+  app:
+
+volumes:
+  database:
+  profile_images:
+
+services:
+  database:
+    build:
+      context: ./database
+    container_name: webchat_database
+    networks:
+      - internal
+    environment:
+      - MYSQL_DATABASE=webchat
+      - MYSQL_USER=webchat_user
+      - MYSQL_PASSWORD=webchat_password
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - database:/var/lib/mysql
+
+  backend:
+    container_name: webchat_backend
+    build:
+      context: ./backend
+    networks:
+      - app
+      - internal
+    depends_on: 
+      - database
+    volumes:
+      - profile_images:/app/images
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+      - MAX_FILE_SIZE=10MB
+      - MAX_REQUEST_SIZE=10MB
+      - HOST_IP=192.168.0.101
+      - IMAGES_PATH=/app/images/
+    restart:
+      on-failure
+
+  frontend:
+    container_name: webchat_frontend
+    build:
+      context: ./frontend
+    networks:
+      - app
+    depends_on:
+      - backend
+
+  proxy:
+    build:
+      context: ./proxy
+    container_name: webchat_proxy
+    ports:
+      - 80:80
+    networks:
+      - app
+    depends_on:
+      - frontend
+      - backend

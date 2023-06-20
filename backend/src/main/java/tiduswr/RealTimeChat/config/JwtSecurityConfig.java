@@ -19,13 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import tiduswr.RealTimeChat.config.filter.JwtAuthFilter;
 import tiduswr.RealTimeChat.services.UserService;
-
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
 import java.util.List;
 
 @Configuration
@@ -33,6 +30,9 @@ import java.util.List;
 @EnableMethodSecurity
 @SuppressWarnings("unused")
 public class JwtSecurityConfig {
+
+    @Value("${HOST_IP}")
+    private String serverAddress;
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
@@ -60,36 +60,6 @@ public class JwtSecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    private String getMachineIp(){
-        String serverAddress = "";
-
-        try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = interfaces.nextElement();
-                if (networkInterface.isLoopback() || !networkInterface.isUp()) {
-                    continue; // Ignorar interfaces de loopback e inativas
-                }
-
-                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                    InetAddress address = addresses.nextElement();
-                    if (address.isLoopbackAddress()) {
-                        continue; // Ignorar endereços de loopback
-                    }
-                    if (address.getHostAddress().startsWith("192.168.")) {
-                        serverAddress = "http://" + address.getHostAddress() + ":3000";
-                        break;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        return serverAddress;
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -98,13 +68,12 @@ public class JwtSecurityConfig {
                 config.configurationSource(request -> {
                     CorsConfiguration corsConfig = new CorsConfiguration();
 
-                    String serverAddress = getMachineIp();
-
-                    corsConfig.setAllowedOrigins(List.of(serverAddress, "http://localhost:3000"));
+                    corsConfig.setAllowedOrigins(List.of("http://" + serverAddress + ":3000", "http://" + serverAddress, "http://localhost:3000", "http://localhost"));
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                     corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                     corsConfig.setAllowCredentials(true);
                     corsConfig.setMaxAge(3600L);
+
                     return corsConfig;
                 });
             })
