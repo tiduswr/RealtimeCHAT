@@ -34,14 +34,12 @@ version: '3.7'
 services:
   database:
     environment:
-      - MYSQL_DATABASE=seu_database
       - MYSQL_USER=seu_database_user
       - MYSQL_PASSWORD=seu_password
       - MYSQL_ROOT_PASSWORD=seu_database_root_password
 
   backend:
     environment:
-      - DB_NAME=seu_database
       - DB_USERNAME=seu_database_user
       - DB_PASSWORD=seu_password
       - JWT_SECRET=sua_chave_jwt_secret

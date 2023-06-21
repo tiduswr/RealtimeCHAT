@@ -17,9 +17,6 @@ services:
       - internal
     environment:
       - MYSQL_DATABASE=webchat
-      - MYSQL_USER=webchat_user
-      - MYSQL_PASSWORD=webchat_password
-      - MYSQL_ROOT_PASSWORD=root
     volumes:
       - database:/var/lib/mysql
 
@@ -35,6 +32,7 @@ services:
     volumes:
       - profile_images:/app/images
     environment:
+      - DB_NAME=webchat
       - DB_HOST=database
       - DB_PORT=3306
       - MAX_FILE_SIZE=10MB
