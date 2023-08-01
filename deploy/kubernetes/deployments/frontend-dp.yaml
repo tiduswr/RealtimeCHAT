@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-frontend
+  name: webchat-frontend
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-frontend
+  template:
+    metadata:
+      labels:
+        app: webchat-frontend
+    spec:
+      containers:
+        - name: webchat-frontend
+          image: harllemnascimento/webchat-frontend:latest
+          ports:
+            - containerPort: 3000

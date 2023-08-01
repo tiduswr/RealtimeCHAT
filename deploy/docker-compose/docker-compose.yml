@@ -11,8 +11,8 @@ volumes:
 services:
   database:
     build:
-      context: ./database
-    container_name: webchat_database
+      context: ../../database
+    container_name: webchat-database
     networks:
       - internal
     environment:
@@ -23,7 +23,7 @@ services:
   backend:
     container_name: webchat_backend
     build:
-      context: ./backend
+      context: ../../backend
     networks:
       - app
       - internal
@@ -37,15 +37,14 @@ services:
       - DB_PORT=3306
       - MAX_FILE_SIZE=10MB
       - MAX_REQUEST_SIZE=10MB
-      - HOST_IP=192.168.0.101
       - IMAGES_PATH=/app/images/
     restart:
       on-failure
 
   frontend:
-    container_name: webchat_frontend
+    container_name: webchat-frontend
     build:
-      context: ./frontend
+      context: ../../frontend
     networks:
       - app
     depends_on:
@@ -53,8 +52,8 @@ services:
 
   proxy:
     build:
-      context: ./proxy
-    container_name: webchat_proxy
+      context: ../../proxy
+    container_name: webchat-proxy
     ports:
       - 80:80
     networks:

@@ -53,6 +53,60 @@ docker-compose up -d
 
 5. Aguarde até que todos os contêineres sejam inicializados corretamente. Após a conclusão, você poderá acessar o frontend em `http://localhost` e começar a usar a aplicação de chat em tempo real.
 
+## Como fazer deploy via Kubernetes
+
+1. Clone o repositório para sua máquina local:
+
+```
+git clone https://github.com/tiduswr/RealtimeCHAT.git
+```
+
+2. Navegue até o diretório do projeto:
+
+```
+cd RealTimeChat
+```
+
+3. Atualize o arquivo "secrets_MODELO.yaml" renomeando para "secrets.yaml" e preenchendo com os dados sensíveis da aplicação.
+
+````
+apiVersion: v1
+kind: Secret
+metadata:
+  name: secrets
+  namespace: webchat
+type: Opaque
+data:
+  #Precisa estar em base64
+  db-user: seu_database_user
+  db-pass: seu_password
+  db-root-pass: seu_database_root_password
+  jwt-secret: sua_chave_jwt_secret
+````
+
+4. Construa na ordem abaixo os objetos:
+
+```
+$ kubectl create -f namespace/
+$ kubectl create -f persistent_volume_claim/
+$ kubectl create -f secrets/
+$ kubectl create -f deployments/
+$ kubectl create -f service/
+```
+
+5. Aguarde até que todos os contêineres sejam inicializados corretamente. Para verificar o status de cada um utilize
+
+```
+$ kubectl get pod -n webchat
+$ kubectl logs <nome_do_pod> -n webchat
+```
+
+6. Para verificar o link de acesso a aplicação utilize:
+
+```
+$ minikube service webchat-proxy -n webchat
+```
+
 ## Estrutura do projeto
 
 - `backend`: Contém o código-fonte e os arquivos de configuração do backend Spring Boot.

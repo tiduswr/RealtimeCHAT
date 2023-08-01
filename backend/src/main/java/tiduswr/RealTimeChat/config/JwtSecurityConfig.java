@@ -1,7 +1,6 @@
 package tiduswr.RealTimeChat.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,9 +29,6 @@ import java.util.List;
 @EnableMethodSecurity
 @SuppressWarnings("unused")
 public class JwtSecurityConfig {
-
-    @Value("${HOST_IP}")
-    private String serverAddress;
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
@@ -67,12 +63,11 @@ public class JwtSecurityConfig {
             .cors(config -> {
                 config.configurationSource(request -> {
                     CorsConfiguration corsConfig = new CorsConfiguration();
-
-                    corsConfig.setAllowedOrigins(List.of("http://" + serverAddress + ":3000", "http://" + serverAddress, "http://localhost:3000", "http://localhost"));
+                    
+                    corsConfig.addAllowedOriginPattern("*");
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-                    corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-                    corsConfig.setAllowCredentials(true);
-                    corsConfig.setMaxAge(3600L);
+                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setExposedHeaders(List.of("*"));
 
                     return corsConfig;
                 });

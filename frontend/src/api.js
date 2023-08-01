@@ -1,7 +1,8 @@
 import axios from 'axios';
 import moment from 'moment';
 
-const baseURL = `http://${window.location.hostname}:80/backend/`;
+const port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
+const baseURL = `${window.location.protocol}//${window.location.hostname}:${port}/backend/`;
 
 axios.defaults.headers.common = {
   'Content-Type': 'application/json',

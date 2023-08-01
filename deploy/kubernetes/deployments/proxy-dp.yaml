@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-proxy
+  name: webchat-proxy
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-proxy
+  template:
+    metadata:
+      labels:
+        app: webchat-proxy
+    spec:
+      containers:
+        - name: webchat-proxy
+          image: harllemnascimento/webchat-proxy:latest
+          ports:
+            - containerPort: 80
+          

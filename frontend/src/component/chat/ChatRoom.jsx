@@ -108,7 +108,8 @@ const ChatRoom = () => {
         const ACCESS_TOKEN = JSON.parse(token);
 
         if (ACCESS_TOKEN) {
-          const sock = new SockJS(`http://${window.location.hostname}:80/backend/ws`);
+          const port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
+          const sock = new SockJS(`${window.location.protocol}//${window.location.hostname}:${port}/backend/ws/`);
           stompClient = over(sock, {
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,

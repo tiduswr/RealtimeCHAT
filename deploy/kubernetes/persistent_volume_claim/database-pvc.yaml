@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: webchat-database
+  name: database-pvc
+  namespace: webchat
+spec:
+  accessModes:
+    - ReadWriteOnce # Volume pode ser montado como leitura e escrita por um único nó ao mesmo tempo
+  resources:
+    requests:
+      storage: 1Gi # Solicitado um giga de armazenamento
+  storageClassName: standard # Tipo padrão de armazenamento

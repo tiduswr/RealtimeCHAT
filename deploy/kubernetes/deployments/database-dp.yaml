@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-database
+  name: webchat-database
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-database
+  template:
+    metadata:
+      labels:
+        app: webchat-database
+    spec:
+      containers:
+        - name: webchat-database
+          image: harllemnascimento/webchat-database:latest
+          env:
+            - name: MYSQL_DATABASE
+              value: webchat
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-pass
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-root-pass
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: database-volume
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: database-volume
+          persistentVolumeClaim:
+            claimName: database-pvc
