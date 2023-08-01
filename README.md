@@ -94,7 +94,7 @@ $ kubectl create -f deployments/
 $ kubectl create -f service/
 ```
 
-5. Aguarde até que todos os contêineres sejam inicializados corretamente. Para verificar o status de cada um utilize
+5. Aguarde até que todos os contêineres sejam inicializados corretamente. Para verificar o status de cada um utilize:
 
 ```
 $ kubectl get pod -n webchat
