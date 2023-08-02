@@ -4,13 +4,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.WeakKeyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import tiduswr.RealTimeChat.exceptions.WeakSecretJWT;
 import tiduswr.RealTimeChat.model.security.JwtToken;
 import tiduswr.RealTimeChat.model.security.JwtTokenType;
 
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -29,7 +32,7 @@ public class JwtService {
     @Autowired
     public JwtService(@Value("${jwt.secret}") String secret) {
         this.SECRET = secret;
-        this.EXPIRATION = 30;
+        this.EXPIRATION = 10;
     }
 
     public String extractUsername(String token) {
@@ -62,7 +65,7 @@ public class JwtService {
         }
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(String token){
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignKey())
@@ -71,19 +74,19 @@ public class JwtService {
                 .getBody();
     }
 
-    public JwtToken generateToken(String userName){
+    public JwtToken generateToken(String userName) throws WeakSecretJWT{
         Map<String, Object> claims = new HashMap<>();
         claims.put("tokenType", JwtTokenType.ACCESS);
         return createToken(claims, userName, EXPIRATION);
     }
 
-    public JwtToken generateRefreshToken(String userName) {
+    public JwtToken generateRefreshToken(String userName) throws WeakSecretJWT {
         Map<String, Object> claims = new HashMap<>();
         claims.put("tokenType", JwtTokenType.REFRESH);
         return createToken(claims, userName, 60 * 24);
     }
 
-    private JwtToken createToken(Map<String, Object> claims, String userName, int expiration) {
+    private JwtToken createToken(Map<String, Object> claims, String userName, int expiration) throws WeakSecretJWT {
         LocalDateTime now = LocalDateTime.now();
         ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
         ZonedDateTime futureDateTime = now.plusMinutes(expiration).atZone(zoneId);
@@ -98,9 +101,13 @@ public class JwtService {
         return new JwtToken(userName, token, Date.from(futureDateTime.toInstant()));
     }
 
-    private Key getSignKey() {
+    private Key getSignKey() throws WeakSecretJWT{
         byte[] keyBytes = SECRET.getBytes();
-        return Keys.hmacShaKeyFor(keyBytes);
+        try{
+            return Keys.hmacShaKeyFor(keyBytes);
+        }catch(WeakKeyException ex){
+            throw new WeakSecretJWT("A chave JWT é muito fraca, reveja as configurações colocando uma Key válida!");
+        }
     }
 
 }

@@ -70,17 +70,25 @@ export default function Register() {
         });
       }
     }).catch((error) => {
-      const data = error.response.data;
+      const data = error.response?.data;
 
-      if(data.error.userName){
-        setUserNameError(data.error.userName);
+      if(data){
+        if(data.error){
+          const {userName, password} = data.error;
+
+          if(userName){
+            setUserNameError(userName);
+          }
+          if(password){
+            const arr = password.split(',');
+            setPasswordError(arr.join(', '));
+          }
+        }
+      }else{
+        setAlert(prevAlert => {
+          return { ...prevAlert, show: true, type: 'error', message: 'Erro no servidor!', title: 'O servidor não respondeu a solicitação.' };
+        });
       }
-
-      if(data.error.password){
-        const arr = data.error.password.split(',');
-        setPasswordError(arr.join(', '));
-      }
-
     })
   };
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import tiduswr.RealTimeChat.exceptions.ImageNotSupportedException;
 import tiduswr.RealTimeChat.exceptions.UsernameAlreadyExists;
+import tiduswr.RealTimeChat.exceptions.WeakSecretJWT;
 import tiduswr.RealTimeChat.model.ErrorResponse;
 
 import java.io.IOException;
@@ -66,6 +67,13 @@ public class GlobalExceptionHandler {
         errors.put("image", ex.getMessage());
 
         ErrorResponse errorResponse = new ErrorResponse(errors, "UNSUPPORTED_MEDIA_TYPE");
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
+    }
+
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(WeakSecretJWT.class)
+    public ResponseEntity<ErrorResponse> handleImageNotSupportedException(WeakSecretJWT ex) {
+        ErrorResponse errorResponse = new ErrorResponse(null, ex.getMessage());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
     }
 }

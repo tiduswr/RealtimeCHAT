@@ -4,7 +4,7 @@ import lombok.*;
 
 @Getter @Setter @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder @ToString
 public class AuthRequest {
     private String userName;
     private String password;

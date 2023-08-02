@@ -1,8 +1,10 @@
 import axios from 'axios';
 import moment from 'moment';
+import { resolveHost } from './hostResolver'
 
-const port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
-const baseURL = `${window.location.protocol}//${window.location.hostname}:${port}/backend/`;
+let refreshing = false;
+let refreshPromise = null;
+const baseURL = resolveHost();
 
 axios.defaults.headers.common = {
   'Content-Type': 'application/json',
@@ -29,6 +31,8 @@ const refreshToken = async () => {
       if (refreshToken?.jwtToken && token?.jwtToken) {
         localStorage.setItem('refresh_token', JSON.stringify(refreshToken));
         localStorage.setItem('access_token', JSON.stringify(token));
+        refreshing = false;
+        refreshPromise = null;
       }
       console.log('Token refreshed successfully');
     } else {
@@ -46,25 +50,34 @@ const handleTokenRefreshError = () => {
     });
   }
 
+  refreshing = false;
+  refreshPromise = null;
   localStorage.removeItem('refresh_token');
   localStorage.removeItem('access_token');
 };
 
+const handleTokenRefreshRequest = async () => {
+  const accessToken = localStorage.getItem('access_token');
+  const accessTk = JSON.parse(accessToken);
+
+  const isExpired = accessTk && moment(accessTk.expiration).isBefore(moment());
+
+  if (isExpired) {
+    if(!refreshing){
+      refreshing = true;
+      refreshPromise = refreshToken();
+    }
+    await refreshPromise;
+  }
+
+  const updatedAccessToken = localStorage.getItem('access_token');
+  return JSON.parse(updatedAccessToken);
+}
+
 Api.interceptors.request.use(
   async (config) => {
-    const accessToken = localStorage.getItem('access_token');
-    const accessTk = JSON.parse(accessToken);
-
-    const isExpired = accessTk && moment(accessTk.expiration).isBefore(moment());
-
-    if (isExpired) {
-      await refreshToken();
-    }
-
-    const updatedAccessToken = localStorage.getItem('access_token');
-    const updatedAccessTk = JSON.parse(updatedAccessToken);
-
-    config.headers.Authorization = `Bearer ${updatedAccessTk?.jwtToken}`;
+    const updatedAccessToken = await handleTokenRefreshRequest()
+    config.headers.Authorization = `Bearer ${updatedAccessToken?.jwtToken}`;
     return config;
   },
   (error) => {
@@ -72,4 +85,4 @@ Api.interceptors.request.use(
   }
 );
 
-export { Auth, Api, refreshToken };
+export { Auth, Api, refreshToken, handleTokenRefreshRequest, baseURL };

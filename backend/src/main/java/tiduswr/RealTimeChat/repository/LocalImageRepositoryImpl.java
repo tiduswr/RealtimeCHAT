@@ -15,7 +15,7 @@ import java.io.IOException;
 @SuppressWarnings("unused")
 public class LocalImageRepositoryImpl implements LocalImageRepository {
 
-    @Value("${IMAGES_PATH}")
+    @Value("${image-repository.url}")
     private String FOLDER;
 
     @Override

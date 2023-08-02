@@ -6,6 +6,7 @@ target/
 *.db
 images/
 profile_images/
+**/application-dev.properties
 
 ### STS ###
 .apt_generated

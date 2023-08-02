@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { Auth } from '../api';
+import React, { createContext, useState, useEffect } from 'react';
+import { Auth, handleTokenRefreshRequest } from '../api';
 import AuthAlert from '../component/AuthAlert';
 import moment from 'moment';
 
@@ -9,33 +9,6 @@ const AuthProvider = ({ children }) => {
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
     const [ alert, setAlert ] = useState({title: 'Erro ao tentar logar', message: '', type: 'error', show: false});
     const [ authLoading, setAuthLoading ] = useState(true);
-
-    const refreshToken = useCallback(async () => {
-        let oldRefreshToken = localStorage.getItem('refresh_token');
-        oldRefreshToken = JSON.parse(oldRefreshToken).jwtToken;
-
-        if (oldRefreshToken) {
-            try {
-                const res = await Auth.post(`/refresh_token`, { 'refreshToken': oldRefreshToken });
-
-                if (res.status === 200) {
-                    const { refreshToken, token } = res.data;
-
-                    if(refreshToken?.jwtToken && token?.jwtToken){
-                        localStorage.setItem('refresh_token', JSON.stringify(refreshToken));
-                        localStorage.setItem('access_token', JSON.stringify(token));
-                    }
-
-                    return token;
-                }else{
-                    await logout();
-                }
-            } catch (error) {
-                await logout();
-            }
-            return undefined;
-        }
-    }, []);
 
     useEffect(() => {
         setAuthLoading(true);
@@ -47,14 +20,14 @@ const AuthProvider = ({ children }) => {
         
                 const isExpired = moment(accessTk.expiration).isBefore(moment());
             
-                if (isExpired) accessTk = await refreshToken();
+                if (isExpired) accessTk = handleTokenRefreshRequest();
                 if (accessTk) setIsAuthenticated(true);
             }
             setAuthLoading(false);
         };
         
         checkTokenValidity();
-    }, [refreshToken]);
+    }, []);
 
     useEffect(() => {
         if (alert.show) {
@@ -80,9 +53,18 @@ const AuthProvider = ({ children }) => {
                     console.log('Refreshed token')
                 }
             }).catch(ex => {
-                setAlert(prevAlert => {
-                    return { ...prevAlert, show: true, type: 'error', message: 'Usuário não encontrado!', title: 'Erro ao tentar logar' };
-                });
+                if(ex.response?.status === 403){
+                    setAlert(prevAlert => {
+                        return { ...prevAlert, show: true, type: 'error', message: 'Credenciais inválidas!', title: 'Erro ao tentar logar' };
+                    });
+                }else{
+                    setAlert(prevAlert => {
+                        return { ...prevAlert, show: true, type: 'error', title: 'Erro no servidor!', 
+                            message: ex.response?.data?.message ? 
+                                ex.response?.data?.message : 'O servidor não respondeu a solicitação.' 
+                        };
+                    });
+                }
             })
         }else{
             setAlert(prevAlert => {

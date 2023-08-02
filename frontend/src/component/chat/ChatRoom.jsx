@@ -6,7 +6,7 @@ import MessageReceivedAlert from '../message/MessageReceivedAlert';
 import { Context } from '../../pages/App/index.js';
 import { UserContext } from '../../contexts/UserProvider';
 import ChatPerspective from './ChatPerspective';
-import { Api } from '../../api';
+import { Api, baseURL } from '../../api';
 
 var stompClient = null;
 
@@ -108,8 +108,7 @@ const ChatRoom = () => {
         const ACCESS_TOKEN = JSON.parse(token);
 
         if (ACCESS_TOKEN) {
-          const port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
-          const sock = new SockJS(`${window.location.protocol}//${window.location.hostname}:${port}/backend/ws/`);
+          const sock = new SockJS(`${baseURL}ws/`);
           stompClient = over(sock, {
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,

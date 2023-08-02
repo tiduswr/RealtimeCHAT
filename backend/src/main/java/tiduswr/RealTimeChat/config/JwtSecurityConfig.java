@@ -68,6 +68,7 @@ public class JwtSecurityConfig {
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                     corsConfig.setAllowedHeaders(List.of("*"));
                     corsConfig.setExposedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true);
 
                     return corsConfig;
                 });

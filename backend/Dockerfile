@@ -11,4 +11,4 @@ FROM openjdk:17
 
 COPY --from=build /app/target/app.jar /app/app.jar
 
-CMD ["java", "-jar", "/app/app.jar"]
+CMD ["java", "-jar", "/app/app.jar", "--spring.profiles.active=prod"]
