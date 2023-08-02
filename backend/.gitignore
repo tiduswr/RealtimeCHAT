@@ -6,6 +6,7 @@ target/
 *.db
 images/
 profile_images/
+profile-images/
 **/application-dev.properties
 
 ### STS ###
