@@ -2,11 +2,13 @@ package tiduswr.RealTimeChat.exceptions.handlers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import tiduswr.RealTimeChat.exceptions.ImageNotSupportedException;
+import tiduswr.RealTimeChat.exceptions.UnauthorizedException;
 import tiduswr.RealTimeChat.exceptions.UsernameAlreadyExists;
 import tiduswr.RealTimeChat.exceptions.WeakSecretJWT;
 import tiduswr.RealTimeChat.model.ErrorResponse;
@@ -76,4 +78,12 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(null, ex.getMessage());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
     }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException unauthorizedException){
+        ErrorResponse errorResponse = new ErrorResponse(null, unauthorizedException.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
 }

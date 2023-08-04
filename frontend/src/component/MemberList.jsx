@@ -7,6 +7,7 @@ import BasicModal from './SearchModal';
 import { Api } from '../api';
 import GroupIcon from '@mui/icons-material/Group';
 import { UserContext } from '../contexts/UserProvider';
+import { fetchUnreadedMessageCount, fetchUserImage } from './../calls/chatInfoCalls'
 
 const ListButtonStyled = styled(ListItemButton)({
   "&.Mui-selected": {
@@ -23,12 +24,11 @@ const ListButtonStyled = styled(ListItemButton)({
   }
 });
 
-const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, messageCount, setMessageCount, setUnreadMessageCount, sendPrivateMessagesRead }) => {
+const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts, messageCount, setMessageCount, setUnreadMessageCount, sendPrivateMessagesRead }) => {
 
   const [openSearchModal, setOpenSearchModal] = useState(false);
-  const [contacts, setContacts] = useState([])
   const { userData } = useContext(UserContext);
-
+  
   useEffect(() => {
 
     const getUsers = async () => {
@@ -37,14 +37,12 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, messageCount, setMessa
         const usersData = usersResponse.data;
     
         const modifiedUsersData = await Promise.all(usersData.map(async e => {
-          const imageResponse = await Api.get(`/users/retrieve_profile_image/${e.userName}`, { responseType: 'arraybuffer' });
-          const image = URL.createObjectURL(new Blob([imageResponse.data], { type: 'image/png' }));
+          const image = await fetchUserImage(e.userName);
           return { ...e, image };
         }));
 
         const unreadedMessages = await Promise.all(modifiedUsersData.map(async e => {
-          const res = await Api.get(`/api/v1/messages/retrieve_count/by/${e.userName}`);
-          const data = res.data.count;
+          const data = await fetchUnreadedMessageCount(e.userName);
           return {userName: e.userName, count: data};
         }));
 
@@ -63,8 +61,8 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, messageCount, setMessa
 
     getUsers();
 
-  },[setMessageCount])
-    
+  },[setMessageCount, setContacts])
+
   useEffect(() => {
     const retrieveMessagesCount = async () =>{
       try{
@@ -76,7 +74,7 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, messageCount, setMessa
       }
     }
     retrieveMessagesCount();
-  }, [messageCount, setUnreadMessageCount])
+  }, [setUnreadMessageCount])
 
   const handleTabChange = (userName, formalName) => {
     Api.put(`/api/v1/messages/mark_messages_as_read/${userName}`)

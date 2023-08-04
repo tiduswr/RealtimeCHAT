@@ -10,7 +10,7 @@ import { Api } from '../../api';
 import LoadingSpinner from '../../component/LoadingSpinner'
 
 const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessageCount }) => {
- 
+
   const [loadingMessage, setLoadingMessage] = useState(true);
   const { userData } = useContext(UserContext);
 

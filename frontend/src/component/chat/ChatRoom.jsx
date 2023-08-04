@@ -7,8 +7,10 @@ import { Context } from '../../pages/App/index.js';
 import { UserContext } from '../../contexts/UserProvider';
 import ChatPerspective from './ChatPerspective';
 import { Api, baseURL } from '../../api';
+import { buildContact } from '../../calls/chatInfoCalls';
 
 var stompClient = null;
+const reconnectDelay = 5000;
 
 const ChatRoom = () => {
   const {
@@ -24,7 +26,8 @@ const ChatRoom = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [tab, setTab] = useState(null);
   const [connecting, setConnecting] = useState(true);
-  
+  const [contacts, setContacts] = useState([])
+
   const sendPrivateMessagesRead = useCallback((username, receiver) => {
     if (stompClient) {
       let chatMessage = {
@@ -51,18 +54,35 @@ const ChatRoom = () => {
       switch (payloadData.status) {
         case 'MESSAGE':
           if (userTabIsNotOpen(senderName)) {
+            
             setMessageCount(prev => {
               const newMap = new Map(prev);
-              let count = newMap.get(senderName);
+              let prevCount = newMap.get(senderName);
+
+              let count = prevCount ? prevCount : 0;
               count++;
               newMap.set(senderName, count);
+
               return newMap;
             })
+            
+            setContacts(prev => {
+              if (!prev.some(ctt => ctt.userName === senderName)) {
+                buildContact(senderName).then((data) => {
+                  setContacts(contacts => [...contacts, data]);
+                });
+              }
+              return prev;
+            });
+
             setUnreadMessageCount(prev => ++prev);
             setShowAlert({ visible: true, sender: senderName })
+
           } else {
+
             setChatMessages(prev => [...prev, payloadData]);
             let receiver = tab.userName;
+
             Api.put(`/api/v1/messages/mark_messages_as_read/${receiver}`)
               .then(res => {
                 if (res.status === 204) {
@@ -71,6 +91,7 @@ const ChatRoom = () => {
               }).catch(error => {
                 console.log(error);
               })
+
           }
           break;
         case 'READ':
@@ -97,9 +118,14 @@ const ChatRoom = () => {
       }
     };
 
+    const onError = (payload) => {
+      console.log(payload);
+    }
+
     const onConnected = () => {
       stompClient.subscribe(`/user/${userData.userName}/private`, onPrivateMessageReceived);
       stompClient.subscribe('/chatroom/public', onPublicMessageReceived);
+      stompClient.subscribe(`/user/${userData.userName}/errors`, onError);
     };
 
     const connectToStompServer = async () => {
@@ -110,16 +136,14 @@ const ChatRoom = () => {
         if (ACCESS_TOKEN) {
           const sock = new SockJS(`${baseURL}ws/`);
           stompClient = over(sock, {
-            reconnectDelay: 5000,
+            reconnectDelay: reconnectDelay,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
           });
 
-          stompClient.debug = null;
+          //stompClient.debug = null;
 
-          stompClient.connect({ 'Authorization': `Bearer ${ACCESS_TOKEN.jwtToken}` }, onConnected, (err) => {
-            console.log(err);
-          });
+          stompClient.connect({ 'Authorization': `Bearer ${ACCESS_TOKEN.jwtToken}` }, onConnected, (err) => {console.log("Erro : " + err)});
 
         }
       } catch (error) {
@@ -152,6 +176,8 @@ const ChatRoom = () => {
           setChatMessages={setChatMessages}
           tab={tab}
           setTab={setTab}
+          contacts={contacts}
+          setContacts={setContacts}
           sendPrivateMessagesRead={sendPrivateMessagesRead}
         />
       </Container>

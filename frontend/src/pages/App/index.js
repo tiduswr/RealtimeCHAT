@@ -14,7 +14,7 @@ const App = () => {
   const [showAlert, setShowAlert] = useState({ visible: false, sender: '' });
   const { authLoading } = useContext(AuthContext);
   const { userLoading } = useContext(UserContext);
-
+  console.log("updated")
   useEffect(() => {
     if (showAlert.visible) {
       setTimeout(() => {

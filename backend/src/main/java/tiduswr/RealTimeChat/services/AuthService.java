@@ -7,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -53,7 +54,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse refreshToken(RefreshTokenRequest request) throws ResponseStatusException {
+    public AuthResponse refreshToken(RefreshTokenRequest request) throws UnauthorizedException, UsernameNotFoundException {
 
         RefreshToken refreshToken = refreshTokenService.findTokenByToken(request.getRefreshToken());
         UserDetails userDetails = userService.loadUserByUsername(refreshToken.getUser().getUserName());

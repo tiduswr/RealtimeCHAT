@@ -3,7 +3,7 @@ import ChatContent from './ChatContent'
 import MemberList from '../MemberList'
 import { Context } from '../../pages/App'
 
-const ChatPerspective = ({ closeMenu, isMenuOpen, stompClient, chatMessages, setChatMessages, tab, setTab, sendPrivateMessagesRead }) => {
+const ChatPerspective = ({ closeMenu, isMenuOpen, contacts, setContacts, stompClient, chatMessages, setChatMessages, tab, setTab, sendPrivateMessagesRead }) => {
 
     const { setMessageCount, messageCount, setUnreadMessageCount } = useContext(Context);
 
@@ -17,6 +17,8 @@ const ChatPerspective = ({ closeMenu, isMenuOpen, stompClient, chatMessages, set
                 isMenuOpen={isMenuOpen}
                 setTab={setTab}
                 tab={tab}
+                contacts={contacts}
+                setContacts={setContacts}
                 sendPrivateMessagesRead={sendPrivateMessagesRead}
             />
             <ChatContent

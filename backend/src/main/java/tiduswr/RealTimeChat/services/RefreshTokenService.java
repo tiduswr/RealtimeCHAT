@@ -1,10 +1,9 @@
 package tiduswr.RealTimeChat.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+import tiduswr.RealTimeChat.exceptions.UnauthorizedException;
 import tiduswr.RealTimeChat.model.security.RefreshToken;
 import tiduswr.RealTimeChat.model.User;
 import tiduswr.RealTimeChat.repository.TokenRepository;
@@ -39,9 +38,9 @@ public class RefreshTokenService {
     }
 
     @Transactional(readOnly = true)
-    public RefreshToken findTokenByToken(String token) throws ResponseStatusException{
+    public RefreshToken findTokenByToken(String token) throws UnauthorizedException {
         return tokenRepository.findByToken(token)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new UnauthorizedException("Refresh Token Revogado!"));
     }
 
     @Transactional

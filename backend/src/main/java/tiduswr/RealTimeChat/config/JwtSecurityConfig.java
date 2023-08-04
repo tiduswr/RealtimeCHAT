@@ -32,10 +32,12 @@ public class JwtSecurityConfig {
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
+    @Autowired
+    private UserService userService;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserService();
+        return userService;
     }
 
     @Bean

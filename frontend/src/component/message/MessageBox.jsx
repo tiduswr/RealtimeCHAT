@@ -35,6 +35,7 @@ const MessageBox = ({ sendMessage, placeholder, username }) => {
             onKeyDown={handleKeyDown}
             variant="outlined"
             fullWidth
+            autoComplete="off"
             sx={{
                 '.MuiOutlinedInput-root': {
                 borderRadius: '50px',
