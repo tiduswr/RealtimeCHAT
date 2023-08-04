@@ -16,18 +16,18 @@ import { AuthContext } from '../../contexts/AuthProvider';
 export default function Register() {
 
   const { setAlert } = useContext(AuthContext);
-  const [ passwordError, setPasswordError ] = useState(undefined);
-  const [ userNameError, setUserNameError ] = useState(undefined);
-  const [ formalNameError, setFormalNameError ] = useState(undefined);
+  const [passwordError, setPasswordError] = useState(undefined);
+  const [userNameError, setUserNameError] = useState(undefined);
+  const [formalNameError, setFormalNameError] = useState(undefined);
 
   const formIsEmpty = (form) => {
-    if(form.userName === ''){
+    if (form.userName === '') {
       setUserNameError('O nome de usuário é obrigatório.')
     }
-    if(form.formalName === ''){
+    if (form.formalName === '') {
       setFormalNameError('O nome de é obrigatório.')
     }
-    if(form.password1 === '' || form.password2 ===''){
+    if (form.password1 === '' || form.password2 === '') {
       setPasswordError('As senhas são obrigatórias.');
     }
 
@@ -39,7 +39,7 @@ export default function Register() {
 
   const passwordsNotMatch = (form) => {
     const test = form.password1 !== form.password2;
-    if(test){
+    if (test) {
       setPasswordError('As senhas não conferem.');
     }
     return test;
@@ -49,42 +49,42 @@ export default function Register() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const form = {
-      userName : data.get('userName'),
-      password1 : data.get('password_01'),
-      password2 : data.get('password_02'),
-      formalName : data.get('formalName')
+      userName: data.get('userName'),
+      password1: data.get('password_01'),
+      password2: data.get('password_02'),
+      formalName: data.get('formalName')
     };
 
-    if(formIsEmpty(form)) return;
-    if(passwordsNotMatch(form)) return;
+    if (formIsEmpty(form)) return;
+    if (passwordsNotMatch(form)) return;
 
     Auth.post('/signup', {
-      userName : form.userName,
-      password : form.password1,
-      formalName : form.formalName
+      userName: form.userName,
+      password: form.password1,
+      formalName: form.formalName
     }).then((res) => {
-      if(res.status === 201){
+      if (res.status === 201) {
         cleanFields();
         setAlert(prevAlert => {
-            return { ...prevAlert, show: true, type: 'success', message: 'Cadastro realizado', title: 'O cadastro foi realizado com sucesso!' };
+          return { ...prevAlert, show: true, type: 'success', message: 'Cadastro realizado', title: 'O cadastro foi realizado com sucesso!' };
         });
       }
     }).catch((error) => {
       const data = error.response?.data;
 
-      if(data){
-        if(data.error){
-          const {userName, password} = data.error;
+      if (data) {
+        if (data.error) {
+          const { userName, password } = data.error;
 
-          if(userName){
+          if (userName) {
             setUserNameError(userName);
           }
-          if(password){
+          if (password) {
             const arr = password.split(',');
             setPasswordError(arr.join(', '));
           }
         }
-      }else{
+      } else {
         setAlert(prevAlert => {
           return { ...prevAlert, show: true, type: 'error', message: 'Erro no servidor!', title: 'O servidor não respondeu a solicitação.' };
         });
@@ -102,27 +102,27 @@ export default function Register() {
     setPasswordError(undefined);
   }
 
-  const cleanPasswordsOnChange = (e) =>{
-    if(passwordError){
+  const cleanPasswordsOnChange = (e) => {
+    if (passwordError) {
       setPasswordError(undefined);
     }
   }
 
-  const cleanUserNameOnChange = (e) =>{
-    if(userNameError){
+  const cleanUserNameOnChange = (e) => {
+    if (userNameError) {
       setUserNameError(undefined);
     }
   }
 
-  const cleanFormalNameOnChange = (e) =>{
-    if(formalNameError){
+  const cleanFormalNameOnChange = (e) => {
+    if (formalNameError) {
       setFormalNameError(undefined);
     }
   }
 
   return (
     <>
-      <PublicHeader hideLoginButton={true}/>
+      <PublicHeader hideLoginButton={true} />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

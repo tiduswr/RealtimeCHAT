@@ -12,65 +12,65 @@ const Perfil = () => {
   const { userImage, userData, updateImage, updateFormalName, userLoading } = useContext(UserContext);
   const { authLoading, setAlert } = useContext(AuthContext);
   const inputRef = useRef(null);
-  
+
   const handleUpdateFormalName = (formalName, setFormalName, setError, setEditing) => {
-    if(formalName !== undefined){
+    if (formalName !== undefined) {
       Api.post('/users/edit/formalname', { formalName })
-      .then( (res) => {
-        if(res.status === 204){
-          updateFormalName();
-          setEditing(false);
-          setError(undefined);
-          setFormalName(formalName);
-          setAlert({title: 'Atualizado', message: 'Nome atualizado', type: 'success', show: true})
-        }
-      }).catch( (error) => {
-        const fieldError = error.response.data.error.formalName;
-        setError(fieldError);
-        setEditing(true);
-      })
+        .then((res) => {
+          if (res.status === 204) {
+            updateFormalName();
+            setEditing(false);
+            setError(undefined);
+            setFormalName(formalName);
+            setAlert({ title: 'Atualizado', message: 'Nome atualizado', type: 'success', show: true })
+          }
+        }).catch((error) => {
+          const fieldError = error.response.data.error.formalName;
+          setError(fieldError);
+          setEditing(true);
+        })
     }
   }
-  
+
   const handleUpdatePassword = (password, setPassword, setError, setEditing) => {
-    if(password !== undefined){
+    if (password !== undefined) {
       Api.post('/users/edit/password', { password })
-      .then( (res) => {
-        if(res.status === 204){
-          setEditing(false);
-          setError(undefined);
-          setPassword('');
-          setAlert({title: 'Atualizado', message: 'Password atualizado', type: 'success', show: true})
-        }
-      }).catch( (error) => {
-        const fieldError = error.response.data.error.password.replace(',', ', ');
-        setError(fieldError);
-        setEditing(true);
-      })
+        .then((res) => {
+          if (res.status === 204) {
+            setEditing(false);
+            setError(undefined);
+            setPassword('');
+            setAlert({ title: 'Atualizado', message: 'Password atualizado', type: 'success', show: true })
+          }
+        }).catch((error) => {
+          const fieldError = error.response.data.error.password.replace(',', ', ');
+          setError(fieldError);
+          setEditing(true);
+        })
     }
   }
 
   const handleUpdateUserImage = () => {
     const file = inputRef.current.files[0];
-    
-    if(file){
+
+    if (file) {
       const formData = new FormData();
       formData.append('image', file);
 
       Api.post('/users/upload_profile_image', formData)
         .then(res => {
-          if(res.status === 200){
+          if (res.status === 200) {
             updateImage();
-            setAlert({title: 'Atualizado', message: 'Imagem atualizada', type: 'success', show: true})
+            setAlert({ title: 'Atualizado', message: 'Imagem atualizada', type: 'success', show: true })
           }
         }).catch(error => {
-          setAlert({title: 'Erro!', message: error.response.data.error.image, type: 'success', show: true})
+          setAlert({ title: 'Erro!', message: error.response.data.error.image, type: 'success', show: true })
         })
 
     }
   }
 
-  if(authLoading || userLoading) return null;
+  if (authLoading || userLoading) return null;
 
   return (
     <>
@@ -137,14 +137,14 @@ const Perfil = () => {
                 onChange={handleUpdateUserImage}
               />
             </IconButton>
-            <EditableTextField 
-              handleUpdate={handleUpdateFormalName} 
-              defaultValue={userData?.formalName ? userData.formalName : ''} 
+            <EditableTextField
+              handleUpdate={handleUpdateFormalName}
+              defaultValue={userData?.formalName ? userData.formalName : ''}
               label='Nome Formal'
             />
-            <EditableTextField 
-              handleUpdate={handleUpdatePassword} 
-              defaultValue={''} 
+            <EditableTextField
+              handleUpdate={handleUpdatePassword}
+              defaultValue={''}
               label='Password'
               type="password"
             />

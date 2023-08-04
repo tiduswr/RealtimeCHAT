@@ -28,7 +28,7 @@ export default function Login() {
     await login(data.get('username'), data.get('password'));
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     if (isAuthenticated) {
       navigate('/chat');
     } else {
@@ -43,7 +43,7 @@ export default function Login() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-    <PublicHeader hideLoginButton={true}/>
+      <PublicHeader hideLoginButton={true} />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

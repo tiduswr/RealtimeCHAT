@@ -9,25 +9,25 @@ const PublicHeader = ({ hideLoginButton }) => {
     const { isAuthenticated } = useContext(AuthContext)
 
     return (
-    <AppBar position='static' sx={{background: '#00467F'}}>
-        <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-                <Link component={RouterLink} to="/" color="inherit" underline="none">
-                    WebSocket CHAT
-                </Link>
-            </Typography>
-            {(!hideLoginButton && !isAuthenticated) &&
-                <Button 
-                    variant="outlined" 
-                    color="inherit" 
-                    startIcon={<LoginIcon sx={{color: 'white'}}/>}
-                    onClick={() => navigate('/login')}                                    
-                >
-                    Login
-                </Button>
-            }
-        </Toolbar>
-    </AppBar>
+        <AppBar position='static' sx={{ background: '#00467F' }}>
+            <Toolbar>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+                    <Link component={RouterLink} to="/" color="inherit" underline="none">
+                        WebSocket CHAT
+                    </Link>
+                </Typography>
+                {(!hideLoginButton && !isAuthenticated) &&
+                    <Button
+                        variant="outlined"
+                        color="inherit"
+                        startIcon={<LoginIcon sx={{ color: 'white' }} />}
+                        onClick={() => navigate('/login')}
+                    >
+                        Login
+                    </Button>
+                }
+            </Toolbar>
+        </AppBar>
     )
 }
 

@@ -13,11 +13,11 @@ const AlertStyled = styled(Alert)(({ theme }) => ({
 }));
 
 const AuthAlert = ({ title, message, type }) => {
-  
-    const isMobile = useMediaQuery('(max-width: 600px')
-  
-    return (
-    <AlertStyled severity={type} sx={{ width: isMobile ? '80%' : '30%'}}>
+
+  const isMobile = useMediaQuery('(max-width: 600px')
+
+  return (
+    <AlertStyled severity={type} sx={{ width: isMobile ? '80%' : '30%' }}>
       <AlertTitle>{title}</AlertTitle>
       {message}
     </AlertStyled>

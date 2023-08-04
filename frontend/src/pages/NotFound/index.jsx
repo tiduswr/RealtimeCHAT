@@ -5,7 +5,7 @@ import PublicHeader from '../../component/PublicHeader';
 export default function NotFound() {
   return (
     <>
-      <PublicHeader/>
+      <PublicHeader />
       <Box
         sx={{
           display: 'flex',

@@ -9,7 +9,7 @@ const MessageSentProvider = ({ message, senderName, lastMessageSender, image, fo
     const { userData } = useContext(UserContext);
     const formattedDate = format(new Date(date), 'dd/MM/yyyy HH:mm:ss');
 
-    const lastMessageIsFromTheSameUser = () =>{
+    const lastMessageIsFromTheSameUser = () => {
         return !lastMessageSender || (lastMessageSender !== senderName);
     }
 
@@ -25,8 +25,8 @@ const MessageSentProvider = ({ message, senderName, lastMessageSender, image, fo
                     date={formattedDate}
                     ownUsername={userData.userName}
                 />
-            : 
-                <MessageSent 
+                :
+                <MessageSent
                     message={message}
                     read={read}
                     date={formattedDate}
@@ -34,7 +34,7 @@ const MessageSentProvider = ({ message, senderName, lastMessageSender, image, fo
                     ownUsername={userData.userName}
                 />
             }
-            
+
         </React.Fragment>
     )
 }

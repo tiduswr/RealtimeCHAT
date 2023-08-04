@@ -71,11 +71,11 @@ const Header = ({ unreadMessagesCount, toggleMenu, includeChatLink }) => {
                                 WebSocket CHAT
                             </Link>
                         </Typography>
-                        {includeChatLink && 
+                        {includeChatLink &&
                             <Link component={RouterLink} to="/chat" color="inherit" underline="none">
                                 <Box display="flex" flexDirection="row" sx={{ alignItems: 'center' }}>
                                     <HeaderLink>
-                                        <MessageIcon sx={{paddingRight: '5px'}}/>Chats
+                                        <MessageIcon sx={{ paddingRight: '5px' }} />Chats
                                     </HeaderLink>
                                 </Box>
                             </Link>
@@ -96,16 +96,16 @@ const Header = ({ unreadMessagesCount, toggleMenu, includeChatLink }) => {
                             anchorEl={userMenuAnchorEl}
                             open={isUserMenuOpen}
                             onClose={handleUserMenuClose}
-                        >   
-                            <Typography sx={{ fontWeight: 'bold', padding: '3px', textAlign: 'center' }}> 
+                        >
+                            <Typography sx={{ fontWeight: 'bold', padding: '3px', textAlign: 'center' }}>
                                 {userData?.userName}
                             </Typography>
-                            <Divider/>
+                            <Divider />
                             <MenuItem component={RouterLink} to="/perfil" onClick={handleUserMenuClose}>
-                                <AccountBoxIcon sx={{paddingRight: '3px'}}/> Perfil
+                                <AccountBoxIcon sx={{ paddingRight: '3px' }} /> Perfil
                             </MenuItem>
                             <MenuItem onClick={logout}>
-                                <LogoutIcon sx={{paddingRight: '3px'}}/> Logout
+                                <LogoutIcon sx={{ paddingRight: '3px' }} /> Logout
                             </MenuItem>
                         </Menu>
                     </Box>

@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 const MessageBox = ({ sendMessage, placeholder, username }) => {
 
-    const [ message, setMessage ] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
@@ -23,7 +23,7 @@ const MessageBox = ({ sendMessage, placeholder, username }) => {
     const handleMessageTeste = e => {
         const { value } = e.target;
         setMessage(value)
-    } 
+    }
 
     return (
         <TextField
@@ -38,7 +38,7 @@ const MessageBox = ({ sendMessage, placeholder, username }) => {
             autoComplete="off"
             sx={{
                 '.MuiOutlinedInput-root': {
-                borderRadius: '50px',
+                    borderRadius: '50px',
                 }
             }}
             InputLabelProps={{
@@ -46,11 +46,11 @@ const MessageBox = ({ sendMessage, placeholder, username }) => {
             }}
             InputProps={{
                 endAdornment: (
-                <InputAdornment position="end">
-                    <IconButton onClick={prepareAndSendMessage} edge="end">
-                        <SendIcon />
-                    </IconButton>
-                </InputAdornment>
+                    <InputAdornment position="end">
+                        <IconButton onClick={prepareAndSendMessage} edge="end">
+                            <SendIcon />
+                        </IconButton>
+                    </InputAdornment>
                 ),
             }}
         />

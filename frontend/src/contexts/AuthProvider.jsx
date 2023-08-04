@@ -6,26 +6,26 @@ import moment from 'moment';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    const [ isAuthenticated, setIsAuthenticated ] = useState(false);
-    const [ alert, setAlert ] = useState({title: 'Erro ao tentar logar', message: '', type: 'error', show: false});
-    const [ authLoading, setAuthLoading ] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [alert, setAlert] = useState({ title: 'Erro ao tentar logar', message: '', type: 'error', show: false });
+    const [authLoading, setAuthLoading] = useState(true);
 
     useEffect(() => {
         setAuthLoading(true);
 
         const checkTokenValidity = async () => {
             const accessTokenString = localStorage.getItem('access_token');
-            if(accessTokenString){
+            if (accessTokenString) {
                 let accessTk = JSON.parse(accessTokenString);
-        
+
                 const isExpired = moment(accessTk.expiration).isBefore(moment());
-            
+
                 if (isExpired) accessTk = handleTokenRefreshRequest();
                 if (accessTk) setIsAuthenticated(true);
             }
             setAuthLoading(false);
         };
-        
+
         checkTokenValidity();
     }, []);
 
@@ -40,46 +40,47 @@ const AuthProvider = ({ children }) => {
     }, [alert]);
 
     const login = async (username, password) => {
-        if(username !== '' && password !== ''){
+        if (username !== '' && password !== '') {
             await Auth.post('/auth', {
                 userName: username,
                 password: password
             }).then(res => {
                 const { refreshToken, token } = res.data;
-                if(refreshToken && token){
+                if (refreshToken && token) {
                     localStorage.setItem('refresh_token', JSON.stringify(refreshToken));
                     localStorage.setItem('access_token', JSON.stringify(token));
                     setIsAuthenticated(true);
                     console.log('Refreshed token')
                 }
             }).catch(ex => {
-                if(ex.response?.status === 403){
+                if (ex.response?.status === 403) {
                     setAlert(prevAlert => {
                         return { ...prevAlert, show: true, type: 'error', message: 'Credenciais inválidas!', title: 'Erro ao tentar logar' };
                     });
-                }else{
+                } else {
                     setAlert(prevAlert => {
-                        return { ...prevAlert, show: true, type: 'error', title: 'Erro no servidor!', 
-                            message: ex.response?.data?.message ? 
-                                ex.response?.data?.message : 'O servidor não respondeu a solicitação.' 
+                        return {
+                            ...prevAlert, show: true, type: 'error', title: 'Erro no servidor!',
+                            message: ex.response?.data?.message ?
+                                ex.response?.data?.message : 'O servidor não respondeu a solicitação.'
                         };
                     });
                 }
             })
-        }else{
+        } else {
             setAlert(prevAlert => {
                 return { ...prevAlert, show: true, type: 'error', message: 'Preencha o login e Senha', title: 'Erro no formulário' };
             });
         }
     };
-      
+
 
     const logout = async () => {
         const refreshToken = localStorage.getItem('refresh_token');
 
-        if(refreshToken){
+        if (refreshToken) {
             await Auth.post('/quit', {
-                refreshToken : JSON.parse(refreshToken).jwtToken
+                refreshToken: JSON.parse(refreshToken).jwtToken
             });
         }
 
@@ -91,8 +92,8 @@ const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={{ isAuthenticated, login, logout, setAlert, authLoading }}>
             {children}
-            {alert.show && 
-                <AuthAlert message={alert.message} type={alert.type} title={alert.title}/>
+            {alert.show &&
+                <AuthAlert message={alert.message} type={alert.type} title={alert.title} />
             }
         </AuthContext.Provider>
     );

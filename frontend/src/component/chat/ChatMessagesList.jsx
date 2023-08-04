@@ -36,9 +36,9 @@ const ChatMessagesList = ({ chatMessages, username }) => {
             chatMessages.forEach((message) => {
                 const sender = message.sender;
 
-                if(!usersData.has(sender)){
+                if (!usersData.has(sender)) {
                     usersNames.add(sender);
-                } 
+                }
             });
 
             const usersDataPromises = Array.from(usersNames).map(async (un) => {
@@ -48,10 +48,10 @@ const ChatMessagesList = ({ chatMessages, username }) => {
             });
 
             const usersDataArray = await Promise.all(usersDataPromises);
-            if(usersDataArray.length !== 0){
+            if (usersDataArray.length !== 0) {
                 setUsersData(prevUsersData => {
                     const updatedUsersData = new Map(prevUsersData);
-                        
+
                     usersDataArray.forEach(el => {
                         updatedUsersData.set(el[0], el[1]);
                     })
@@ -64,7 +64,7 @@ const ChatMessagesList = ({ chatMessages, username }) => {
 
         loadUsersData();
     }, [userImageApi, userFormalNameApi, chatMessages, usersData]);
-    
+
     if (loading) {
         return null;
     }

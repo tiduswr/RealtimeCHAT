@@ -1,5 +1,6 @@
 import axios from 'axios';
 import moment from 'moment';
+
 import { resolveHost } from './hostResolver'
 
 let refreshing = false;
@@ -63,7 +64,7 @@ const handleTokenRefreshRequest = async () => {
   const isExpired = accessTk && moment(accessTk.expiration).isBefore(moment());
 
   if (isExpired) {
-    if(!refreshing){
+    if (!refreshing) {
       refreshing = true;
       refreshPromise = refreshToken();
     }
@@ -82,7 +83,6 @@ Api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
-);
+});
 
 export { Auth, Api, refreshToken, handleTokenRefreshRequest, baseURL };

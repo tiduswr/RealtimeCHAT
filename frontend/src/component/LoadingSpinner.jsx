@@ -13,7 +13,7 @@ const LoadingSpinner = ({ sx, iconSx }) => {
         ...sx
       }}
     >
-      <CircularProgress sx={{...iconSx}}/>
+      <CircularProgress sx={{ ...iconSx }} />
     </Box>
   );
 };

@@ -13,11 +13,11 @@ const AlertStyled = styled(Alert)(({ theme }) => ({
 }));
 
 const MessageReceivedAlert = ({ senderName }) => {
-  
-    const isMobile = useMediaQuery('(max-width: 600px')
-  
-    return (
-    <AlertStyled severity="info" sx={{ width: isMobile ? '80%' : '30%'}}>
+
+  const isMobile = useMediaQuery('(max-width: 600px')
+
+  return (
+    <AlertStyled severity="info" sx={{ width: isMobile ? '80%' : '30%' }}>
       <AlertTitle>Mensagem recebida!</AlertTitle>
       {`${senderName} acaba de te enviar uma mensagem.`}
     </AlertStyled>

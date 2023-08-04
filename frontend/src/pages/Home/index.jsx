@@ -13,11 +13,11 @@ const ChatButton = styled(Button)({
 
 function Home() {
   const navigate = useNavigate();
-  
+
   return (
     <>
       <PublicHeader />
-      <Container component="main" maxWidth="lg" sx={{ marginTop: '2rem', marginBottom: '2rem'}}>
+      <Container component="main" maxWidth="lg" sx={{ marginTop: '2rem', marginBottom: '2rem' }}>
         <Paper sx={{ padding: '10px' }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={6}>

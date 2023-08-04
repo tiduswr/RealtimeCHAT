@@ -37,9 +37,9 @@ const EditableTextField = ({ handleUpdate, defaultValue, label, type }) => {
                 endAdornment: (
                     <InputAdornment position="end">
                         <IconButton onClick={e => {
-                            if (editingName){
+                            if (editingName) {
                                 handleUpdate(value, setValue, setError, setEditingName);
-                            }else{
+                            } else {
                                 setEditingName(true);
                             }
                         }}>

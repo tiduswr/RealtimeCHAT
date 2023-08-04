@@ -1,15 +1,17 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import React, { useContext, useEffect } from 'react'
-import Home from '../pages/Home'
-import { App } from '../pages/App'
-import NotFound from '../pages/NotFound';
-import Login from '../pages/Login'
-import Register from '../pages/Register'
-import { createTheme, ThemeProvider } from '@mui/material';
-import { AuthContext, AuthProvider } from '../contexts/AuthProvider'
 import '@fontsource/roboto';
+
+import {createTheme, ThemeProvider} from '@mui/material';
+import React, {useContext, useEffect} from 'react'
+import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom';
+
+import {AuthContext, AuthProvider} from '../contexts/AuthProvider'
+import {UserProvider} from '../contexts/UserProvider';
+import {App} from '../pages/App'
+import Home from '../pages/Home'
+import Login from '../pages/Login'
+import NotFound from '../pages/NotFound';
 import Perfil from '../pages/Perfil';
-import { UserProvider } from '../contexts/UserProvider';
+import Register from '../pages/Register'
 
 const theme = createTheme({
   typography: {
@@ -17,19 +19,16 @@ const theme = createTheme({
   },
 });
 
-const PrivateRoute = ({ children }) => {
-  const { isAuthenticated, authLoading } = useContext(AuthContext);
+const PrivateRoute = ({children}) => {
+      const {isAuthenticated, authLoading} = useContext(AuthContext);
 
-  useEffect(() => {}, [authLoading])
+      useEffect(() => {}, [authLoading])
 
-  if(authLoading) return null;
+      if (authLoading) return null;
 
-  return isAuthenticated ? (
-    children
-  ) : (
-    <Navigate to='/login' replace />
-  );
-}
+      return isAuthenticated ? (children) :
+                               (<Navigate to = '/login' replace />);
+    }
 
 const Main = () => {
   return (

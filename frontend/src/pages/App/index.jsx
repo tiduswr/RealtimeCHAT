@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useCallback, createContext, useContext } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+
+import { Api } from '../../api';
 import ChatRoom from '../../component/chat/ChatRoom';
 import Header from '../../component/Header';
 import { AuthContext } from '../../contexts/AuthProvider';
 import { UserContext } from '../../contexts/UserProvider';
-import { Api } from '../../api';
 
 const Context = createContext();
 
@@ -14,7 +15,7 @@ const App = () => {
   const [showAlert, setShowAlert] = useState({ visible: false, sender: '' });
   const { authLoading } = useContext(AuthContext);
   const { userLoading } = useContext(UserContext);
-  console.log("updated")
+  console.log('updated')
   useEffect(() => {
     if (showAlert.visible) {
       setTimeout(() => {
@@ -25,7 +26,7 @@ const App = () => {
 
   const toggleMenu = useCallback(() => {
     setMenuOpen((prevIsMenuOpen) => !prevIsMenuOpen);
-  },[]);
+  }, []);
 
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
@@ -33,19 +34,19 @@ const App = () => {
 
   useEffect(() => {
     const countUnreadedMessages = async () => {
-      try{
+      try {
         const res = await Api.get('/api/v1/messages/retrieve_count/total');
         const data = res.data.count;
         setUnreadMessageCount(parseInt(data));
-      }catch(error){
+      } catch (error) {
         console.log(error);
       }
-    }  
+    }
 
     countUnreadedMessages();
   }, [messageCount])
 
-  if(authLoading || userLoading) return null;
+  if (authLoading || userLoading) return null;
 
   return (
     <Context.Provider

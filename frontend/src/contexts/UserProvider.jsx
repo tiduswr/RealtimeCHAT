@@ -12,59 +12,59 @@ const UserProvider = ({ children }) => {
     const { isAuthenticated } = useContext(AuthContext);
 
     useEffect(() => {
-        if(isAuthenticated){
+        if (isAuthenticated) {
             setUserDataLoading(true);
             Api.get('/users/retrieve_profile_info')
-            .then(res => {
-                if (res.status === 200) {
-                    const data = res.data;
-                    setUserData(data);
-                    Api.get(`/users/retrieve_profile_image/${data.userName}`, { responseType: 'arraybuffer' })
-                        .then((res) => {
-                            if (res.status === 200 && res.data) {
-                                const imageUrl = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }))
-                                setUserImage(imageUrl);
+                .then(res => {
+                    if (res.status === 200) {
+                        const data = res.data;
+                        setUserData(data);
+                        Api.get(`/users/retrieve_profile_image/${data.userName}`, { responseType: 'arraybuffer' })
+                            .then((res) => {
+                                if (res.status === 200 && res.data) {
+                                    const imageUrl = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }))
+                                    setUserImage(imageUrl);
+                                    setUserDataLoading(false);
+                                }
+                            }).catch(e => {
                                 setUserDataLoading(false);
-                            }
-                        }).catch(e => {
-                            setUserDataLoading(false);
-                        })
-                }
-            }).catch(e => {
-                setUserDataLoading(false);
-            })
+                            })
+                    }
+                }).catch(e => {
+                    setUserDataLoading(false);
+                })
         }
     }, [isAuthenticated])
 
     const updateFormalName = useCallback(() => {
-        if(userData){
+        if (userData) {
             setUserDataLoading(true);
             Api.get('/users/retrieve_profile_info')
-            .then(res => {
-                if (res.status === 200) {
-                    const data = res.data;
-                    setUserData(data);
+                .then(res => {
+                    if (res.status === 200) {
+                        const data = res.data;
+                        setUserData(data);
+                        setUserDataLoading(false);
+                    }
+                }).catch(e => {
                     setUserDataLoading(false);
-                }
-            }).catch(e => {
-                setUserDataLoading(false);
-            })
+                })
         }
     }, [userData])
 
     const updateImage = useCallback(() => {
-        if(isAuthenticated && userData){
+        if (isAuthenticated && userData) {
             setUserDataLoading(true);
             Api.get(`/users/retrieve_profile_image/${userData.userName}`, { responseType: 'arraybuffer' })
-            .then((res) => {
-                if (res.status === 200 && res.data) {
-                    const imageUrl = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }))
-                    setUserImage(imageUrl);
+                .then((res) => {
+                    if (res.status === 200 && res.data) {
+                        const imageUrl = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }))
+                        setUserImage(imageUrl);
+                        setUserDataLoading(false);
+                    }
+                }).catch(e => {
                     setUserDataLoading(false);
-                }
-            }).catch(e => {
-                setUserDataLoading(false);
-            })
+                })
         }
     }, [userData, isAuthenticated])
 

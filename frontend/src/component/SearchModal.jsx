@@ -38,15 +38,15 @@ export default function BasicModal({ closeFunc, setContacts }) {
 
     setLoading(true);
     Api.get(`/users/find/${searchValue}`)
-    .then((res) => {
-      if(res.status === 200){
-        setOptions([...res.data]);
-      }
-      setLoading(false);
-    }).catch((error) => {
-      console.log(error);
-      setLoading(false);
-    })
+      .then((res) => {
+        if (res.status === 200) {
+          setOptions([...res.data]);
+        }
+        setLoading(false);
+      }).catch((error) => {
+        console.log(error);
+        setLoading(false);
+      })
 
   };
 
@@ -56,9 +56,9 @@ export default function BasicModal({ closeFunc, setContacts }) {
     setLoading(true);
     Api.get(`/users/retrieve_profile_image/${selectedOption.userName}`, { responseType: 'arraybuffer' })
       .then(res => {
-        if(res.status === 200){
+        if (res.status === 200) {
           const image = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }));
-          setContacts(prev => [...prev, {...selectedOption, image}])
+          setContacts(prev => [...prev, { ...selectedOption, image }])
           handleClose();
         }
       }).catch((error) => {
@@ -88,16 +88,16 @@ export default function BasicModal({ closeFunc, setContacts }) {
             fullWidth
             sx={{ marginTop: 2 }}
             InputProps={{
-                endAdornment: (
-                    <InputAdornment position='end'>
-                        <IconButton onClick={handleSearch}>
-                            <SearchIcon/>
-                        </IconButton>
-                    </InputAdornment>
-                )
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <IconButton onClick={handleSearch}>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
             }}
           />
-          {!isLoading ? 
+          {!isLoading ?
             <List sx={{ marginTop: 2 }}>
               {options.map((option, index) => (
                 <ListItemButton
@@ -105,12 +105,12 @@ export default function BasicModal({ closeFunc, setContacts }) {
                   onClick={() => handleOptionClick(index)}
                 >
                   <Typography>{option.formalName}</Typography>
-                  <Typography sx={{fontWeight: 'bold', marginLeft: '6px'}}>({option.userName})</Typography>
+                  <Typography sx={{ fontWeight: 'bold', marginLeft: '6px' }}>({option.userName})</Typography>
                 </ListItemButton>
               ))}
             </List>
-          :
-            <LoadingSpinner sx={{marginTop: 2}}/>
+            :
+            <LoadingSpinner sx={{ marginTop: 2 }} />
           }
         </ModalCustom>
       </Modal>
