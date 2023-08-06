@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
@@ -9,6 +9,8 @@ import { styled } from '@mui/system'
 import SearchIcon from '@mui/icons-material/Search';
 import { Api } from '../api'
 import LoadingSpinner from './LoadingSpinner'
+import { NotificationContext } from '../contexts/NotificationProvider';
+import { tryGetErrorMessage } from '../errorParser';
 
 const ModalCustom = styled(Box)({
   position: 'absolute',
@@ -28,6 +30,7 @@ export default function BasicModal({ closeFunc, setContacts }) {
   const [searchValue, setSearchValue] = useState('');
   const [options, setOptions] = useState([]);
   const [isLoading, setLoading] = useState(false);
+  const { setAlert } = useContext(NotificationContext);
 
   const handleClose = () => {
     setOpen(false);
@@ -44,7 +47,13 @@ export default function BasicModal({ closeFunc, setContacts }) {
         }
         setLoading(false);
       }).catch((error) => {
-        console.log(error);
+        setAlert({ 
+          title: 'Erro ao buscar usuário!', 
+          message: tryGetErrorMessage(error), 
+          type: 'error', 
+          show: true, 
+          wrap: false
+        });
         setLoading(false);
       })
 
@@ -62,7 +71,13 @@ export default function BasicModal({ closeFunc, setContacts }) {
           handleClose();
         }
       }).catch((error) => {
-        console.log(error);
+        setAlert({ 
+          title: 'Erro ao buscar imagem do usuário!', 
+          message: tryGetErrorMessage(error), 
+          type: 'error', 
+          show: true, 
+          wrap: false
+        });
         setLoading(false);
       })
 

@@ -31,10 +31,9 @@ const HeaderLink = styled(Typography)({
 
 const Header = ({ unreadMessagesCount, toggleMenu, includeChatLink }) => {
     const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
-
     const { userData, userImage } = useContext(UserContext);
-
     const { logout } = useContext(AuthContext);
+    const isUserMenuOpen = Boolean(userMenuAnchorEl);
 
     const handleUserMenuOpen = (event) => {
         setUserMenuAnchorEl(event.currentTarget);
@@ -43,8 +42,6 @@ const Header = ({ unreadMessagesCount, toggleMenu, includeChatLink }) => {
     const handleUserMenuClose = () => {
         setUserMenuAnchorEl(null);
     };
-
-    const isUserMenuOpen = Boolean(userMenuAnchorEl);
 
     return (
         <React.Fragment>

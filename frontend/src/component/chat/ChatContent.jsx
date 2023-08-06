@@ -8,11 +8,14 @@ import ChatMessagesList from './ChatMessagesList';
 import { UserContext } from '../../contexts/UserProvider';
 import { Api } from '../../api';
 import LoadingSpinner from '../../component/LoadingSpinner'
+import { NotificationContext } from '../../contexts/NotificationProvider';
+import { tryGetErrorMessage } from '../../errorParser';
 
 const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessageCount }) => {
 
   const [loadingMessage, setLoadingMessage] = useState(true);
   const { userData } = useContext(UserContext);
+  const { setAlert } = useContext(NotificationContext);
 
   const messages = useRef('null');
 
@@ -22,7 +25,13 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
         const res = await Api.get('/api/v1/messages/retrieve_messages/by/public');
         setChatMessages(res.data);
       } catch (error) {
-        console.log(error);
+        setAlert({ 
+          title: 'Erro ao buscar mensagens Publicas!', 
+          message: tryGetErrorMessage(error), 
+          type: 'error', 
+          show: true, 
+          wrap: false
+        });
       }
       setLoadingMessage(false);
     };
@@ -32,7 +41,13 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
         const res = await Api.get(`/api/v1/messages/retrieve_messages/by/${tab.userName}`);
         setChatMessages(res.data);
       } catch (error) {
-        console.log(error);
+        setAlert({ 
+          title: 'Erro ao buscar mensagens Privadas!', 
+          message: tryGetErrorMessage(error), 
+          type: 'error', 
+          show: true, 
+          wrap: false
+        });
       }
       setLoadingMessage(false);
     };
@@ -46,7 +61,7 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
         pullPrivateMessage();
         break;
     }
-  }, [tab, setChatMessages, setMessageCount])
+  }, [tab, setChatMessages, setMessageCount, setAlert])
 
   const sendPublicMessage = useCallback((message, username) => {
     if (stompClient) {

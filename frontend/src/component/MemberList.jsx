@@ -8,6 +8,8 @@ import { Api } from '../api';
 import GroupIcon from '@mui/icons-material/Group';
 import { UserContext } from '../contexts/UserProvider';
 import { fetchUnreadedMessageCount, fetchUserImage } from './../calls/chatInfoCalls'
+import { NotificationContext } from '../contexts/NotificationProvider';
+import { tryGetErrorMessage } from '../errorParser';
 
 const ListButtonStyled = styled(ListItemButton)({
   "&.Mui-selected": {
@@ -28,6 +30,7 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
 
   const [openSearchModal, setOpenSearchModal] = useState(false);
   const { userData } = useContext(UserContext);
+  const { setAlert } = useContext(NotificationContext);
 
   useEffect(() => {
 
@@ -55,13 +58,19 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
         })
         setContacts(modifiedUsersData);
       } catch (error) {
-        console.log(error);
+        setAlert({ 
+          title: 'Erro ao buscar usuários!', 
+          message: tryGetErrorMessage(error), 
+          type: 'error', 
+          show: true, 
+          wrap: false
+        });
       }
     };
 
     getUsers();
 
-  }, [setMessageCount, setContacts])
+  }, [setMessageCount, setContacts, setAlert])
 
   useEffect(() => {
     const retrieveMessagesCount = async () => {
@@ -70,11 +79,17 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
         const data = res.data.count;
         setUnreadMessageCount(parseInt(data));
       } catch (error) {
-        console.log(error);
+        setAlert({ 
+          title: 'Erro ao contar mensagens!', 
+          message: tryGetErrorMessage(error), 
+          type: 'error', 
+          show: true, 
+          wrap: false
+        });
       }
     }
     retrieveMessagesCount();
-  }, [setUnreadMessageCount])
+  }, [setUnreadMessageCount, setAlert])
 
   const handleTabChange = (userName, formalName) => {
     Api.put(`/api/v1/messages/mark_messages_as_read/${userName}`)
@@ -89,7 +104,13 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
           setTab({ userName, formalName });
         }
       }).catch(error => {
-        console.log(error);
+        setAlert({ 
+          title: 'Erro ao marcar mensagem como lida!', 
+          message: tryGetErrorMessage(error), 
+          type: 'error', 
+          show: true, 
+          wrap: false
+        });
       })
   }
 

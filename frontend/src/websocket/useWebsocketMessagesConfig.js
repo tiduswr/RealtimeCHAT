@@ -4,10 +4,12 @@ import { Api } from '../api';
 import { buildContact } from '../calls/chatInfoCalls';
 import { UserContext } from '../contexts/UserProvider';
 import { Context } from '../pages/App';
+import { NotificationContext } from '../contexts/NotificationProvider';
+import { tryGetErrorMessage } from '../errorParser';
 
 export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessages, setStompClient }) => {
-  const { setShowAlert, setMessageCount, setUnreadMessageCount } =
-    useContext(Context);
+  const { setMessageCount, setUnreadMessageCount } = useContext(Context);
+  const { setAlert } = useContext(NotificationContext);
   const { userData } = useContext(UserContext);
 
   const sendPrivateMessagesRead = useCallback((username, receiver) => {
@@ -64,7 +66,7 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
           });
 
           setUnreadMessageCount(prev => ++prev);
-          setShowAlert({ visible: true, sender: senderName })
+          setAlert({ title: `Nova mensagem de ${senderName}`, message: payloadData.message, type: 'info', show: true, wrap: true })
 
         } else {
           setChatMessages(prev => [...prev, payloadData]);
@@ -78,7 +80,13 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
                 }
               })
               .catch(error => {
-                console.log(error);
+                setAlert({ 
+                  title: 'Erro ao marcar mensagens como Lida!', 
+                  message: tryGetErrorMessage(error), 
+                  type: 'error', 
+                  show: true, 
+                  wrap: false
+                });
               })
             return tab;
           })
@@ -95,7 +103,7 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
         break;
     }
   }, [sendPrivateMessagesRead, setChatMessages, setContacts,
-    setMessageCount, setShowAlert, setUnreadMessageCount, setTab,
+    setMessageCount, setAlert, setUnreadMessageCount, setTab,
     userData, userTabIsNotOpen]);
 
   const onPublicMessageReceived = useCallback((payload) => {
@@ -110,15 +118,21 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
     }
   }, [setChatMessages]);
 
-  const onError = (payload) => {
-    console.log(payload);
-  }
+  const onError = useCallback((error) => {
+    setAlert({ 
+      title: 'Erro ao marcar mensagens como Lida!', 
+      message: tryGetErrorMessage(error), 
+      type: 'error', 
+      show: true, 
+      wrap: false
+    });
+  }, [setAlert]);
 
   const onConnected = useCallback((client) => {
     client.subscribe(`/user/${userData.userName}/private`, onPrivateMessageReceived);
     client.subscribe('/chatroom/public', onPublicMessageReceived);
     client.subscribe(`/user/${userData.userName}/errors`, onError);
-  }, [onPrivateMessageReceived, onPublicMessageReceived, userData])
+  }, [onPrivateMessageReceived, onPublicMessageReceived, userData, onError])
 
   return {
     sendPrivateMessagesRead, onConnected

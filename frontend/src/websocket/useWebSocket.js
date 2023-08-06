@@ -6,11 +6,14 @@ import { baseURL, handleTokenRefreshRequest } from '../api';
 import { UserContext } from '../contexts/UserProvider';
 
 import { useWebsocketMessagesConfig } from './useWebsocketMessagesConfig';
+import { NotificationContext } from '../contexts/NotificationProvider';
+import { tryGetErrorMessage } from '../errorParser';
 
 export const useWebSockets = ({ setTab, setContacts, setChatMessages }) => {
   const { userData } = useContext(UserContext);
   const [connecting, setConnecting] = useState(true);
   const [stompClient, setStompClient] = useState(null);
+  const { setAlert } = useContext(NotificationContext);
 
   const {
     sendPrivateMessagesRead,
@@ -31,15 +34,27 @@ export const useWebSockets = ({ setTab, setContacts, setChatMessages }) => {
             // client.debug = null;
             client.connect(
               { 'Authorization': `Bearer ${ACCESS_TOKEN.jwtToken}` }, () => onConnected(client),
-              (err) => {
-                console.log(err);
+              (error) => {
+                setAlert({ 
+                  title: 'Erro na conexão WebSocket!', 
+                  message: tryGetErrorMessage(error), 
+                  type: 'error', 
+                  show: true, 
+                  wrap: false
+                });
               })
 
             return client;
           });
         }
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        setAlert({ 
+          title: 'Erro na conexão WebSocket!', 
+          message: tryGetErrorMessage(error), 
+          type: 'error', 
+          show: true, 
+          wrap: false
+        });
       }
       setConnecting(false);
     }
@@ -60,7 +75,7 @@ export const useWebSockets = ({ setTab, setContacts, setChatMessages }) => {
       })
 
     };
-  }, [userData, onConnected]);
+  }, [userData, onConnected, setAlert]);
 
   return [connecting, sendPrivateMessagesRead, stompClient];
 }

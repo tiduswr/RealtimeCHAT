@@ -5,6 +5,8 @@ import ChatRoom from '../../component/chat/ChatRoom';
 import Header from '../../component/Header';
 import { AuthContext } from '../../contexts/AuthProvider';
 import { UserContext } from '../../contexts/UserProvider';
+import { NotificationContext } from '../../contexts/NotificationProvider';
+import { tryGetErrorMessage } from '../../errorParser';
 
 const Context = createContext();
 
@@ -12,17 +14,11 @@ const App = () => {
   const [unreadMessagesCount, setUnreadMessageCount] = useState(0);
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [messageCount, setMessageCount] = useState(new Map());
-  const [showAlert, setShowAlert] = useState({ visible: false, sender: '' });
   const { authLoading } = useContext(AuthContext);
   const { userLoading } = useContext(UserContext);
+  const { setAlert } = useContext(NotificationContext);
+
   console.log('updated')
-  useEffect(() => {
-    if (showAlert.visible) {
-      setTimeout(() => {
-        setShowAlert({ ...showAlert, visible: false });
-      }, 3000);
-    }
-  }, [showAlert]);
 
   const toggleMenu = useCallback(() => {
     setMenuOpen((prevIsMenuOpen) => !prevIsMenuOpen);
@@ -39,12 +35,18 @@ const App = () => {
         const data = res.data.count;
         setUnreadMessageCount(parseInt(data));
       } catch (error) {
-        console.log(error);
+        setAlert({ 
+          title: 'Erro ao contar mensagens não lidas!', 
+          message: tryGetErrorMessage(error), 
+          type: 'error', 
+          show: true, 
+          wrap: false
+        });
       }
     }
 
     countUnreadedMessages();
-  }, [messageCount])
+  }, [messageCount, setAlert])
 
   if (authLoading || userLoading) return null;
 
@@ -54,8 +56,6 @@ const App = () => {
         closeMenu,
         isMenuOpen,
         messageCount,
-        showAlert,
-        setShowAlert,
         setMessageCount,
         setUnreadMessageCount
       }}

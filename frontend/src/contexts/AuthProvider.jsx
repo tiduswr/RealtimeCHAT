@@ -1,14 +1,15 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { Auth, handleTokenRefreshRequest } from '../api';
-import AuthAlert from '../component/AuthAlert';
 import moment from 'moment';
+import { NotificationContext } from './NotificationProvider';
+import { tryGetErrorMessage } from '../errorParser';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [alert, setAlert] = useState({ title: 'Erro ao tentar logar', message: '', type: 'error', show: false });
     const [authLoading, setAuthLoading] = useState(true);
+    const { setAlert } = useContext(NotificationContext);
 
     useEffect(() => {
         setAuthLoading(true);
@@ -20,7 +21,7 @@ const AuthProvider = ({ children }) => {
 
                 const isExpired = moment(accessTk.expiration).isBefore(moment());
 
-                if (isExpired) accessTk = handleTokenRefreshRequest();
+                if (isExpired) accessTk = await handleTokenRefreshRequest();
                 if (accessTk) setIsAuthenticated(true);
             }
             setAuthLoading(false);
@@ -28,16 +29,6 @@ const AuthProvider = ({ children }) => {
 
         checkTokenValidity();
     }, []);
-
-    useEffect(() => {
-        if (alert.show) {
-            setTimeout(() => {
-                setAlert(prevAlert => {
-                    return { ...prevAlert, show: false };
-                });
-            }, 3000);
-        }
-    }, [alert]);
 
     const login = async (username, password) => {
         if (username !== '' && password !== '') {
@@ -50,7 +41,6 @@ const AuthProvider = ({ children }) => {
                     localStorage.setItem('refresh_token', JSON.stringify(refreshToken));
                     localStorage.setItem('access_token', JSON.stringify(token));
                     setIsAuthenticated(true);
-                    console.log('Refreshed token')
                 }
             }).catch(ex => {
                 if (ex.response?.status === 403) {
@@ -61,8 +51,7 @@ const AuthProvider = ({ children }) => {
                     setAlert(prevAlert => {
                         return {
                             ...prevAlert, show: true, type: 'error', title: 'Erro no servidor!',
-                            message: ex.response?.data?.message ?
-                                ex.response?.data?.message : 'O servidor não respondeu a solicitação.'
+                            message: tryGetErrorMessage(ex, 'O servidor não respondeu a solicitação.')
                         };
                     });
                 }
@@ -73,7 +62,6 @@ const AuthProvider = ({ children }) => {
             });
         }
     };
-
 
     const logout = async () => {
         const refreshToken = localStorage.getItem('refresh_token');
@@ -90,11 +78,8 @@ const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, setAlert, authLoading }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, authLoading }}>
             {children}
-            {alert.show &&
-                <AuthAlert message={alert.message} type={alert.type} title={alert.title} />
-            }
         </AuthContext.Provider>
     );
 

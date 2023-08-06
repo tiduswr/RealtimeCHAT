@@ -11,11 +11,11 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import PublicHeader from '../../component/PublicHeader';
 import { Auth } from '../../api';
-import { AuthContext } from '../../contexts/AuthProvider';
+import { NotificationContext } from '../../contexts/NotificationProvider';
 
 export default function Register() {
 
-  const { setAlert } = useContext(AuthContext);
+  const { setAlert } = useContext(NotificationContext);
   const [passwordError, setPasswordError] = useState(undefined);
   const [userNameError, setUserNameError] = useState(undefined);
   const [formalNameError, setFormalNameError] = useState(undefined);

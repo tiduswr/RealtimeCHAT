@@ -6,11 +6,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import EditableTextField from '../../component/EditableTextField';
 import { Api } from '../../api';
 import { AuthContext } from '../../contexts/AuthProvider';
+import { NotificationContext } from '../../contexts/NotificationProvider';
+import { tryGetErrorMessage } from '../../errorParser';
 
 const Perfil = () => {
 
   const { userImage, userData, updateImage, updateFormalName, userLoading } = useContext(UserContext);
-  const { authLoading, setAlert } = useContext(AuthContext);
+  const { authLoading } = useContext(AuthContext);
+  const { setAlert } = useContext(NotificationContext);
   const inputRef = useRef(null);
 
   const handleUpdateFormalName = (formalName, setFormalName, setError, setEditing) => {
@@ -64,7 +67,7 @@ const Perfil = () => {
             setAlert({ title: 'Atualizado', message: 'Imagem atualizada', type: 'success', show: true })
           }
         }).catch(error => {
-          setAlert({ title: 'Erro!', message: error.response.data.error.image, type: 'success', show: true })
+          setAlert({ title: 'Erro!', message: tryGetErrorMessage(error), type: 'success', show: true })
         })
 
     }
