@@ -35,12 +35,9 @@ const App = () => {
         const data = res.data.count;
         setUnreadMessageCount(parseInt(data));
       } catch (error) {
-        setAlert({ 
-          title: 'Erro ao contar mensagens não lidas!', 
+        setAlert({
           message: tryGetErrorMessage(error), 
-          type: 'error', 
-          show: true, 
-          wrap: false
+          type: 'error'
         });
       }
     }

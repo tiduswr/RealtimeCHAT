@@ -59,11 +59,8 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
         setContacts(modifiedUsersData);
       } catch (error) {
         setAlert({ 
-          title: 'Erro ao buscar usuários!', 
           message: tryGetErrorMessage(error), 
-          type: 'error', 
-          show: true, 
-          wrap: false
+          type: 'error',
         });
       }
     };
@@ -80,11 +77,8 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
         setUnreadMessageCount(parseInt(data));
       } catch (error) {
         setAlert({ 
-          title: 'Erro ao contar mensagens!', 
           message: tryGetErrorMessage(error), 
-          type: 'error', 
-          show: true, 
-          wrap: false
+          type: 'error'
         });
       }
     }
@@ -105,11 +99,8 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
         }
       }).catch(error => {
         setAlert({ 
-          title: 'Erro ao marcar mensagem como lida!', 
           message: tryGetErrorMessage(error), 
-          type: 'error', 
-          show: true, 
-          wrap: false
+          type: 'error'
         });
       })
   }
@@ -132,7 +123,7 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
               <SearchIcon />
             </IconButton>
           </Box>
-          <List sx={{ minWidth: '300px' }} >
+        <List sx={{ minWidth: '300px' }} >
             <ListButtonStyled
               onClick={() => setTab(null)}
               selected={tab === null}

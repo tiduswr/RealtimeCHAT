@@ -44,22 +44,13 @@ const AuthProvider = ({ children }) => {
                 }
             }).catch(ex => {
                 if (ex.response?.status === 403) {
-                    setAlert(prevAlert => {
-                        return { ...prevAlert, show: true, type: 'error', message: 'Credenciais inválidas!', title: 'Erro ao tentar logar' };
-                    });
+                    setAlert({ type: 'error', message: 'Credenciais inválidas!' });
                 } else {
-                    setAlert(prevAlert => {
-                        return {
-                            ...prevAlert, show: true, type: 'error', title: 'Erro no servidor!',
-                            message: tryGetErrorMessage(ex, 'O servidor não respondeu a solicitação.')
-                        };
-                    });
+                    setAlert({type: 'error', message: tryGetErrorMessage(ex, 'O servidor não respondeu a solicitação.')});
                 }
             })
         } else {
-            setAlert(prevAlert => {
-                return { ...prevAlert, show: true, type: 'error', message: 'Preencha o login e Senha', title: 'Erro no formulário' };
-            });
+            setAlert({ type: 'error', message: 'Preencha o login e Senha' });
         }
     };
 

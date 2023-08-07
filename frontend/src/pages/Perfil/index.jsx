@@ -25,7 +25,7 @@ const Perfil = () => {
             setEditing(false);
             setError(undefined);
             setFormalName(formalName);
-            setAlert({ title: 'Atualizado', message: 'Nome atualizado', type: 'success', show: true })
+            setAlert({ message: 'Nome atualizado', type: 'success' })
           }
         }).catch((error) => {
           const fieldError = error.response.data.error.formalName;
@@ -43,7 +43,7 @@ const Perfil = () => {
             setEditing(false);
             setError(undefined);
             setPassword('');
-            setAlert({ title: 'Atualizado', message: 'Password atualizado', type: 'success', show: true })
+            setAlert({ message: 'Password atualizado', type: 'success' })
           }
         }).catch((error) => {
           const fieldError = error.response.data.error.password.replace(',', ', ');
@@ -64,10 +64,10 @@ const Perfil = () => {
         .then(res => {
           if (res.status === 200) {
             updateImage();
-            setAlert({ title: 'Atualizado', message: 'Imagem atualizada', type: 'success', show: true })
+            setAlert({ message: 'Imagem atualizada', type: 'success' })
           }
         }).catch(error => {
-          setAlert({ title: 'Erro!', message: tryGetErrorMessage(error), type: 'success', show: true })
+          setAlert({ message: tryGetErrorMessage(error), type: 'error' })
         })
 
     }
@@ -84,13 +84,14 @@ const Perfil = () => {
           alignItems: 'center'
         }}
       >
-        <Box
+        <Box 
           sx={{
             marginTop: 8,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            width: '100%'
+            width: '100%',
+            padding: '20px'
           }}
         >
           <Paper

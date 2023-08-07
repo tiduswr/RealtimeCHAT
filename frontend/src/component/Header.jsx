@@ -84,7 +84,6 @@ const Header = ({ unreadMessagesCount, toggleMenu, includeChatLink }) => {
                             edge="start"
                             color="inherit"
                             aria-label="menu"
-                            sx={{ mr: 2 }}
                             onClick={handleUserMenuOpen}
                         >
                             <Avatar sx={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)', border: '2px solid green' }} alt={userData?.formalName} src={userImage} />
@@ -93,6 +92,7 @@ const Header = ({ unreadMessagesCount, toggleMenu, includeChatLink }) => {
                             anchorEl={userMenuAnchorEl}
                             open={isUserMenuOpen}
                             onClose={handleUserMenuClose}
+                            sx={{ mr: 2 }}
                         >
                             <Typography sx={{ fontWeight: 'bold', padding: '3px', textAlign: 'center' }}>
                                 {userData?.userName}

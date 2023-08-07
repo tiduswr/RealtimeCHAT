@@ -65,9 +65,7 @@ export default function Register() {
     }).then((res) => {
       if (res.status === 201) {
         cleanFields();
-        setAlert(prevAlert => {
-          return { ...prevAlert, show: true, type: 'success', message: 'Cadastro realizado', title: 'O cadastro foi realizado com sucesso!' };
-        });
+        setAlert({type: 'success', message: 'Cadastro realizado'});
       }
     }).catch((error) => {
       const data = error.response?.data;
@@ -85,9 +83,7 @@ export default function Register() {
           }
         }
       } else {
-        setAlert(prevAlert => {
-          return { ...prevAlert, show: true, type: 'error', message: 'Erro no servidor!', title: 'O servidor não respondeu a solicitação.' };
-        });
+        setAlert({type: 'error', message: 'O servidor não respondeu a solicitação.'});
       }
     })
   };

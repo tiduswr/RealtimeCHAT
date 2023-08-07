@@ -66,7 +66,7 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
           });
 
           setUnreadMessageCount(prev => ++prev);
-          setAlert({ title: `Nova mensagem de ${senderName}`, message: payloadData.message, type: 'info', show: true, wrap: true })
+          setAlert({ message: `${senderName} diz: ${payloadData.message}`, type: 'info' })
 
         } else {
           setChatMessages(prev => [...prev, payloadData]);
@@ -81,11 +81,8 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
               })
               .catch(error => {
                 setAlert({ 
-                  title: 'Erro ao marcar mensagens como Lida!', 
                   message: tryGetErrorMessage(error), 
-                  type: 'error', 
-                  show: true, 
-                  wrap: false
+                  type: 'error'
                 });
               })
             return tab;
@@ -111,20 +108,24 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
 
     switch (payloadData.status) {
       case 'MESSAGE':
-        setChatMessages(prev => [...prev, payloadData]);
+        setTab(prev => {
+          const isUserOnPublicChat = (prev == null);
+
+          if(isUserOnPublicChat){
+            setChatMessages(prev => [...prev, payloadData]);
+          }
+          return prev;
+        })
         break;
       default:
         break;
     }
-  }, [setChatMessages]);
+  }, [setChatMessages, setTab]);
 
   const onError = useCallback((error) => {
     setAlert({ 
-      title: 'Erro ao marcar mensagens como Lida!', 
       message: tryGetErrorMessage(error), 
-      type: 'error', 
-      show: true, 
-      wrap: false
+      type: 'error'
     });
   }, [setAlert]);
 

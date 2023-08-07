@@ -48,11 +48,8 @@ export default function BasicModal({ closeFunc, setContacts }) {
         setLoading(false);
       }).catch((error) => {
         setAlert({ 
-          title: 'Erro ao buscar usuário!', 
           message: tryGetErrorMessage(error), 
-          type: 'error', 
-          show: true, 
-          wrap: false
+          type: 'error'
         });
         setLoading(false);
       })
@@ -72,11 +69,8 @@ export default function BasicModal({ closeFunc, setContacts }) {
         }
       }).catch((error) => {
         setAlert({ 
-          title: 'Erro ao buscar imagem do usuário!', 
           message: tryGetErrorMessage(error), 
-          type: 'error', 
-          show: true, 
-          wrap: false
+          type: 'error'
         });
         setLoading(false);
       })

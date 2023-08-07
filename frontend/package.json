@@ -19,6 +19,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
+    "react-toastify": "^9.1.3",
     "react-window": "^1.8.9",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",

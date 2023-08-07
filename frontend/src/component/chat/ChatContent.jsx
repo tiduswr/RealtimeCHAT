@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useContext, useCallback } from 'react';
+import React, { useRef, useEffect, useLayoutEffect, useState, useContext, useCallback } from 'react';
 
 import { Grid, Paper, Typography, Box } from '@mui/material'
 import { useMediaQuery } from '@mui/material';
@@ -17,7 +17,7 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
   const { userData } = useContext(UserContext);
   const { setAlert } = useContext(NotificationContext);
 
-  const messages = useRef('null');
+  const messages = useRef(null);
 
   useEffect(() => {
     const pullPublicMessage = async () => {
@@ -26,11 +26,8 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
         setChatMessages(res.data);
       } catch (error) {
         setAlert({ 
-          title: 'Erro ao buscar mensagens Publicas!', 
           message: tryGetErrorMessage(error), 
-          type: 'error', 
-          show: true, 
-          wrap: false
+          type: 'error'
         });
       }
       setLoadingMessage(false);
@@ -42,11 +39,8 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
         setChatMessages(res.data);
       } catch (error) {
         setAlert({ 
-          title: 'Erro ao buscar mensagens Privadas!', 
           message: tryGetErrorMessage(error), 
-          type: 'error', 
-          show: true, 
-          wrap: false
+          type: 'error'
         });
       }
       setLoadingMessage(false);
@@ -94,15 +88,15 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
 
     const { offsetHeight, scrollHeight, scrollTop } = messages.current
 
-    if (scrollHeight <= scrollTop + offsetHeight + 120) {
+    if (scrollHeight <= scrollTop + offsetHeight + 150) {
       messages.current.scrollTo(0, scrollHeight);
     }
 
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     scroll();
-  }, [chatMessages, messages]);
+  }, [chatMessages]);
 
   const isMobile = useMediaQuery('(max-width: 600px)');
 

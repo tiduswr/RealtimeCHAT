@@ -1,33 +1,31 @@
-import { createContext, useEffect, useState } from "react";
-import Notification from '../component/Notification'
+import { createContext} from "react";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const NotificationContext = createContext();
 const TIME_IN_SCREEN = 3000;
-const defaultAlert = { 
-    title: 'default', 
-    message: 'default', 
-    type: 'info', 
-    show: false, 
-    wrap: false
-};
 
 const NotificationProvider = ({ children }) => {
-    const [alert, setAlert] = useState({...defaultAlert})
 
-    useEffect(() => {
-        if (alert.show) {
-            setTimeout(() => {
-                setAlert({...defaultAlert});
-            }, TIME_IN_SCREEN);
-        }
-    }, [alert]);
+    const setAlert = (obj) =>{
+        toast[obj.type](obj?.message ? obj.message : "Eita");
+    }
 
     return (
-        <NotificationContext.Provider value={{alert, setAlert}}>
+        <NotificationContext.Provider value={{setAlert}}>
             { children }
-            {alert.show &&
-                <Notification message={alert.message} type={alert.type} title={alert.title} />
-            }
+            <ToastContainer
+                position="top-right"
+                autoClose={TIME_IN_SCREEN}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable
+                pauseOnHover
+                theme="light"
+            />
         </NotificationContext.Provider>
     );
 
