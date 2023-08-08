@@ -1,6 +1,9 @@
 package tiduswr.RealTimeChat.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +68,17 @@ public class MessageService {
         return messageRepository.filterPublicChatMessages();
     }
 
+    public Page<PublicMessageDTO> getPublicChatMessages(int page, int size){
+        Pageable pageable = createPageable(page, size, messageRepository.countPublicMessages());
+        return messageRepository.filterPublicChatMessages(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PrivateMessageDTO> getPrivateMessagesBy(String username, String receiver, int page, int size){
+        Pageable pageable = createPageable(page, size, messageRepository.countByUsernameAndReceiver(username, receiver));
+        return messageRepository.filterByUsernameAndReceiver(username, receiver, pageable);
+    }
+
     @Transactional(readOnly = true)
     public List<PublicUserDTO> findAllTalkedUsers(String username) {
         return messageRepository.findAllInteractedUsersByUsername(username);
@@ -90,6 +104,12 @@ public class MessageService {
     public MessageReadCountDTO countTotalUnreadedMessage(String username){
         return new MessageReadCountDTO(messageRepository
                 .countUnreadedMessagesByReceiver(username));
+    }
+
+    private Pageable createPageable(int page, int size, long totalRows){
+        int totalPages = (int) Math.ceil((double) totalRows/size);
+        int currentPage = totalPages - (page - 1);
+        return PageRequest.of(page, size);
     }
 
 }

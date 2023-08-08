@@ -5,7 +5,6 @@ import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.socket.messaging.StompSubProtocolErrorHandler;
-import tiduswr.RealTimeChat.exceptions.UnauthorizedException;
 
 public class StompErrorHandler extends StompSubProtocolErrorHandler{
 

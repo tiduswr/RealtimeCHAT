@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import MessageSentProvider from '../message/MessageSentProvider';
-import { List, ListItem } from '@mui/material';
+import { Button, List, ListItem } from '@mui/material';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { Api } from '../../api';
 
-const ChatMessagesList = ({ chatMessages, username }) => {
+const ChatMessagesList = ({ chatMessages, username, page, setPage, lengthPages, setPreventFetchMessages }) => {
     const [usersData, setUsersData] = useState(new Map());
     const [loading, setLoading] = useState(true);
 
@@ -69,42 +70,70 @@ const ChatMessagesList = ({ chatMessages, username }) => {
         return null;
     }
 
+    const retrieveMoreMessages = () => {
+        setPage(prev => {
+            setPreventFetchMessages(false);
+            const newPage = ++prev;
+            return newPage < lengthPages ? newPage : prev;
+        })
+    }
+
+    const renderRows = () => {
+        return chatMessages.map((chat, index) => {
+            const sender = chat.sender;
+            const userData = usersData.get(sender);
+
+            return (
+                <ListItem
+                    key={chat.id}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: chat.sender === username ? 'flex-end' : 'flex-start',
+                        padding: 1,
+                        paddingLeft: chat.sender === username ? '10%' : '0%',
+                        paddingRight: chat.sender === username ? '0%' : '10%',
+                        paddingTop: !lastMessageIsFromOtherUser(
+                            index > 0 ? chatMessages[index - 1].sender : null,
+                            chat.sender
+                        )
+                            ? '10px'
+                            : '1px',
+                        paddingBottom: '1px',
+                    }}
+                >
+                    <MessageSentProvider
+                        message={chat.message}
+                        senderName={chat.sender}
+                        image={userData?.image}
+                        formalName={userData?.formalName}
+                        lastMessageSender={index > 0 ? chatMessages[index - 1].sender : null}
+                        read={chat.read}
+                        date={chat.createdAt}
+                    />
+                </ListItem>
+            );
+        })
+    }
+
     return (
         <List>
-            {chatMessages.map((chat, index) => {
-                const sender = chat.sender;
-                const userData = usersData.get(sender);
-
-                return (
-                    <ListItem
-                        key={chat.id}
-                        sx={{
-                            display: 'flex',
-                            justifyContent: chat.sender === username ? 'flex-end' : 'flex-start',
-                            padding: 1,
-                            paddingLeft: chat.sender === username ? '10%' : '0%',
-                            paddingRight: chat.sender === username ? '0%' : '10%',
-                            paddingTop: !lastMessageIsFromOtherUser(
-                                index > 0 ? chatMessages[index - 1].sender : null,
-                                chat.sender
-                            )
-                                ? '10px'
-                                : '1px',
-                            paddingBottom: '1px',
-                        }}
+            <ListItem 
+                key='pagination'
+                sx={{
+                    justifyContent: 'center'
+                }}
+            >
+                {!!(page < (lengthPages - 1)) && 
+                    <Button variant='contained' 
+                        size='small'
+                        onClick={retrieveMoreMessages}
+                        endIcon={<KeyboardDoubleArrowUpIcon />}
                     >
-                        <MessageSentProvider
-                            message={chat.message}
-                            senderName={chat.sender}
-                            image={userData?.image}
-                            formalName={userData?.formalName}
-                            lastMessageSender={index > 0 ? chatMessages[index - 1].sender : null}
-                            read={chat.read}
-                            date={chat.createdAt}
-                        />
-                    </ListItem>
-                );
-            })}
+                        Mais
+                    </Button>
+                }
+            </ListItem>
+            {renderRows()}
         </List>
     );
 };

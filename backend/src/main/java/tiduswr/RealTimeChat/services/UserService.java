@@ -39,7 +39,8 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public UserDTO createUser(UserDTO dto) {
-        if(userRepository.existsByUsername(dto.getUserName()))
+        if(dto.getUserName().equalsIgnoreCase("public") ||
+                userRepository.existsByUsername(dto.getUserName()))
             throw new UsernameAlreadyExists("Esse username ja está sendo usado");
 
         var user = User.builder()

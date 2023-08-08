@@ -67,10 +67,4 @@ public class ChatController {
                 "/errors", new ErrorMessage(exception));
     }
 
-    @MessageExceptionHandler
-    public void handleAccessDeniedException(AccessDeniedException exception, Principal principal) {
-        simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                "/errors", new ErrorMessage(exception));
-    }
-
 }

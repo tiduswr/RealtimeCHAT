@@ -24,7 +24,7 @@ const MessageSent = ({ message, read, date, ownUsername, senderName }) => {
                 {ownUsername === senderName &&
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
                         {read ?
-                            <DoneAllIcon sx={{ fontSize: 14 }} />
+                            <DoneAllIcon sx={{ fontSize: 14, color: 'green' }} />
                             :
                             <CheckIcon sx={{ fontSize: 14 }} />
                         }

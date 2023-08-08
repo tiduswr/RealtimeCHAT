@@ -1,6 +1,7 @@
 package tiduswr.RealTimeChat.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tiduswr.RealTimeChat.model.dto.MessageReadCountDTO;
@@ -32,10 +33,28 @@ public class MessagesRestController {
         return messageService.getPrivateMessagesBy(username, receiver);
     }
 
+    @GetMapping("/retrieve_messages/by/{receiver}/in/page/{page}/size/{size}")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<PrivateMessageDTO> getMessageByReceiver(@PathVariable("receiver") String receiver,
+                                                        @PathVariable("page") int page,
+                                                        @PathVariable("size") int size,
+                                                        @RequestHeader("Authorization") String auth){
+
+        String username = jwtService.extractUsername(auth);
+        return messageService.getPrivateMessagesBy(username, receiver, page, size);
+    }
+
     @GetMapping("/retrieve_messages/by/public")
     @ResponseStatus(HttpStatus.OK)
     public List<PublicMessageDTO> getPublicChatMessages(){
         return messageService.getPublicChatMessages();
+    }
+
+        @GetMapping("/retrieve_messages/by/public/in/page/{page}/size/{size}")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<PublicMessageDTO> getPublicChatMessages(@PathVariable("page") int page,
+                                                        @PathVariable("size") int size){
+        return messageService.getPublicChatMessages(page, size);
     }
 
     @GetMapping("/retrieve_users/talked")

@@ -1,5 +1,7 @@
 package tiduswr.RealTimeChat.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,10 +22,26 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "AND (m.receiver.userName = :username OR m.receiver.userName = :receiver) ORDER BY m.id")
     List<PrivateMessageDTO> filterByUsernameAndReceiver(@Param("username") String username, @Param("receiver") String receiver);
 
+    @Query("SELECT new tiduswr.RealTimeChat.model.dto.PrivateMessageDTO(m.id, m.sender.userName, m.receiver.userName, m.message, m.read, m.createdAt, m.status) " +
+            "FROM Message m " +
+            "WHERE (m.sender.userName = :username OR m.sender.userName = :receiver) " +
+            "AND (m.receiver.userName = :username OR m.receiver.userName = :receiver) ORDER BY m.id")
+    Page<PrivateMessageDTO> filterByUsernameAndReceiver(@Param("username") String username, @Param("receiver") String receiver, Pageable pageable);
+
+    @Query("SELECT count(m) FROM Message m " +
+            "WHERE (m.sender.userName = :username OR m.sender.userName = :receiver) " +
+            "AND (m.receiver.userName = :username OR m.receiver.userName = :receiver)")
+    long countByUsernameAndReceiver(@Param("username") String username, @Param("receiver") String receiver);
+
     @Query("SELECT new tiduswr.RealTimeChat.model.dto.PublicMessageDTO(m.id, m.message, m.sender.userName, m.read, m.createdAt, m.status) " +
             "FROM Message m " +
             "WHERE m.receiver IS NULL ORDER BY m.id")
     List<PublicMessageDTO> filterPublicChatMessages();
+
+    @Query("SELECT new tiduswr.RealTimeChat.model.dto.PublicMessageDTO(m.id, m.message, m.sender.userName, m.read, m.createdAt, m.status) " +
+            "FROM Message m " +
+            "WHERE m.receiver IS NULL ORDER BY m.id")
+    Page<PublicMessageDTO> filterPublicChatMessages(Pageable pageable);
 
     @Query("SELECT DISTINCT " +
             "new tiduswr.RealTimeChat.model.dto.PublicUserDTO(" +
@@ -52,4 +70,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "AND m.read = false")
     Long countUnreadedMessagesByReceiver(@Param("receiver") String receiver);
 
+    @Query("SELECT count(m) FROM Message m " +
+            "WHERE m.receiver IS NULL " +
+            "ORDER BY m.id")
+    long countPublicMessages();
 }
