@@ -68,6 +68,7 @@ public class MessageService {
         return messageRepository.filterPublicChatMessages();
     }
 
+    @Transactional(readOnly = true)
     public Page<PublicMessageDTO> getPublicChatMessages(int page, int size){
         Pageable pageable = createPageable(page, size, messageRepository.countPublicMessages());
         return messageRepository.filterPublicChatMessages(pageable);

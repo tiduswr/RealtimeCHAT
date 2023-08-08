@@ -107,6 +107,13 @@ $ kubectl logs <nome_do_pod> -n webchat
 $ minikube service webchat-proxy -n webchat
 ```
 
+## Sobre o ambiente de desenvolvimento ReactJS
+
+Para que o projeto funcione corretamente é necessário criar um arquivo .env adicionando os valores abaixo descritos:
+
+- REACT_APP_BACKEND_HOST: Váriavel de ambiente com o endereço HOST do servidor Spring Boot;
+- REACT_APP_BACKEND_URI: Váriavel de ambiente com a uri de acesso ao servidor Spring Boot (Para casos em que existe um servidor proxy, caso não exista apenas deixe o valor de '/');
+
 ## Estrutura do projeto
 
 - `backend`: Contém o código-fonte e os arquivos de configuração do backend Spring Boot.
@@ -124,7 +131,7 @@ $ minikube service webchat-proxy -n webchat
 
 ## Contribuição
 
-Contribuições são bem-vindas! Se você encontrar algum problema ou tiver sugestões de melhorias, fique à vontade para abrir uma issue ou enviar um pull request.
+Dado que o intuito desse projeto é ser para o meu TCC de Ciências da Computação, as contribuções serão permitidas apenas após a avaliação, pois até a data de entrega todo o trabalho precisa ser meu.
 
 ## Licença
 
