@@ -13,7 +13,7 @@ import { tryGetErrorMessage } from '../../errorParser';
 
 const PAGE_SIZE = 15;
 
-const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessageCount }) => {
+const ChatContent = ({ stompClient, tab, setTab, chatMessages, setChatMessages, setMessageCount }) => {
 
   const isMobile = useMediaQuery('(max-width: 600px)');
   const [loadingMessage, setLoadingMessage] = useState(true);
@@ -21,70 +21,57 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
   const { setAlert } = useContext(NotificationContext);
   const [page, setPage] = useState(0);
   const [lengthPages, setLengthPages] = useState(0);
-  const [preventFetchMessages, setPreventFetchMessages] = useState(false);
   const messages = useRef(null);
 
-  useEffect(() => {
-    if(!preventFetchMessages){
-      const pullPublicMessage = async () => {
-        try {
-          const res = await Api.get(`/api/v1/messages/retrieve_messages/by/public/in/page/${page}/size/${PAGE_SIZE}`);
-          const { totalPages, content } = res.data;
+  const pullPublicMessage = useCallback(async (currentPage) => {
+    setLoadingMessage(true);
+    try {
+      const res = await Api.get(`/api/v1/messages/retrieve_messages/by/public/in/page/${currentPage}/size/${PAGE_SIZE}`);
+      const { totalPages, content } = res.data;
+      const idOrderedMessages = content.reverse();
 
-          setLengthPages(totalPages);
+      setLengthPages(totalPages);
 
-          if(page === 0){
-            setChatMessages(content);
-          }else{
-            setChatMessages(prev => {
-              return content.concat(prev);
-            });
-          }
-        } catch (error) {
-          setAlert({ 
-            message: tryGetErrorMessage(error), 
-            type: 'error'
-          });
-        }
-        setLoadingMessage(false);
-      };
-
-      const pullPrivateMessage = async () => {
-        try {
-          const res = await Api.get(`/api/v1/messages/retrieve_messages/by/${tab.userName}/in/page/${page}/size/${PAGE_SIZE}`);
-          const { totalPages, content } = res.data;
-
-          setLengthPages(totalPages);
-          
-          if(page === 0){
-            setChatMessages(content);
-          }else{
-            setChatMessages(prev => {
-              return content.concat(prev);
-            });
-          }
-        } catch (error) {
-          setAlert({ 
-            message: tryGetErrorMessage(error), 
-            type: 'error'
-          });
-        }
-        setLoadingMessage(false);
-      };
-
-      setLoadingMessage(true);
-      switch (tab) {
-        case null:
-          pullPublicMessage();
-          break;
-        default:
-          pullPrivateMessage();
-          break;
+      if(currentPage === 0){
+        setChatMessages(idOrderedMessages);
+      }else{
+        setChatMessages(prev => {
+          return idOrderedMessages.concat(prev);
+        });
       }
+    } catch (error) {
+      setAlert({ 
+        message: tryGetErrorMessage(error), 
+        type: 'error'
+      });
     }
-  }, [tab, setChatMessages, setMessageCount, setAlert, page, preventFetchMessages])
+    setLoadingMessage(false);
+  }, [setChatMessages, setAlert]);
 
-  
+  const pullPrivateMessage = useCallback(async (currentPage) => {
+    setLoadingMessage(true);
+    try {
+      const res = await Api.get(`/api/v1/messages/retrieve_messages/by/${tab.userName}/in/page/${currentPage}/size/${PAGE_SIZE}`);
+      const { totalPages, content } = res.data;
+      const idOrderedMessages = content.reverse();
+
+      setLengthPages(totalPages);
+      
+      if(currentPage === 0){
+        setChatMessages(idOrderedMessages);
+      }else{
+        setChatMessages(prev => {
+          return idOrderedMessages.concat(prev);
+        });
+      }
+    } catch (error) {
+      setAlert({ 
+        message: tryGetErrorMessage(error), 
+        type: 'error'
+      });
+    }
+    setLoadingMessage(false);
+  }, [setChatMessages, setAlert, tab]);
 
   const sendPublicMessage = useCallback((message, username) => {
     if (stompClient) {
@@ -113,38 +100,66 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
     }
   }, [stompClient, tab]);
 
-  const scroll = () => {
+  const scrollToBottom = () => {
     const COMPENSATION_HEIGHT = 150;
     const { offsetHeight, scrollHeight, scrollTop } = messages.current
-
+    
     if (scrollHeight <= scrollTop + offsetHeight + COMPENSATION_HEIGHT) {
       messages.current.scrollTo(0, scrollHeight);
     }
   };
 
-  const isEndOfList = () =>{
+  const isBottomMobileOrPc = () => {
     const list = messages.current;
     const isBottomOnMobile = isMobile && ((list.scrollHeight - Math.round(list.scrollTop)) === list.clientHeight);
     const isBottomOnPc = (list.scrollTop + list.clientHeight) >= list.scrollHeight;
+    return isBottomOnMobile || isBottomOnPc;
+  }
 
-    if (isBottomOnMobile || isBottomOnPc) {
+  const isEndOfList = () =>{
+    if (isBottomMobileOrPc()) {
       setChatMessages(prev => {
         if(prev.length > PAGE_SIZE){
-          setPreventFetchMessages(true);
           setPage(0);
           return prev.slice(PAGE_SIZE*(-1));
         }
-
         return prev;
       })
     }
   }
 
-  useLayoutEffect(() => {
-    scroll();
-  }, [chatMessages]);
+  useEffect(() => {
+    switch (tab) {
+      case null:
+        pullPublicMessage(0);
+        break;
+      default:
+        pullPrivateMessage(0);
+        break;
+    }
+  }, [tab, pullPrivateMessage, pullPublicMessage])
 
+  useEffect(() => {
+    if(page > 0){
+      switch (tab) {
+        case null:
+          pullPublicMessage(page);
+          break;
+        default:
+          pullPrivateMessage(page);
+          break;
+      }
+    }
+  }, [tab, pullPrivateMessage, pullPublicMessage, page])  
   
+  useEffect(() => {
+    setPage(0);
+    setChatMessages([]);
+  }, [tab, setChatMessages])
+
+  useLayoutEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
 
   return (
     <Box sx={{ marginTop: '20px' }}>
@@ -174,26 +189,26 @@ const ChatContent = ({ stompClient, tab, chatMessages, setChatMessages, setMessa
               paddingBottom: '10px',
               background: 'linear-gradient(to right, #00467F, #A5CC82)'
             }}>
-            {loadingMessage ?
-              <LoadingSpinner iconSx={{ backgroundColor: 'white', borderRadius: '50%', padding: 2 }} />
-              :
               <ChatMessagesList
-                setPreventFetchMessages={setPreventFetchMessages}
                 page={page}
                 setPage={setPage}
                 lengthPages={lengthPages}
                 chatMessages={chatMessages}
+                setChatMessages={setChatMessages}
                 username={userData?.userName}
               />
-            }
           </Paper>
         </Grid>
         <Grid item>
+        {loadingMessage ?
+          <LoadingSpinner iconSx={{ backgroundColor: 'white', borderRadius: '50%', padding: 2 }} />
+          :
           <MessageBox
             sendMessage={tab === null ? sendPublicMessage : sendPrivateMessage}
             placeholder={"Insira a mensagem..."}
             userName={userData?.userName}
           />
+        }
         </Grid>
       </Grid>
     </Box>

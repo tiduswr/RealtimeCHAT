@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -70,13 +71,13 @@ public class MessageService {
 
     @Transactional(readOnly = true)
     public Page<PublicMessageDTO> getPublicChatMessages(int page, int size){
-        Pageable pageable = createPageable(page, size, messageRepository.countPublicMessages());
+        Pageable pageable = createIdInversedPageable(page, size);
         return messageRepository.filterPublicChatMessages(pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<PrivateMessageDTO> getPrivateMessagesBy(String username, String receiver, int page, int size){
-        Pageable pageable = createPageable(page, size, messageRepository.countByUsernameAndReceiver(username, receiver));
+        Pageable pageable = createIdInversedPageable(page, size);
         return messageRepository.filterByUsernameAndReceiver(username, receiver, pageable);
     }
 
@@ -107,10 +108,9 @@ public class MessageService {
                 .countUnreadedMessagesByReceiver(username));
     }
 
-    private Pageable createPageable(int page, int size, long totalRows){
-        int totalPages = (int) Math.ceil((double) totalRows/size);
-        int currentPage = totalPages - (page - 1);
-        return PageRequest.of(page, size);
+    private Pageable createIdInversedPageable(int page, int size){
+        Sort sort = Sort.by(Sort.Order.desc("id"));
+        return PageRequest.of(page, size, sort);
     }
 
 }

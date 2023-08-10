@@ -14,6 +14,7 @@ const ChatPerspective = () => {
     const [connecting, sendPrivateMessagesRead, stompClient] = useWebSockets({ setTab, setContacts, setChatMessages });
 
     if (connecting) return null;
+    
     return (
         <>
             <MemberList
@@ -29,6 +30,7 @@ const ChatPerspective = () => {
                 sendPrivateMessagesRead={sendPrivateMessagesRead}
             />
             <ChatContent
+                setTab={setTab}
                 tab={tab}
                 stompClient={stompClient}
                 chatMessages={chatMessages}

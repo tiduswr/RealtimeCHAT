@@ -25,7 +25,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("SELECT new tiduswr.RealTimeChat.model.dto.PrivateMessageDTO(m.id, m.sender.userName, m.receiver.userName, m.message, m.read, m.createdAt, m.status) " +
             "FROM Message m " +
             "WHERE (m.sender.userName = :username OR m.sender.userName = :receiver) " +
-            "AND (m.receiver.userName = :username OR m.receiver.userName = :receiver) ORDER BY m.id")
+            "AND (m.receiver.userName = :username OR m.receiver.userName = :receiver)")
     Page<PrivateMessageDTO> filterByUsernameAndReceiver(@Param("username") String username, @Param("receiver") String receiver, Pageable pageable);
 
     @Query("SELECT count(m) FROM Message m " +
@@ -40,7 +40,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Query("SELECT new tiduswr.RealTimeChat.model.dto.PublicMessageDTO(m.id, m.message, m.sender.userName, m.read, m.createdAt, m.status) " +
             "FROM Message m " +
-            "WHERE m.receiver IS NULL ORDER BY m.id")
+            "WHERE m.receiver IS NULL")
     Page<PublicMessageDTO> filterPublicChatMessages(Pageable pageable);
 
     @Query("SELECT DISTINCT " +

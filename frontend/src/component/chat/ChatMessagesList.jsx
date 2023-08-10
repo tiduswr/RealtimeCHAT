@@ -1,16 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import MessageSentProvider from '../message/MessageSentProvider';
 import { Button, List, ListItem } from '@mui/material';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { Api } from '../../api';
+import ChatMessages from './ChatMessages';
 
-const ChatMessagesList = ({ chatMessages, username, page, setPage, lengthPages, setPreventFetchMessages }) => {
+const ChatMessagesList = ({ chatMessages, username, page, setPage, lengthPages }) => {
     const [usersData, setUsersData] = useState(new Map());
     const [loading, setLoading] = useState(true);
-
-    const lastMessageIsFromOtherUser = (lastSender, sender) => {
-        return lastSender !== null && lastSender === sender;
-    };
+    const [bottomChat, setBottomChat] = useState(null);
 
     const userImageApi = useCallback(async (senderName) => {
         try {
@@ -33,86 +30,55 @@ const ChatMessagesList = ({ chatMessages, username, page, setPage, lengthPages, 
 
     useEffect(() => {
         async function loadUsersData() {
+            let changed = false;
             const usersNames = new Set();
             chatMessages.forEach((message) => {
                 const sender = message.sender;
 
                 if (!usersData.has(sender)) {
+                    changed = true;
                     usersNames.add(sender);
                 }
             });
 
-            const usersDataPromises = Array.from(usersNames).map(async (un) => {
-                const image = await userImageApi(un);
-                const formalName = await userFormalNameApi(un);
-                return [un, { image, formalName }];
-            });
-
-            const usersDataArray = await Promise.all(usersDataPromises);
-            if (usersDataArray.length !== 0) {
-                setUsersData(prevUsersData => {
-                    const updatedUsersData = new Map(prevUsersData);
-
-                    usersDataArray.forEach(el => {
-                        updatedUsersData.set(el[0], el[1]);
+            if(changed){
+                const usersDataPromises = Array.from(usersNames).map(async (un) => {
+                    const image = await userImageApi(un);
+                    const formalName = await userFormalNameApi(un);
+                    return [un, { image, formalName }];
+                });
+    
+                const usersDataArray = await Promise.all(usersDataPromises);
+                if (usersDataArray.length !== 0) {
+                    setUsersData(prevUsersData => {
+                        const updatedUsersData = new Map(prevUsersData);
+    
+                        usersDataArray.forEach(el => {
+                            updatedUsersData.set(el[0], el[1]);
+                        })
+    
+                        return updatedUsersData;
                     })
-
-                    return updatedUsersData;
-                })
+                }
             }
+            
             setLoading(false);
+            if(page === 0 && bottomChat) 
+                bottomChat.scrollIntoView({behavior: 'smooth'});
         };
 
         loadUsersData();
-    }, [userImageApi, userFormalNameApi, chatMessages, usersData]);
-
-    if (loading) {
-        return null;
-    }
+    }, [userImageApi, userFormalNameApi, chatMessages, usersData, bottomChat, page]);
 
     const retrieveMoreMessages = () => {
         setPage(prev => {
-            setPreventFetchMessages(false);
             const newPage = ++prev;
             return newPage < lengthPages ? newPage : prev;
         })
     }
 
-    const renderRows = () => {
-        return chatMessages.map((chat, index) => {
-            const sender = chat.sender;
-            const userData = usersData.get(sender);
-
-            return (
-                <ListItem
-                    key={chat.id}
-                    sx={{
-                        display: 'flex',
-                        justifyContent: chat.sender === username ? 'flex-end' : 'flex-start',
-                        padding: 1,
-                        paddingLeft: chat.sender === username ? '10%' : '0%',
-                        paddingRight: chat.sender === username ? '0%' : '10%',
-                        paddingTop: !lastMessageIsFromOtherUser(
-                            index > 0 ? chatMessages[index - 1].sender : null,
-                            chat.sender
-                        )
-                            ? '10px'
-                            : '1px',
-                        paddingBottom: '1px',
-                    }}
-                >
-                    <MessageSentProvider
-                        message={chat.message}
-                        senderName={chat.sender}
-                        image={userData?.image}
-                        formalName={userData?.formalName}
-                        lastMessageSender={index > 0 ? chatMessages[index - 1].sender : null}
-                        read={chat.read}
-                        date={chat.createdAt}
-                    />
-                </ListItem>
-            );
-        })
+    if (loading) {
+        return null;
     }
 
     return (
@@ -133,8 +99,14 @@ const ChatMessagesList = ({ chatMessages, username, page, setPage, lengthPages, 
                     </Button>
                 }
             </ListItem>
-            {renderRows()}
-        </List>
+            <ChatMessages 
+                page={page}
+                chatMessages={chatMessages}
+                usersData={usersData} 
+                username={username}
+            />
+            <div id='bottom_chat' ref={setBottomChat}></div>
+        </ List>
     );
 };
 
