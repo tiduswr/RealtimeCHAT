@@ -1,0 +1,45 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-RcEurekaServerApplication<rc-eureka-server>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.tiduswr.rceurekaserver.RcEurekaServerApplication",
+            "projectName": "rc-eureka-server",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=37037 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=rc-eureka-server"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-RealtimeChatApplication<rc-user>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.tiduswr.rcuser.RealtimeChatApplication",
+            "projectName": "rc-user",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-RcAuthApplication<rc-auth>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.tiduswr.rcauth.RcAuthApplication",
+            "projectName": "rc-auth",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-RcGatewayApplication<rc-gateway>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.tiduswr.rcgateway.RcGatewayApplication",
+            "projectName": "rc-gateway",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
