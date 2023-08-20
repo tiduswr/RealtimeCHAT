@@ -11,10 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.tiduswr.rcuser.feignclients.JwtService;
 import com.tiduswr.rcuser.feignclients.PasswordService;
 import com.tiduswr.rcuser.model.AccessTokenRequest;
+import com.tiduswr.rcuser.model.UploadedImage;
+import com.tiduswr.rcuser.model.dto.ImageDTO;
 import com.tiduswr.rcuser.model.dto.PublicUserDTO;
 import com.tiduswr.rcuser.model.dto.UserDTO;
 import com.tiduswr.rcuser.model.dto.UserFormalNameRequestDTO;
 import com.tiduswr.rcuser.model.dto.UserPasswordRequestDTO;
+import com.tiduswr.rcuser.rabbitmq.ProfileImagePublisher;
 import com.tiduswr.rcuser.services.ImageService;
 import com.tiduswr.rcuser.services.UserService;
 
@@ -38,13 +41,18 @@ public class UserRestController {
     @Autowired
     private PasswordService passwordService;
 
+    @Autowired
+    private ProfileImagePublisher profileImagePublisher;
+
     @PostMapping("/upload_profile_image")
     @ResponseStatus(HttpStatus.OK)
     public void uploadImage(@RequestParam("image") MultipartFile image,
                             @RequestHeader("Authorization") String auth) throws IOException {
-                                
+        
         var username = jwtService.decodeAndExtractUsername(new AccessTokenRequest(auth));
-        imageService.saveProfileImage(username, image);
+        UploadedImage uploadedImage = imageService.validateAndConvert(image, username);
+        
+        profileImagePublisher.publishProfileImageSaveRequest(new ImageDTO(uploadedImage, username));
     }
 
     @GetMapping("/retrieve_profile_image/{username}")
