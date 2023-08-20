@@ -40,6 +40,16 @@
             "projectName": "rc-gateway",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-RcImageWorkerApplication<rc-image-worker>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.tiduswr.rcimageworker.RcImageWorkerApplication",
+            "projectName": "rc-image-worker",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

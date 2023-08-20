@@ -1,4 +1,4 @@
-package com.tiduswr.rcuser.repositories;
+package com.tiduswr.rcimageworker.repositories;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -19,6 +19,17 @@ public class LocalImageRepositoryImpl implements LocalImageRepository {
     private String FOLDER;
 
     @Override
+    public void store(String filename, BufferedImage image, String format) throws IOException {
+
+        File outputFile = new File(FOLDER + filename + "." + format);
+
+        checkImagesFolder();
+
+        ImageIO.write(image, format, outputFile);
+
+    }
+
+    @Override
     public byte[] retrieveImage(String filename, String format) throws IOException {
 
         String imagePath = FOLDER + filename + "." + format;
@@ -29,6 +40,13 @@ public class LocalImageRepositoryImpl implements LocalImageRepository {
         }
 
         return imageResource.getContentAsByteArray();
+    }
+
+    private void checkImagesFolder() {
+        File folder = new File(FOLDER);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
     }
 
 }
