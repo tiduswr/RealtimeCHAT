@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react'
 import { Api } from '../api';
 import { AuthContext } from './AuthProvider';
+import { USER_SERVICE_URI } from '../hostResolver';
 
 const UserContext = createContext();
 
@@ -14,12 +15,12 @@ const UserProvider = ({ children }) => {
     useEffect(() => {
         if (isAuthenticated) {
             setUserDataLoading(true);
-            Api.get('/users/retrieve_profile_info')
+            Api.get(`${USER_SERVICE_URI}/users/retrieve_profile_info`)
                 .then(res => {
                     if (res.status === 200) {
                         const data = res.data;
                         setUserData(data);
-                        Api.get(`/users/retrieve_profile_image/${data.userName}`, { responseType: 'arraybuffer' })
+                        Api.get(`${USER_SERVICE_URI}/users/retrieve_profile_image/${data.userName}`, { responseType: 'arraybuffer' })
                             .then((res) => {
                                 if (res.status === 200 && res.data) {
                                     const imageUrl = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }))
@@ -39,7 +40,7 @@ const UserProvider = ({ children }) => {
     const updateFormalName = useCallback(() => {
         if (userData) {
             setUserDataLoading(true);
-            Api.get('/users/retrieve_profile_info')
+            Api.get(`${USER_SERVICE_URI}/users/retrieve_profile_info`)
                 .then(res => {
                     if (res.status === 200) {
                         const data = res.data;
@@ -52,10 +53,10 @@ const UserProvider = ({ children }) => {
         }
     }, [userData])
 
-    const updateImage = useCallback(() => {
+    const updateImage = () => {
         if (isAuthenticated && userData) {
             setUserDataLoading(true);
-            Api.get(`/users/retrieve_profile_image/${userData.userName}`, { responseType: 'arraybuffer' })
+            Api.get(`${USER_SERVICE_URI}/users/retrieve_profile_image/${userData.userName}`, { responseType: 'arraybuffer' })
                 .then((res) => {
                     if (res.status === 200 && res.data) {
                         const imageUrl = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }))
@@ -66,7 +67,7 @@ const UserProvider = ({ children }) => {
                     setUserDataLoading(false);
                 })
         }
-    }, [userData, isAuthenticated])
+    }
 
     return (
         <UserContext.Provider value={{ userData, userImage, updateImage, updateFormalName, userDataLoading }}>

@@ -6,10 +6,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class RealtimeChatApplication {
+public class RcUserApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RealtimeChatApplication.class, args);
+		SpringApplication.run(RcUserApplication.class, args);
 	}
 
 }

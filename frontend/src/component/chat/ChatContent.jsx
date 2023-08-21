@@ -10,6 +10,7 @@ import { Api } from '../../api';
 import LoadingSpinner from '../../component/LoadingSpinner'
 import { NotificationContext } from '../../contexts/NotificationProvider';
 import { tryGetErrorMessage } from '../../errorParser';
+import { MESSAGE_SERVICE_URI } from '../../hostResolver';
 
 const PAGE_SIZE = 15;
 
@@ -26,7 +27,7 @@ const ChatContent = ({ stompClient, tab, setTab, chatMessages, setChatMessages, 
   const pullPublicMessage = useCallback(async (currentPage) => {
     setLoadingMessage(true);
     try {
-      const res = await Api.get(`/api/v1/messages/retrieve_messages/by/public/in/page/${currentPage}/size/${PAGE_SIZE}`);
+      const res = await Api.get(`${MESSAGE_SERVICE_URI}/messages/retrieve_messages/by/public/in/page/${currentPage}/size/${PAGE_SIZE}`);
       const { totalPages, content } = res.data;
       const idOrderedMessages = content.reverse();
 
@@ -51,7 +52,7 @@ const ChatContent = ({ stompClient, tab, setTab, chatMessages, setChatMessages, 
   const pullPrivateMessage = useCallback(async (currentPage) => {
     setLoadingMessage(true);
     try {
-      const res = await Api.get(`/api/v1/messages/retrieve_messages/by/${tab.userName}/in/page/${currentPage}/size/${PAGE_SIZE}`);
+      const res = await Api.get(`${MESSAGE_SERVICE_URI}/messages/retrieve_messages/by/${tab.userName}/in/page/${currentPage}/size/${PAGE_SIZE}`);
       const { totalPages, content } = res.data;
       const idOrderedMessages = content.reverse();
 

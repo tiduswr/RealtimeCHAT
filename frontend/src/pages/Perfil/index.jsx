@@ -8,17 +8,18 @@ import { Api } from '../../api';
 import { AuthContext } from '../../contexts/AuthProvider';
 import { NotificationContext } from '../../contexts/NotificationProvider';
 import { tryGetErrorMessage } from '../../errorParser';
+import { USER_SERVICE_URI } from '../../hostResolver';
 
 const Perfil = () => {
 
-  const { userImage, userData, updateImage, updateFormalName, userLoading } = useContext(UserContext);
+  const { userImage, userData, updateFormalName, userLoading } = useContext(UserContext);
   const { authLoading } = useContext(AuthContext);
   const { setAlert } = useContext(NotificationContext);
   const inputRef = useRef(null);
 
   const handleUpdateFormalName = (formalName, setFormalName, setError, setEditing) => {
     if (formalName !== undefined) {
-      Api.post('/users/edit/formalname', { formalName })
+      Api.post(`${USER_SERVICE_URI}/users/edit/formalname`, { formalName })
         .then((res) => {
           if (res.status === 204) {
             updateFormalName();
@@ -37,7 +38,7 @@ const Perfil = () => {
 
   const handleUpdatePassword = (password, setPassword, setError, setEditing) => {
     if (password !== undefined) {
-      Api.post('/users/edit/password', { password })
+      Api.post(`${USER_SERVICE_URI}/users/edit/password`, { password })
         .then((res) => {
           if (res.status === 204) {
             setEditing(false);
@@ -60,10 +61,9 @@ const Perfil = () => {
       const formData = new FormData();
       formData.append('image', file);
 
-      Api.post('/users/upload_profile_image', formData)
+      Api.post(`${USER_SERVICE_URI}/users/upload_profile_image`, formData)
         .then(res => {
           if (res.status === 200) {
-            updateImage();
             setAlert({ message: 'Imagem atualizada', type: 'success' })
           }
         }).catch(error => {

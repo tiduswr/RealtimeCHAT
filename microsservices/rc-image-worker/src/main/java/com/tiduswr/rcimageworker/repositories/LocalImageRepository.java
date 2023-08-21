@@ -9,6 +9,5 @@ import java.io.IOException;
 public interface LocalImageRepository {
 
     void store(String filename, BufferedImage file, String format) throws IOException;
-
     byte[] retrieveImage(String filename, String format) throws IOException;
 }

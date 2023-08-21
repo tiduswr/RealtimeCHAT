@@ -25,9 +25,4 @@ public class User implements Serializable {
     @Column(nullable = false, length = 100)
     private String formalName;
 
-    @JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "profile_image_id")
-    private ProfileImage profileImage;
-
 }

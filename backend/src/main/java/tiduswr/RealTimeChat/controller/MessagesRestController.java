@@ -14,7 +14,7 @@ import tiduswr.RealTimeChat.services.MessageService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/messages")
+@RequestMapping("/messages")
 @SuppressWarnings("unused")
 public class MessagesRestController {
 

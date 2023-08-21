@@ -13,10 +13,10 @@
         },
         {
             "type": "java",
-            "name": "Spring Boot-RealtimeChatApplication<rc-user>",
+            "name": "Spring Boot-RcUserApplication<rc-user>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "mainClass": "com.tiduswr.rcuser.RealtimeChatApplication",
+            "mainClass": "com.tiduswr.rcuser.RcUserApplication",
             "projectName": "rc-user",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
@@ -29,7 +29,8 @@
             "mainClass": "com.tiduswr.rcauth.RcAuthApplication",
             "projectName": "rc-auth",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=38765 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=rc-auth"
         },
         {
             "type": "java",
@@ -39,7 +40,8 @@
             "mainClass": "com.tiduswr.rcgateway.RcGatewayApplication",
             "projectName": "rc-gateway",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=35135 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=rc-gateway"
         },
         {
             "type": "java",
@@ -48,6 +50,27 @@
             "cwd": "${workspaceFolder}",
             "mainClass": "com.tiduswr.rcimageworker.RcImageWorkerApplication",
             "projectName": "rc-image-worker",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=41797 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=rc-image-worker"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-RcMessageWorkerApplication<rc-message-worker>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.tiduswr.rcmessageworker.RcMessageWorkerApplication",
+            "projectName": "rc-message-worker",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-RcMessageApplication<rc-message>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.tiduswr.rcmessage.RcMessageApplication",
+            "projectName": "rc-message",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }

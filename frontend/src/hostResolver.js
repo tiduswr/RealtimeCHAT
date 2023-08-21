@@ -9,6 +9,11 @@ const resolveHost = () => {
     }
   }
 
+const AUTH_SERVICE_URI = process.env.REACT_APP_BACKEND_TYPE === "MICROSSERVICE" ? "apis/auth/v1" : "";
+const USER_SERVICE_URI = process.env.REACT_APP_BACKEND_TYPE === "MICROSSERVICE" ? "apis/user/v1" : "";
+const MESSAGE_SERVICE_URI = process.env.REACT_APP_BACKEND_TYPE === "MICROSSERVICE" ? "apis/message/v1" : "";
+
 export {
-  resolveHost
+  resolveHost, AUTH_SERVICE_URI,
+  USER_SERVICE_URI, MESSAGE_SERVICE_URI
 }

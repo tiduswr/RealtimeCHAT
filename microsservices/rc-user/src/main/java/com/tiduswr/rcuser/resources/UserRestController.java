@@ -18,8 +18,10 @@ import com.tiduswr.rcuser.model.dto.UserDTO;
 import com.tiduswr.rcuser.model.dto.UserFormalNameRequestDTO;
 import com.tiduswr.rcuser.model.dto.UserPasswordRequestDTO;
 import com.tiduswr.rcuser.rabbitmq.ProfileImagePublisher;
-import com.tiduswr.rcuser.services.ImageService;
 import com.tiduswr.rcuser.services.UserService;
+import com.tiduswr.rcuser.util.ImageValidator;
+import com.tiduswr.rcuser.exceptions.ImageNotSupportedException;
+import com.tiduswr.rcuser.feignclients.ImageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,13 +46,16 @@ public class UserRestController {
     @Autowired
     private ProfileImagePublisher profileImagePublisher;
 
+    @Autowired
+    private ImageValidator imageValidator;
+
     @PostMapping("/upload_profile_image")
     @ResponseStatus(HttpStatus.OK)
     public void uploadImage(@RequestParam("image") MultipartFile image,
-                            @RequestHeader("Authorization") String auth) throws IOException {
+                            @RequestHeader("Authorization") String auth) throws ImageNotSupportedException {
         
         var username = jwtService.decodeAndExtractUsername(new AccessTokenRequest(auth));
-        UploadedImage uploadedImage = imageService.validateAndConvert(image, username);
+        UploadedImage uploadedImage = imageValidator.validateAndConvert(image, username);
         
         profileImagePublisher.publishProfileImageSaveRequest(new ImageDTO(uploadedImage, username));
     }
@@ -58,7 +63,7 @@ public class UserRestController {
     @GetMapping("/retrieve_profile_image/{username}")
     @ResponseStatus(HttpStatus.OK)
     public byte[] getImage(@PathVariable("username") String username,
-                           HttpServletResponse response) throws IOException {
+                           HttpServletResponse response) throws ImageNotSupportedException {
 
         response.setContentType(MediaType.IMAGE_PNG_VALUE);
         return imageService.retrieveProfileImageByUsername(username);

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 
-import { resolveHost } from './hostResolver'
+import { resolveHost, AUTH_SERVICE_URI } from './hostResolver'
 
 let refreshing = false;
 let refreshPromise = null;
@@ -12,7 +12,7 @@ axios.defaults.headers.common = {
 };
 
 const Auth = axios.create({
-  baseURL: baseURL,
+  baseURL: `${baseURL}${AUTH_SERVICE_URI}`,
 });
 
 const Api = axios.create({
@@ -22,7 +22,7 @@ const Api = axios.create({
 const refreshToken = async () => {
   try {
     const refreshToken = JSON.parse(localStorage.getItem('refresh_token'));
-    const response = await Auth.post('/refresh_token', {
+    const response = await Auth.post(`/refresh_token`, {
       refreshToken: refreshToken.jwtToken,
     });
 
@@ -46,7 +46,7 @@ const refreshToken = async () => {
 
 const handleTokenRefreshError = () => {
   if (localStorage.getItem('refresh_token')) {
-    Auth.post('/quit', {
+    Auth.post(`/quit`, {
       refreshToken: JSON.parse(localStorage.getItem('refresh_token')).jwtToken,
     });
   }
