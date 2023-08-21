@@ -11,6 +11,7 @@ import { Api } from '../api'
 import LoadingSpinner from './LoadingSpinner'
 import { NotificationContext } from '../contexts/NotificationProvider';
 import { tryGetErrorMessage } from '../errorParser';
+import { USER_SERVICE_URI } from '../hostResolver';
 
 const ModalCustom = styled(Box)({
   position: 'absolute',
@@ -40,7 +41,7 @@ export default function BasicModal({ closeFunc, setContacts }) {
   const handleSearch = () => {
 
     setLoading(true);
-    Api.get(`/users/find/${searchValue}`)
+    Api.get(`${USER_SERVICE_URI}/users/find/${searchValue}`)
       .then((res) => {
         if (res.status === 200) {
           setOptions([...res.data]);
@@ -60,7 +61,7 @@ export default function BasicModal({ closeFunc, setContacts }) {
     const selectedOption = options[index];
 
     setLoading(true);
-    Api.get(`/users/retrieve_profile_image/${selectedOption.userName}`, { responseType: 'arraybuffer' })
+    Api.get(`${USER_SERVICE_URI}/users/retrieve_profile_image/${selectedOption.userName}`, { responseType: 'arraybuffer' })
       .then(res => {
         if (res.status === 200) {
           const image = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }));

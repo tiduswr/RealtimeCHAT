@@ -6,6 +6,7 @@ import { UserContext } from '../contexts/UserProvider';
 import { Context } from '../pages/App';
 import { NotificationContext } from '../contexts/NotificationProvider';
 import { tryGetErrorMessage } from '../errorParser';
+import { MESSAGE_SERVICE_URI } from '../hostResolver';
 
 export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessages, setStompClient }) => {
   const { setMessageCount, setUnreadMessageCount } = useContext(Context);
@@ -73,7 +74,7 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
 
           setTab(tab => {
             let receiver = tab.userName;
-            Api.put(`/api/v1/messages/mark_messages_as_read/${receiver}`)
+            Api.put(`${MESSAGE_SERVICE_URI}//messages/mark_messages_as_read/${receiver}`)
               .then(res => {
                 if (res.status === 204) {
                   sendPrivateMessagesRead(userData.userName, receiver)

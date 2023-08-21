@@ -19,12 +19,13 @@ public class GatewayRoutesConfig {
         return builder.routes()
             .route("rc-auth-route", r -> buildDeafultPredicateSpec(r, "rc-auth", "auth"))
             .route("rc-user-route", r -> buildDeafultPredicateSpec(r, "rc-user", "user"))
+            .route("rc-message-route", r -> buildDeafultPredicateSpec(r, "rc-message", "message"))
             .build();
     }
 
     private Buildable<Route> buildDeafultPredicateSpec(PredicateSpec r, String serviceName, String apiName){
-        return r.path(String.format("/apis/v1/%s/**", apiName))
-            .filters(f -> f.rewritePath(String.format("/apis/v1/%s/(?<segment>.*)", apiName), "/$\\{segment}"))            
+        return r.path(String.format("/apis/%s/v1/**", apiName))
+            .filters(f -> f.rewritePath(String.format("/apis/%s/v1/(?<segment>.*)", apiName), "/$\\{segment}"))            
             .metadata(RouteMetadataUtils.RESPONSE_TIMEOUT_ATTR, GLOBAL_TIMEOUT)
             .metadata(RouteMetadataUtils.CONNECT_TIMEOUT_ATTR, GLOBAL_TIMEOUT)
             .uri(String.format("lb://%s", serviceName.toUpperCase()));

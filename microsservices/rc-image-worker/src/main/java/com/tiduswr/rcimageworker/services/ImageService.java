@@ -36,10 +36,7 @@ public class ImageService {
 
     @Transactional
     public void saveProfileImage(String username, UploadedImage file) throws IOException, ImageNotSupportedException{
-
-        if(file.isEmpty())
-            throw new ImageNotSupportedException("A imagem não é suportada ou o ContentType está vazio.");
-
+        
         var user = userService.findUserByUsername(username);
         ProfileImage profileImage = profileImageRepository
                 .findByUserName(username)
@@ -47,38 +44,30 @@ public class ImageService {
                     profileImageRepository.save(ProfileImage.builder().user(user).build())
                 );
 
-        BufferedImage image = getImage(file)
-                .map(this::convertToPng)
-                .orElseThrow(() ->
-                        new ImageNotSupportedException("A imagem não é suportada ou o ContentType está vazio.")
-                );
+        BufferedImage image = convertToPng(getImage(file));
 
         localFileRepository.store(profileImage.getId().toString(), image, "png");
 
     }
 
     @Transactional(readOnly = true)
-    public byte[] retrieveProfileImageByUsername(String username) throws IOException {
+    public byte[] retrieveProfileImageByUsername(String username) throws ImageNotSupportedException {
         Optional<ProfileImage> profileImage = profileImageRepository.findByUserName(username);
 
         if(profileImage.isPresent()){
             ProfileImage image = profileImage.get();
-            return localFileRepository.retrieveImage(image.getId().toString(), "png");
-        }else{
-            return null;
+            
+            try{
+                return localFileRepository.retrieveImage(image.getId().toString(), "png");
+            }catch(IOException ex){
+                throw new ImageNotSupportedException("A imagem não é suportada ou o ContentType está vazio.");
+            }
         }
+        return new byte[]{};
     }
 
-    private Optional<BufferedImage> getImage(UploadedImage file) {
-        if (file.getContentType() != null && !file.getContentType().startsWith("image"))
-            return Optional.empty();
-
-        try {
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(file.getImageBytes()));
-            return image != null ? Optional.of(image) : Optional.empty();
-        } catch (Exception ex) {
-            return Optional.empty();
-        }
+    private BufferedImage getImage(UploadedImage file) throws IOException {
+        return ImageIO.read(new ByteArrayInputStream(file.getImageBytes()));
     }
 
     private BufferedImage convertToPng(BufferedImage image) {

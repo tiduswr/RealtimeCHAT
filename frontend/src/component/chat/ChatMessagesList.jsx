@@ -3,6 +3,7 @@ import { Button, List, ListItem } from '@mui/material';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { Api } from '../../api';
 import ChatMessages from './ChatMessages';
+import { USER_SERVICE_URI } from '../../hostResolver';
 
 const ChatMessagesList = ({ chatMessages, username, page, setPage, lengthPages }) => {
     const [usersData, setUsersData] = useState(new Map());
@@ -11,7 +12,7 @@ const ChatMessagesList = ({ chatMessages, username, page, setPage, lengthPages }
 
     const userImageApi = useCallback(async (senderName) => {
         try {
-            const res = await Api.get(`/users/retrieve_profile_image/${senderName}`, { responseType: 'arraybuffer' });
+            const res = await Api.get(`${USER_SERVICE_URI}/users/retrieve_profile_image/${senderName}`, { responseType: 'arraybuffer' });
             const imageUrl = URL.createObjectURL(new Blob([res.data], { type: 'image/png' }));
             return imageUrl;
         } catch (error) {
@@ -21,7 +22,7 @@ const ChatMessagesList = ({ chatMessages, username, page, setPage, lengthPages }
 
     const userFormalNameApi = useCallback(async (senderName) => {
         try {
-            const res = await Api.get(`/users/retrieve_profile_info/${senderName}`);
+            const res = await Api.get(`${USER_SERVICE_URI}/users/retrieve_profile_info/${senderName}`);
             return res.data.formalName;
         } catch (error) {
             return 'ERROR';

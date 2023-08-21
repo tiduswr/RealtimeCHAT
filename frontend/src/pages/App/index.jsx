@@ -7,6 +7,7 @@ import { AuthContext } from '../../contexts/AuthProvider';
 import { UserContext } from '../../contexts/UserProvider';
 import { NotificationContext } from '../../contexts/NotificationProvider';
 import { tryGetErrorMessage } from '../../errorParser';
+import { MESSAGE_SERVICE_URI } from '../../hostResolver';
 
 const Context = createContext();
 
@@ -31,7 +32,7 @@ const App = () => {
   useEffect(() => {
     const countUnreadedMessages = async () => {
       try {
-        const res = await Api.get('/api/v1/messages/retrieve_count/total');
+        const res = await Api.get(`${MESSAGE_SERVICE_URI}/messages/retrieve_count/total`);
         const data = res.data.count;
         setUnreadMessageCount(parseInt(data));
       } catch (error) {

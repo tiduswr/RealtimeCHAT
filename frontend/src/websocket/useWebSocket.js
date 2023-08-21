@@ -8,6 +8,7 @@ import { UserContext } from '../contexts/UserProvider';
 import { useWebsocketMessagesConfig } from './useWebsocketMessagesConfig';
 import { NotificationContext } from '../contexts/NotificationProvider';
 import { tryGetErrorMessage } from '../errorParser';
+import { MESSAGE_SERVICE_URI } from '../hostResolver';
 
 const RECONECT_DELAY = 5000;
 
@@ -29,7 +30,7 @@ export const useWebSockets = ({ setTab, setContacts, setChatMessages }) => {
         const ACCESS_TOKEN = await handleTokenRefreshRequest();
 
         if (ACCESS_TOKEN) {
-          const sock = new SockJS(`${baseURL}ws/`);
+          const sock = new SockJS(`${baseURL}${MESSAGE_SERVICE_URI === "" ? "" : `${MESSAGE_SERVICE_URI}/`}ws/`);
           
           setStompClient(prev => {
             const client = over(sock, { heartbeatIncoming: 4000, heartbeatOutgoing: 4000, reconnect_delay: RECONECT_DELAY });

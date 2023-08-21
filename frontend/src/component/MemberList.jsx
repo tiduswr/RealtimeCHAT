@@ -10,6 +10,7 @@ import { UserContext } from '../contexts/UserProvider';
 import { fetchUnreadedMessageCount, fetchUserImage } from './../calls/chatInfoCalls'
 import { NotificationContext } from '../contexts/NotificationProvider';
 import { tryGetErrorMessage } from '../errorParser';
+import { MESSAGE_SERVICE_URI } from '../hostResolver';
 
 const ListButtonStyled = styled(ListItemButton)({
   "&.Mui-selected": {
@@ -36,7 +37,7 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
 
     const getUsers = async () => {
       try {
-        const usersResponse = await Api.get('/api/v1/messages/retrieve_users/talked');
+        const usersResponse = await Api.get(`${MESSAGE_SERVICE_URI}/messages/retrieve_users/talked`);
         const usersData = usersResponse.data;
 
         const modifiedUsersData = await Promise.all(usersData.map(async e => {
@@ -72,7 +73,7 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
   useEffect(() => {
     const retrieveMessagesCount = async () => {
       try {
-        const res = await Api.get('/api/v1/messages/retrieve_count/total')
+        const res = await Api.get(`${MESSAGE_SERVICE_URI}/messages/retrieve_count/total`)
         const data = res.data.count;
         setUnreadMessageCount(parseInt(data));
       } catch (error) {
@@ -86,7 +87,7 @@ const MemberList = ({ setTab, tab, closeMenu, isMenuOpen, contacts, setContacts,
   }, [setUnreadMessageCount, setAlert])
 
   const handleTabChange = (userName, formalName) => {
-    Api.put(`/api/v1/messages/mark_messages_as_read/${userName}`)
+    Api.put(`${MESSAGE_SERVICE_URI}/messages/mark_messages_as_read/${userName}`)
       .then(res => {
         if (res.status === 204) {
           sendPrivateMessagesRead(userData.userName, userName)
