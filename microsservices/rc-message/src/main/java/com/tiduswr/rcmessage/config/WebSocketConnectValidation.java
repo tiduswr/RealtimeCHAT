@@ -1,17 +1,16 @@
 package com.tiduswr.rcmessage.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import com.tiduswr.rcmessage.exceptions.StompAccessorNotFound;
 import com.tiduswr.rcmessage.exceptions.StompConnectionRefused;
-import com.tiduswr.rcmessage.feignclients.InternalUserDetailsService;
 import com.tiduswr.rcmessage.feignclients.JwtService;
 import com.tiduswr.rcmessage.model.AccessTokenRequest;
 import com.tiduswr.rcmessage.model.UserPrincipal;
@@ -22,11 +21,11 @@ import java.util.List;
 @Component
 public class WebSocketConnectValidation implements ChannelInterceptor {
 
-    @Autowired
-    private JwtService jwtService;
-    
-    @Autowired
-    private InternalUserDetailsService internalUserDetailsService;
+    private final JwtService jwtService;
+
+    public WebSocketConnectValidation(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -49,8 +48,26 @@ public class WebSocketConnectValidation implements ChannelInterceptor {
                     return message;
                 }
             }
+        }else if(isAValidHeartbeat(accessor)){
+            return message;
         }
         throw new StompAccessorNotFound("Mensagem inválida");
+    }
+
+    private boolean isAValidHeartbeat(StompHeaderAccessor accessor){
+        final Object SIMP_MESSAGE_TYPE = accessor.getHeader("simpMessageType");
+        final boolean USER_IS_NOT_NULL = !(accessor.getUser() == null);
+
+        if(SIMP_MESSAGE_TYPE != null){
+            final String EXPECTED_SIMP_MESSAGE_TYPE = "HEARTBEAT";
+            final String INCOMING_SIMP_MESSAGE_TYPE = SIMP_MESSAGE_TYPE.toString();
+
+            if(EXPECTED_SIMP_MESSAGE_TYPE.equalsIgnoreCase(INCOMING_SIMP_MESSAGE_TYPE) && USER_IS_NOT_NULL){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Message<?> validateSubscription(Principal user, String destination, Message<?> message) throws StompConnectionRefused{
@@ -78,10 +95,12 @@ public class WebSocketConnectValidation implements ChannelInterceptor {
                 authToken = authToken.substring(7);
                 try{
                     String username = jwtService.decodeAndExtractUsername(new AccessTokenRequest(authToken));
-                    UserDetails user = internalUserDetailsService.createUserDetails(username);
+                    List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("USER"));
 
                     if(jwtService.validateAccessToken(new AccessTokenRequest(authToken), username)){
-                        accessor.setUser(new UserPrincipal(user));
+                        accessor.setUser(new UserPrincipal(
+                            new User(username, "", authorities)
+                        ));
                         return message;
                     }
                 }catch (Exception e){

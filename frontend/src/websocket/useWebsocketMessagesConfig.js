@@ -11,7 +11,7 @@ import { MESSAGE_SERVICE_URI } from '../hostResolver';
 export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessages, setStompClient }) => {
   const { setMessageCount, setUnreadMessageCount } = useContext(Context);
   const { setAlert } = useContext(NotificationContext);
-  const { userData } = useContext(UserContext);
+  const { setUserData, userData } = useContext(UserContext);
 
   const sendPrivateMessagesRead = useCallback((username, receiver) => {
     setStompClient(stompClient => {
@@ -131,10 +131,13 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
   }, [setAlert]);
 
   const onConnected = useCallback((client) => {
-    client.subscribe(`/user/${userData.userName}/private`, onPrivateMessageReceived);
-    client.subscribe('/chatroom/public', onPublicMessageReceived);
-    client.subscribe(`/user/${userData.userName}/errors`, onError);
-  }, [onPrivateMessageReceived, onPublicMessageReceived, userData, onError])
+    setUserData(userData => {
+      client.subscribe(`/user/${userData.userName}/private`, onPrivateMessageReceived);
+      client.subscribe('/chatroom/public', onPublicMessageReceived);
+      client.subscribe(`/user/${userData.userName}/errors`, onError);
+      return userData;
+    })
+  }, [onPrivateMessageReceived, onPublicMessageReceived, setUserData, onError])
 
   return {
     sendPrivateMessagesRead, onConnected

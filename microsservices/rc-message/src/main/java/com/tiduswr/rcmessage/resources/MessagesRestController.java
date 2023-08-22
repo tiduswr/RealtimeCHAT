@@ -34,13 +34,7 @@ public class MessagesRestController {
         String username = jwtService.decodeAndExtractUsername(new AccessTokenRequest(auth));
         return messageService.getPrivateMessagesBy(username, receiver);
     }
-
-    @GetMapping("/test")
-    @ResponseStatus(HttpStatus.OK)
-    public String test(@RequestHeader("Authorization") String auth){
-        return jwtService.decodeAndExtractUsername(new AccessTokenRequest(auth));
-    }
-
+    
     @GetMapping("/retrieve_messages/by/{receiver}/in/page/{page}/size/{size}")
     @ResponseStatus(HttpStatus.OK)
     public Page<PrivateMessageDTO> getMessageByReceiver(@PathVariable("receiver") String receiver,
