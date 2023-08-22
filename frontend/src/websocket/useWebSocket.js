@@ -33,9 +33,9 @@ export const useWebSockets = ({ setTab, setContacts, setChatMessages }) => {
           const sock = new SockJS(`${baseURL}${MESSAGE_SERVICE_URI === "" ? "" : `${MESSAGE_SERVICE_URI}/`}ws/`);
           
           setStompClient(prev => {
-            const client = over(sock, { heartbeatIncoming: 4000, heartbeatOutgoing: 4000, reconnect_delay: RECONECT_DELAY });
+            const client = over(sock, {});
 
-            // client.debug = null;
+            //client.debug = null;
 
             client.connect(
               { 'Authorization': `Bearer ${ACCESS_TOKEN.jwtToken}` }, () => onConnected(client),

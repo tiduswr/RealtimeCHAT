@@ -1,14 +1,14 @@
 package com.tiduswr.rcgateway.config.security;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.hc.core5.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
@@ -20,17 +20,23 @@ import reactor.core.publisher.Mono;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-	@Autowired
-	private AuthenticationManager reactiveManager;
+	private final AuthenticationManager reactiveManager;
+	private final SecurityContextRepository securityContextRepository;
+	private final List<String> CORS_HOSTS;
 
-	@Autowired
-	private SecurityContextRepository securityContextRepository;
+	public SecurityConfig(@Value("${cors.hosts}") String corsHosts, 
+		SecurityContextRepository securityContextRepository,
+		AuthenticationManager reactiveManager){
+		
+			this.securityContextRepository = securityContextRepository;
+			this.reactiveManager = reactiveManager;
+			this.CORS_HOSTS = Arrays.asList(corsHosts.split(","));	
+	}
 
     @Bean
 	SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
 
-		return http
-			.csrf(CsrfSpec::disable)
+		return http.csrf(csrf -> csrf.disable())
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.exceptionHandling(ex -> 
 				ex.authenticationEntryPoint((swe, e) -> 
@@ -50,7 +56,7 @@ public class SecurityConfig {
 
 	private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(CORS_HOSTS);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

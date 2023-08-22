@@ -70,7 +70,7 @@ const UserProvider = ({ children }) => {
     }
 
     return (
-        <UserContext.Provider value={{ userData, userImage, updateImage, updateFormalName, userDataLoading }}>
+        <UserContext.Provider value={{ setUserData, userData, userImage, updateImage, updateFormalName, userDataLoading }}>
             {children}
         </UserContext.Provider>
     );

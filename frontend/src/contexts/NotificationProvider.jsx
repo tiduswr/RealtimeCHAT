@@ -15,7 +15,7 @@ const NotificationProvider = ({ children }) => {
         <NotificationContext.Provider value={{setAlert}}>
             { children }
             <ToastContainer
-                position="top-right"
+                position="top-center"
                 autoClose={TIME_IN_SCREEN}
                 hideProgressBar={false}
                 newestOnTop={false}

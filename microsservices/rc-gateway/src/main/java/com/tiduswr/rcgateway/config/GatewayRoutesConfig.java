@@ -25,7 +25,8 @@ public class GatewayRoutesConfig {
 
     private Buildable<Route> buildDeafultPredicateSpec(PredicateSpec r, String serviceName, String apiName){
         return r.path(String.format("/apis/%s/v1/**", apiName))
-            .filters(f -> f.rewritePath(String.format("/apis/%s/v1/(?<segment>.*)", apiName), "/$\\{segment}"))            
+            .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin Access-Control-Allow-Credentials", "RETAIN_UNIQUE") 
+                            .rewritePath(String.format("/apis/%s/v1/(?<segment>.*)", apiName), "/$\\{segment}"))            
             .metadata(RouteMetadataUtils.RESPONSE_TIMEOUT_ATTR, GLOBAL_TIMEOUT)
             .metadata(RouteMetadataUtils.CONNECT_TIMEOUT_ATTR, GLOBAL_TIMEOUT)
             .uri(String.format("lb://%s", serviceName.toUpperCase()));
