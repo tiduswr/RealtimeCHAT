@@ -43,7 +43,7 @@ const AuthProvider = ({ children }) => {
                     setIsAuthenticated(true);
                 }
             }).catch(ex => {
-                if (ex.response?.status === 403) {
+                if ([400, 403, 404, 401].includes(ex.response?.status)) {
                     setAlert({ type: 'error', message: 'Credenciais inválidas!' });
                 } else {
                     setAlert({type: 'error', message: tryGetErrorMessage(ex, 'O servidor não respondeu a solicitação.')});

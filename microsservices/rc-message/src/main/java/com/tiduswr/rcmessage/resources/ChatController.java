@@ -38,7 +38,7 @@ public class ChatController {
     private MessageService messageService;
 
     @MessageMapping("/message")
-    @SendTo("/chatroom/public")
+    @SendTo("/topic/chatroom.public")
     public PublicMessageDTO receivePublicMessage(@Payload @Valid PublicMessageDTO message,
                                                  Principal principal){
 
@@ -50,20 +50,19 @@ public class ChatController {
                                                    Principal principal){
 
         if(message.getStatus().equals(Status.READ)){
-            simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private",  message);
+            simpMessagingTemplate.convertAndSend("/topic/private." + message.getReceiver(), message);
             return message;
         }
 
         PrivateMessageDTO persistedMessage = messageService.createPrivateMessage(message, principal.getName());
-        simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/private", persistedMessage);
-        simpMessagingTemplate.convertAndSendToUser(persistedMessage.getSender(), "/private", persistedMessage);
+        simpMessagingTemplate.convertAndSend("/topic/private." + message.getReceiver(), persistedMessage);
+        simpMessagingTemplate.convertAndSend("/topic/private." + persistedMessage.getSender(), persistedMessage);
         return persistedMessage;
     }
 
     @MessageExceptionHandler
     public void handleMethodArgumentNotValidException(MethodArgumentNotValidException exception, Principal principal) {
-        simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                "/errors", new ErrorMessage(exception));
+        simpMessagingTemplate.convertAndSend("/topic/errors." + principal.getName(), new ErrorMessage(exception));
     }
 
 }

@@ -65,7 +65,7 @@ const ChatMessagesList = ({ chatMessages, username, page, setPage, lengthPages }
             
             setLoading(false);
             if(page === 0 && bottomChat) 
-                bottomChat.scrollIntoView({behavior: 'smooth'});
+                bottomChat.scrollIntoView();
         };
 
         loadUsersData();

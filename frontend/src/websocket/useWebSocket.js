@@ -45,6 +45,7 @@ export const useWebSockets = ({ setTab, setContacts, setChatMessages }) => {
                 if(errorMessage.startsWith("Whoops! Lost connection")){
                   errorMessage = "Oops! Conexão perdida, tentando reconectar..."
                   setTimeout(async () => {
+                    
                     await connectToStompServer();
                   }, RECONECT_DELAY);
                 }
@@ -68,16 +69,9 @@ export const useWebSockets = ({ setTab, setContacts, setChatMessages }) => {
       })
     }
     return () => {
-      setStompClient(prev => {
-        if (prev) {
-          if (prev.connected) prev.disconnect();
-          return null;
-        }
-        return prev;
-      })
-
+      if (stompClient && stompClient.connected) stompClient.disconnect();
     };
-  }, [userData, onConnected, setAlert]);
+  }, [userData, onConnected, setAlert, stompClient]);
 
   return [connecting, sendPrivateMessagesRead, stompClient];
 }

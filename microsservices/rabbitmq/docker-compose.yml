@@ -3,11 +3,12 @@ version: "3.8"
 services:
   rabbitmq:
     container_name: "rabbitmq-server"
-    image: rabbitmq:3.9.7-management
+    image: rc-rabbitmq:v1
     ports:
       - 5672:5672
       - 15672:15672
       - 45806:15672
+      - 61613:61613
     restart: always
     environment:
       - RABBITMQ_USER=guest

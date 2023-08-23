@@ -9,7 +9,7 @@ const UserProvider = ({ children }) => {
 
     const [userData, setUserData] = useState(null);
     const [userImage, setUserImage] = useState(null);
-    const [userDataLoading, setUserDataLoading] = useState(true);
+    const [userDataLoading, setUserDataLoading] = useState(false);
     const { isAuthenticated } = useContext(AuthContext);
 
     useEffect(() => {
@@ -68,6 +68,8 @@ const UserProvider = ({ children }) => {
                 })
         }
     }
+
+    if(userDataLoading) return null;
 
     return (
         <UserContext.Provider value={{ setUserData, userData, userImage, updateImage, updateFormalName, userDataLoading }}>
