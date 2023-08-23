@@ -42,8 +42,8 @@ public class WebSocketConnectValidation implements ChannelInterceptor {
 
                     return validateSubscription(accessor.getUser(), accessor.getDestination(), message);
                 }default -> {
-                    if(accessor.getUser() == null){
-                        throw new StompConnectionRefused("Conexão inválida!");}
+                    if(accessor.getUser() == null)
+                        throw new StompConnectionRefused("Conexão inválida!");
 
                     return message;
                 }
@@ -78,8 +78,8 @@ public class WebSocketConnectValidation implements ChannelInterceptor {
                 .stream()
                 .anyMatch(endpoint -> endpoint.equalsIgnoreCase(destination));
 
-        //if(!endpointIsValid)
-            //throw new StompConnectionRefused("Endpoint de conexão não permitido para seu usuário!");
+        if(!endpointIsValid)
+            throw new StompConnectionRefused("Endpoint de conexão não permitido para seu usuário!");
 
         return message;
     }
