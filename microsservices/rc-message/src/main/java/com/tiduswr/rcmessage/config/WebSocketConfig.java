@@ -8,8 +8,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.session.Session;
-import org.springframework.session.web.socket.config.annotation.AbstractSessionWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurationSupport;
@@ -22,21 +20,21 @@ import com.tiduswr.rcmessage.feignclients.UserService;
 @Configuration
 @EnableWebSocketMessageBroker
 @SuppressWarnings("unused")
-public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfigurer<Session>  {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 
     private final JwtService jwtService;
     private final WebSocketConnectValidation webSocketConnectValidation;
     
-    @Value("${broker.host}")
+    @Value("${spring.rabbitmq.host}")
     private String brokerHost;
 
-    @Value("${broker.port}")
+    @Value("${spring.rabbitmq.port}")
     private int brokerPort;
 
-    @Value("${broker.username}")
+    @Value("${spring.rabbitmq.username}")
     private String brokerUser;
 
-    @Value("${broker.password}")
+    @Value("${spring.rabbitmq.password}")
     private String brokerPass;
 
     public WebSocketConfig(@Lazy JwtService jwtService) {
@@ -45,7 +43,7 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
     }
 
     @Override
-	protected void configureStompEndpoints(StompEndpointRegistry registry) {
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
@@ -54,19 +52,14 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app");
-                
-        //registry.enableSimpleBroker("/chatroom", "/user", "/queue");
-        //Enable distributed messages between Websocket Instances
-        registry.enableStompBrokerRelay("/chatroom", "/user", "/queue")
+        registry.setApplicationDestinationPrefixes("/app")
+            .enableStompBrokerRelay("/topic")
             .setRelayHost(brokerHost)
             .setRelayPort(brokerPort)
             .setClientLogin(brokerUser)
             .setClientPasscode(brokerPass)
             .setSystemLogin(brokerUser)
             .setSystemPasscode(brokerPass);
-
-        registry.setUserDestinationPrefix("/user");
     }
 
     @Override

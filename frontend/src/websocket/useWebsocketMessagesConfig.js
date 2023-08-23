@@ -6,7 +6,10 @@ import { UserContext } from '../contexts/UserProvider';
 import { Context } from '../pages/App';
 import { NotificationContext } from '../contexts/NotificationProvider';
 import { tryGetErrorMessage } from '../errorParser';
-import { MESSAGE_SERVICE_URI } from '../hostResolver';
+import { MESSAGE_SERVICE_URI, 
+          websocketPrivateSubscribtionResolver, 
+          websocketPublicSubscribtionResolver,
+          websocketErrorSubscribtionResolver } from '../hostResolver';
 
 export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessages, setStompClient }) => {
   const { setMessageCount, setUnreadMessageCount } = useContext(Context);
@@ -132,9 +135,9 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
 
   const onConnected = useCallback((client) => {
     setUserData(userData => {
-      client.subscribe(`/user/${userData.userName}/private`, onPrivateMessageReceived);
-      client.subscribe('/chatroom/public', onPublicMessageReceived);
-      client.subscribe(`/user/${userData.userName}/errors`, onError);
+      client.subscribe(websocketPrivateSubscribtionResolver(userData.userName), onPrivateMessageReceived);
+      client.subscribe(websocketPublicSubscribtionResolver(), onPublicMessageReceived);
+      client.subscribe(websocketErrorSubscribtionResolver(userData.userName), onError);
       return userData;
     })
   }, [onPrivateMessageReceived, onPublicMessageReceived, setUserData, onError])

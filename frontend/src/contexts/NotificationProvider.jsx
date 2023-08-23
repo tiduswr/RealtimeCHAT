@@ -8,7 +8,9 @@ const TIME_IN_SCREEN = 3000;
 const NotificationProvider = ({ children }) => {
 
     const setAlert = (obj) =>{
-        toast[obj.type](obj?.message ? obj.message : "Eita");
+        if (!document.hidden) {
+            toast[obj.type](obj?.message ? obj.message : "");
+        }
     }
 
     return (

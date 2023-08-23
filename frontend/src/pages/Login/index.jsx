@@ -34,8 +34,7 @@ export default function Login() {
     } else {
       setComponentVisible(true);
     }
-    // eslint-disable-next-line
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   if (!componentVisible) {
     return null;
