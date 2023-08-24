@@ -76,10 +76,11 @@ export default function Register() {
 
           if (userName) {
             setUserNameError(userName);
-          }
-          if (password) {
+          }else if (password) {
             const arr = password.split(',');
             setPasswordError(arr.join(', '));
+          }else{
+            setAlert({type: 'error', message: data.message});
           }
         }
       } else {

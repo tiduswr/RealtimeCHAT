@@ -1,10 +1,11 @@
 package com.tiduswr.rcuser.resources;
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +24,7 @@ import com.tiduswr.rcuser.util.ImageValidator;
 import com.tiduswr.rcuser.exceptions.ImageNotSupportedException;
 import com.tiduswr.rcuser.feignclients.ImageService;
 
-import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @RestController
@@ -62,11 +63,17 @@ public class UserRestController {
 
     @GetMapping("/retrieve_profile_image/{username}")
     @ResponseStatus(HttpStatus.OK)
-    public byte[] getImage(@PathVariable("username") String username,
-                           HttpServletResponse response) throws ImageNotSupportedException {
+    public ResponseEntity<?> getImage(@PathVariable("username") String username) throws ImageNotSupportedException {
 
-        response.setContentType(MediaType.IMAGE_PNG_VALUE);
-        return imageService.retrieveProfileImageByUsername(username);
+        HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_PNG);
+
+            byte[] imageBytes = imageService.retrieveProfileImageByUsername(username);
+            
+            return ResponseEntity.ok()
+                .headers(headers)
+                .body(imageBytes);
+
     }
 
     @GetMapping("/retrieve_profile_info/{username}")

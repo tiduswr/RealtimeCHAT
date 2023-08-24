@@ -48,6 +48,17 @@ export const useWebSockets = ({ setTab, setContacts, setChatMessages }) => {
                     
                     await connectToStompServer();
                   }, RECONECT_DELAY);
+                }else{
+                  if(errorMessage?.message){
+                    errorMessage = errorMessage.message;
+                  }else{
+                    try{
+                      const payload = JSON.parse(errorMessage);
+                      errorMessage = payload.message;
+                    }catch(ex){
+                      errorMessage = "Erro na conexão!";
+                    }
+                  }
                 }
 
                 setAlert({message: errorMessage, type: 'error'});

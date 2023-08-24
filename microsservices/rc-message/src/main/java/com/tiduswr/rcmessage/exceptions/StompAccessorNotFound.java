@@ -1,8 +1,6 @@
 package com.tiduswr.rcmessage.exceptions;
 
-import org.springframework.messaging.MessageDeliveryException;
-
-public class StompAccessorNotFound extends MessageDeliveryException {
+public class StompAccessorNotFound extends RuntimeException  {
     public StompAccessorNotFound(String message) {
         super(message);
     }

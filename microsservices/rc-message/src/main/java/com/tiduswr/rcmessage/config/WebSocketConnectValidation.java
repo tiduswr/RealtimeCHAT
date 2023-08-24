@@ -105,10 +105,21 @@ public class WebSocketConnectValidation implements ChannelInterceptor {
                         return message;
                     }
                 }catch (Exception e){
-                    throw new StompConnectionRefused(e.getMessage());
+                    throw new StompConnectionRefused(parseFeignErrorMessage(e.getMessage()));
                 }
             }
         }
         throw new StompConnectionRefused("Token de acesso inválido ou expirado!");
+    }
+
+    private String parseFeignErrorMessage(String message){
+        try{
+            if(!message.contains(":")) return message;
+            String[] splited = message.split(":");
+            String result = splited[2];
+            return result.replace(" [", "").replace("]", "");
+        }catch(Exception ex){
+            return message;
+        }
     }
 }
