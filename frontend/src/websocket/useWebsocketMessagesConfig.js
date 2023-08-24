@@ -127,8 +127,21 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
   }, [setChatMessages, setTab]);
 
   const onError = useCallback((error) => {
+    let errorMessage = error?.body ? error.body : error;
+
+    if(errorMessage?.message){
+      errorMessage = errorMessage.message;
+    }else{
+      try{
+        const payload = JSON.parse(errorMessage);
+        errorMessage = payload.message;
+      }catch(ex){
+        errorMessage = tryGetErrorMessage(error);
+      }
+    }
+
     setAlert({ 
-      message: tryGetErrorMessage(error), 
+      message: message, 
       type: 'error'
     });
   }, [setAlert]);

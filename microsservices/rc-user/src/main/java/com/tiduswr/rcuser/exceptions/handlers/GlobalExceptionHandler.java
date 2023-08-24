@@ -6,17 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tiduswr.rcuser.exceptions.GenericFeignException;
 import com.tiduswr.rcuser.exceptions.ImageNotSupportedException;
 import com.tiduswr.rcuser.exceptions.UserNotFoundException;
 import com.tiduswr.rcuser.exceptions.UsernameAlreadyExists;
 import com.tiduswr.rcuser.model.ErrorResponse;
 
-import feign.FeignException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,30 +24,6 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(FeignException.class)
-    public ResponseEntity<ErrorResponse> handleFeignException(FeignException ex) {
-        if (ex.responseBody().isPresent() && ex.responseBody().get() != null) {
-            try {
-                String content = ex.contentUTF8();
-                ErrorResponse errorResponse = null;
-
-                if(content.contains("timestamp")){
-                    var generic = new ObjectMapper().readValue(content, GenericFeignException.class);
-                    errorResponse = new ErrorResponse("error", generic.error());
-                }else{
-                    errorResponse = new ObjectMapper().readValue(content, ErrorResponse.class);
-                }
-
-                return ResponseEntity.status(ex.status()).body(errorResponse);
-            } catch (IOException e) {
-                logger.error("Function handleFeignException", e);
-            }
-        }
-        ErrorResponse errorResponse = new ErrorResponse("error", ex.getMessage());
-        return ResponseEntity.status(ex.status()).body(errorResponse);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
 
@@ -69,7 +41,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UsernameAlreadyExists.class)
     public ResponseEntity<ErrorResponse> handleUsernameAlreadyExists(UsernameAlreadyExists ex) {
 
@@ -80,7 +51,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
 
@@ -91,7 +61,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(ImageNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleImageNotSupportedException(ImageNotSupportedException ex) {
 
@@ -102,14 +71,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(errorResponse);
     }
 
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(IOException.class)
     public ResponseEntity<ErrorResponse> handleImageNotSupportedException(IOException ex) {
 
         Map<String, String> errors = new HashMap<>();
         errors.put("image", ex.getMessage());
 
-        ErrorResponse errorResponse = new ErrorResponse(errors, "UNSUPPORTED_MEDIA_TYPE");
+        ErrorResponse errorResponse = new ErrorResponse(errors, "SERVICE_UNAVAILABLE");
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
     }
 

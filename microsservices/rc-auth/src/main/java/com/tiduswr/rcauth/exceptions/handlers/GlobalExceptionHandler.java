@@ -26,31 +26,6 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
-    @ExceptionHandler(FeignException.class)
-    public ResponseEntity<ErrorResponse> handleFeignException(FeignException ex) {
-        if (ex.responseBody().isPresent() && ex.responseBody().get() != null) {
-            try {
-                String content = ex.contentUTF8();
-                ErrorResponse errorResponse = null;
-
-                if(content.contains("timestamp")){
-                    var generic = new ObjectMapper().readValue(content, GenericFeignException.class);
-                    errorResponse = new ErrorResponse("error", generic.error());
-                }else{
-                    errorResponse = new ObjectMapper().readValue(content, ErrorResponse.class);
-                }
-
-                return ResponseEntity.status(ex.status()).body(errorResponse);
-            } catch (IOException e) {
-                logger.error("Function handleFeignException", e);
-            }
-        }
-        ErrorResponse errorResponse = new ErrorResponse("error", ex.getMessage());
-        return ResponseEntity.status(ex.status()).body(errorResponse);
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
