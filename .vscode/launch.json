@@ -73,6 +73,16 @@
             "projectName": "rc-message",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-RcEmailWorkerApplication<rc-email-worker>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.tiduswr.rcemailworker.RcEmailWorkerApplication",
+            "projectName": "rc-email-worker",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
