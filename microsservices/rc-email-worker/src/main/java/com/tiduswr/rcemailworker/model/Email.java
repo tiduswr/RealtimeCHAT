@@ -29,23 +29,26 @@ public class Email implements Serializable{
     private Long id;
 
     @Column(nullable = false)
-    private String from;
+    private Long ownerId;
 
     @Column(nullable = false)
-    private String to;
+    private String emailFrom;
 
     @Column(nullable = false)
-    private String subject;
+    private String emailTo;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String text;
+    @Column(nullable = false)
+    private String emailSubject;
+
+    @Column(columnDefinition = "TEXT", nullable = true)
+    private String emailText;
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDateTime sendAt;
+    private LocalDateTime emailSendAt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EmailStatus status;
+    private EmailStatus emailStatus;
 
 }
