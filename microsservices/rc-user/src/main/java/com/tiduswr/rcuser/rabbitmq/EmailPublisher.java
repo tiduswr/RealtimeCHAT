@@ -1,4 +1,4 @@
-package com.tiduswr.rcauth.rabbitmq;
+package com.tiduswr.rcuser.rabbitmq;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.tiduswr.rcauth.config.EmailConfigRabbitMQ;
-import com.tiduswr.rcauth.models.dto.EmailDTO;
+import com.tiduswr.rcuser.config.EmailConfigRabbitMQ;
+import com.tiduswr.rcuser.model.dto.EmailDTO;
 
 import jakarta.validation.Valid;
 

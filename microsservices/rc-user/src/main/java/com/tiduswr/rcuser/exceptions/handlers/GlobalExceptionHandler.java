@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.tiduswr.rcuser.exceptions.EmailAlreadyExists;
 import com.tiduswr.rcuser.exceptions.ImageNotSupportedException;
 import com.tiduswr.rcuser.exceptions.UserNotFoundException;
 import com.tiduswr.rcuser.exceptions.UsernameAlreadyExists;
@@ -46,6 +47,16 @@ public class GlobalExceptionHandler {
 
         Map<String, String> errors = new HashMap<>();
         errors.put("userName", ex.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(errors, "VALIDATION_FAILED");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(EmailAlreadyExists.class)
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExists ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("email", ex.getMessage());
 
         ErrorResponse errorResponse = new ErrorResponse(errors, "VALIDATION_FAILED");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);

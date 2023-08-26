@@ -12,6 +12,7 @@ import com.tiduswr.rcuser.exceptions.UserNotFoundException;
 import com.tiduswr.rcuser.model.User;
 import com.tiduswr.rcuser.model.dto.InternalUserDTO;
 import com.tiduswr.rcuser.model.dto.UserDTO;
+import com.tiduswr.rcuser.model.dto.UserPasswordRequestDTO;
 import com.tiduswr.rcuser.services.UserService;
 
 @RestController
@@ -23,7 +24,7 @@ public class InternalUserService {
 
     @PostMapping("/create")
     public InternalUserDTO createUser(@RequestBody InternalUserDTO dto){
-        UserDTO userDTO = userService.createUser(UserDTO.from(dto));
+        UserDTO userDTO = userService.createUser(UserDTO.from(dto), dto.getRedirectUrl());
 
         return InternalUserDTO.from(userDTO);
     }
@@ -31,6 +32,16 @@ public class InternalUserService {
     @GetMapping("/find/by/username/{username}")
     public User findUserByUsername(@PathVariable String username) throws UserNotFoundException{
         return userService.findUserByUsername(username);
+    }
+
+    @GetMapping("/find/by/email/{email}")
+    public User findUserByEmail(@PathVariable String email){
+        return userService.findUserByEmail(email);
+    }
+
+    @PostMapping("/update/password/{username}")
+    public void updatePassword(@RequestBody UserPasswordRequestDTO request, @PathVariable("username") String username){
+        userService.updatePassword(username, request);
     }
 
 }

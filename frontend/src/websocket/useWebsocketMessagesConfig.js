@@ -141,7 +141,7 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
     }
 
     setAlert({ 
-      message: message, 
+      message: errorMessage, 
       type: 'error'
     });
   }, [setAlert]);

@@ -20,4 +20,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT DISTINCT new com.tiduswr.rcuser.model.dto.PublicUserDTO(u.userName, u.formalName) FROM User u " +
             "WHERE (u.userName LIKE %:query% OR u.formalName LIKE %:query%) AND NOT u.userName = :ownUsername")
     List<PublicUserDTO> findUsersByUsernameOrFormalname(@Param("query") String query, @Param("ownUsername") String ownUsername);
+
+    @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email")
+    boolean existsByEmail(@Param("email") String email);
+
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findUserByEmail(@Param("email") String email);
 }

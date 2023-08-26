@@ -1,4 +1,4 @@
-package com.tiduswr.rcauth.config;
+package com.tiduswr.rcuser.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -21,13 +21,13 @@ public class EmailConfigRabbitMQ {
     }
 
     @Bean
-    Queue queue(){
+    Queue emailQueue(){
         return QueueBuilder.durable(QUEUE).build();
     }
 
     @Bean
-    Binding binding(){
-        return BindingBuilder.bind(queue())
+    Binding emailBinding(){
+        return BindingBuilder.bind(emailQueue())
             .to(emailExchange())
             .with(ROUTING_KEY);
     }

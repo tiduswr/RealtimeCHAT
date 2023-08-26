@@ -1,8 +1,8 @@
-package com.tiduswr.rcauth.models.dto;
+package com.tiduswr.rcuser.model.dto;
 
 import java.io.Serializable;
 
-import com.tiduswr.rcauth.models.EmailTemplateType;
+import com.tiduswr.rcuser.model.EmailTemplateType;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

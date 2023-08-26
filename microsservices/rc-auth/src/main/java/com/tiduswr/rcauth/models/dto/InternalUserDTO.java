@@ -12,12 +12,16 @@ public class InternalUserDTO {
         private String userName;
         private String password;
         private String formalName;
+        private String email;
+        private String redirectUrl;
 
         public static InternalUserDTO from(UserDTO u) {
                 return InternalUserDTO.builder()
+                        .redirectUrl(u.getRedirectUrl())
                         .formalName(u.getFormalName())
                         .password(u.getPassword())
                         .userName(u.getUserName())
+                        .email(u.getEmail())
                         .id(u.getId())
                         .build();
         }
