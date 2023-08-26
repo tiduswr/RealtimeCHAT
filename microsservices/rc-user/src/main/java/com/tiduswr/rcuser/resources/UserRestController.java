@@ -16,6 +16,7 @@ import com.tiduswr.rcuser.model.UploadedImage;
 import com.tiduswr.rcuser.model.dto.ImageDTO;
 import com.tiduswr.rcuser.model.dto.PublicUserDTO;
 import com.tiduswr.rcuser.model.dto.UserDTO;
+import com.tiduswr.rcuser.model.dto.UserEmailRequestDTO;
 import com.tiduswr.rcuser.model.dto.UserFormalNameRequestDTO;
 import com.tiduswr.rcuser.model.dto.UserPasswordRequestDTO;
 import com.tiduswr.rcuser.rabbitmq.ProfileImagePublisher;

@@ -12,6 +12,7 @@ import Container from '@mui/material/Container';
 import PublicHeader from '../../component/PublicHeader';
 import { Auth } from '../../api';
 import { NotificationContext } from '../../contexts/NotificationProvider';
+import { resolveBaseHost } from '../../hostResolver';
 
 export default function Register() {
 
@@ -19,6 +20,7 @@ export default function Register() {
   const [passwordError, setPasswordError] = useState(undefined);
   const [userNameError, setUserNameError] = useState(undefined);
   const [formalNameError, setFormalNameError] = useState(undefined);
+  const [emailError, setEmailError] = useState(undefined);
 
   const formIsEmpty = (form) => {
     if (form.userName === '') {
@@ -29,6 +31,9 @@ export default function Register() {
     }
     if (form.password1 === '' || form.password2 === '') {
       setPasswordError('As senhas são obrigatórias.');
+    }
+    if(form.email === ''){
+      setEmailError('O email é obrigatório.')
     }
 
     return form.userName === '' ||
@@ -52,7 +57,8 @@ export default function Register() {
       userName: data.get('userName'),
       password1: data.get('password_01'),
       password2: data.get('password_02'),
-      formalName: data.get('formalName')
+      formalName: data.get('formalName'),
+      email: data.get('email')
     };
 
     if (formIsEmpty(form)) return;
@@ -61,7 +67,9 @@ export default function Register() {
     Auth.post('/signup', {
       userName: form.userName,
       password: form.password1,
-      formalName: form.formalName
+      formalName: form.formalName,
+      email: form.email,
+      redirectUrl: `${resolveBaseHost()}/`
     }).then((res) => {
       if (res.status === 201) {
         cleanFields();
@@ -72,15 +80,18 @@ export default function Register() {
 
       if (data) {
         if (data.error) {
-          const { userName, password } = data.error;
+          const { userName, password, email } = data.error;
 
           if (userName) {
             setUserNameError(userName);
           }else if (password) {
             const arr = password.split(',');
             setPasswordError(arr.join(', '));
-          }else{
-            setAlert({type: 'error', message: data.message});
+          }else if(email){
+            setEmailError(email);
+          }
+          else{
+            setAlert({type: 'error', message: data.message !== '' ? data.message : "Erro no servidor"});
           }
         }
       } else {
@@ -94,14 +105,22 @@ export default function Register() {
     document.getElementById('password_01').value = '';
     document.getElementById('password_02').value = '';
     document.getElementById('userName').value = '';
+    document.getElementById('email').value = '';
     setUserNameError(undefined);
     setFormalNameError(undefined);
     setPasswordError(undefined);
+    setEmailError(undefined);
   }
 
   const cleanPasswordsOnChange = (e) => {
     if (passwordError) {
       setPasswordError(undefined);
+    }
+  }
+
+  const cleanEmailOnChange = (e) => {
+    if (passwordError) {
+      setEmailError(undefined);
     }
   }
 
@@ -163,6 +182,19 @@ export default function Register() {
                   name="userName"
                   autoComplete="userName"
                   onChange={cleanUserNameOnChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  error={emailError ? true : false}
+                  helperText={emailError ? emailError : undefined}
+                  label="E-Mail"
+                  name="email"
+                  autoComplete="email"
+                  onChange={cleanEmailOnChange}
                 />
               </Grid>
               <Grid item xs={12}>

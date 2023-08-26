@@ -2,6 +2,10 @@ package com.tiduswr.rcuser.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.tiduswr.rcuser.model.User;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
@@ -20,8 +24,13 @@ public class UserDTO {
 
         private String formalName;
 
+        private String email;
+
+        private String redirectUrl;
+
         public static UserDTO from(User u) {
                 return UserDTO.builder()
+                        .email(u.getEmail())
                         .formalName(u.getFormalName())
                         .password(u.getPassword())
                         .userName(u.getUserName())
@@ -31,6 +40,8 @@ public class UserDTO {
 
         public static UserDTO from(InternalUserDTO u) {
                 return UserDTO.builder()
+                        .redirectUrl(u.getRedirectUrl())
+                        .email(u.getEmail())
                         .formalName(u.getFormalName())
                         .password(u.getPassword())
                         .userName(u.getUserName())

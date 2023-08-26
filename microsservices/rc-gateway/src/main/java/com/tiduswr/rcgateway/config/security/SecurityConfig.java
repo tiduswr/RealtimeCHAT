@@ -49,6 +49,7 @@ public class SecurityConfig {
 			.authorizeExchange(auth -> auth
 				.pathMatchers("/apis/auth/v1/auth", "/apis/auth/v1/signup", "/apis/auth/v1/refresh_token", 
 					"/apis/auth/v1/quit", "/apis/message/v1/ws", "/apis/message/v1/ws/**").permitAll()
+				.pathMatchers(".*internal.*").denyAll()
                 .anyExchange().authenticated()
 			).authenticationManager(reactiveManager)
 			.securityContextRepository(securityContextRepository).build();

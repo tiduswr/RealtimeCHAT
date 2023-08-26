@@ -10,11 +10,13 @@ import com.tiduswr.rcauth.models.AuthRequest;
 import com.tiduswr.rcauth.models.AuthResponse;
 import com.tiduswr.rcauth.models.RefreshTokenRequest;
 import com.tiduswr.rcauth.models.dto.InternalUserDTO;
+import com.tiduswr.rcauth.models.dto.PasswordRecoverRequest;
 import com.tiduswr.rcauth.models.dto.UserDTO;
+import com.tiduswr.rcauth.models.dto.UserPasswordRequestDTO;
+import com.tiduswr.rcauth.rabbitmq.EmailPublisher;
 import com.tiduswr.rcauth.services.AuthService;
 
 @RestController
-@SuppressWarnings("unused")
 public class AuthRestController {
 
     @Autowired
@@ -26,7 +28,7 @@ public class AuthRestController {
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDTO createUser(@Valid @RequestBody UserDTO user) {
-        InternalUserDTO userDTO = userService.createUser(InternalUserDTO.from(user));
+        var userDTO = userService.createUser(InternalUserDTO.from(user));
         return UserDTO.from(userDTO);
     }
 
@@ -36,6 +38,19 @@ public class AuthRestController {
         return authService.authUser(authRequest);
     }
 
+    @PostMapping("/recover_password")
+    @ResponseStatus(HttpStatus.OK)
+    public void recoverPassword(@RequestBody PasswordRecoverRequest request){
+        authService.generateRecoverPasswordRequest(request);
+    }
+
+    @PostMapping("/recover_password/validate/{code}")
+    @ResponseStatus(HttpStatus.OK)
+    public void validateRecoverPasswordRequest(@RequestBody UserPasswordRequestDTO request, 
+        @PathVariable("code") String code){
+        authService.validateRecoverPasswordRequest(code, request);
+    }
+    
     @PostMapping("/refresh_token")
     @ResponseStatus(HttpStatus.OK)
     public AuthResponse refreshToken(@RequestBody RefreshTokenRequest request){

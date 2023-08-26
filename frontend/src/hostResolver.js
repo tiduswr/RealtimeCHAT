@@ -3,10 +3,14 @@ const resolveHost = () => {
       return `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_BACKEND_URI}`;
     } else {
       // For Docker and Kubernetes enviroments
-      const port = window.location.port ||
-        (window.location.protocol === 'https:' ? '443' : '80');
-      return `${window.location.protocol}//${window.location.hostname}:${port}/backend/`;
+      return `${resolveBaseHost()}/backend/`;
     }
+  }
+
+  const resolveBaseHost = () => {
+    const port = window.location.port ||
+        (window.location.protocol === 'https:' ? '443' : '80');
+    return `${window.location.protocol}//${window.location.hostname}:${port}`;
   }
 
 const AUTH_SERVICE_URI = process.env.REACT_APP_BACKEND_TYPE === "MICROSSERVICE" ? "apis/auth/v1" : "";
@@ -32,5 +36,5 @@ export {
   resolveHost, AUTH_SERVICE_URI,
   USER_SERVICE_URI, MESSAGE_SERVICE_URI,
   websocketPrivateSubscribtionResolver, websocketPublicSubscribtionResolver,
-  websocketErrorSubscribtionResolver
+  websocketErrorSubscribtionResolver, resolveBaseHost
 }
