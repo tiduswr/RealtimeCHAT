@@ -13,6 +13,8 @@ import NotFound from '../pages/NotFound';
 import Perfil from '../pages/Perfil';
 import Register from '../pages/Register'
 import { NotificationProvider } from '../contexts/NotificationProvider'
+import RecoverPassword from '../pages/RecoverPassword';
+import ValidateRecoverPassword from '../pages/ValidateRecoverPassword';
 
 const theme = createTheme({
   typography: {
@@ -45,6 +47,8 @@ const Main = () => {
                   element={<PrivateRoute><Perfil /></PrivateRoute>} />
                 <Route path='/' element={<Home />} />
                 <Route path='/login' element={<Login />} />
+                <Route path='/recover-password' element={<RecoverPassword />} />
+                <Route path='/validate/recover-password/:passwordCode' element={<ValidateRecoverPassword />} />
                 <Route path='/register' element={<Register />} />
                 <Route path='*' element={<NotFound />} />
               </Routes>

@@ -12,4 +12,8 @@ public interface PasswordRecoverRepository extends JpaRepository<PasswordRecover
 
     @Query("SELECT pr FROM PasswordRecover pr WHERE pr.code = :code")
     Optional<PasswordRecover> findByCode(@Param("code") String code);
+
+    @Query("SELECT pr FROM PasswordRecover pr WHERE pr.user.id = :userId")
+    Optional<PasswordRecover> findByUserId(@Param("userId") Long userId);
+    
 }

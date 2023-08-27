@@ -12,17 +12,17 @@ import { USER_SERVICE_URI } from '../../hostResolver';
 
 const Perfil = () => {
 
-  const { userImage, userData, updateFormalName, userLoading } = useContext(UserContext);
+  const { userImage, userData, updateUserData, userLoading } = useContext(UserContext);
   const { authLoading } = useContext(AuthContext);
   const { setAlert } = useContext(NotificationContext);
   const inputRef = useRef(null);
 
-  const handleUpdateFormalName = (formalName, setFormalName, setError, setEditing) => {
+  const handleupdateUserData = (formalName, setFormalName, setError, setEditing) => {
     if (formalName !== undefined) {
       Api.post(`${USER_SERVICE_URI}/users/edit/formalname`, { formalName })
         .then((res) => {
           if (res.status === 204) {
-            updateFormalName();
+            updateUserData();
             setEditing(false);
             setError(undefined);
             setFormalName(formalName);
@@ -30,6 +30,25 @@ const Perfil = () => {
           }
         }).catch((error) => {
           const fieldError = error.response.data.error.formalName;
+          setError(fieldError);
+          setEditing(true);
+        })
+    }
+  }
+
+  const handleUpdateEmail = (email, setEmail, setError, setEditing) => {
+    if (email !== undefined) {
+      Api.post(`${USER_SERVICE_URI}/users/edit/email`, { email })
+        .then((res) => {
+          if (res.status === 204) {
+            updateUserData();
+            setEditing(false);
+            setError(undefined);
+            setEmail(email);
+            setAlert({ message: 'Email atualizado', type: 'success' })
+          }
+        }).catch((error) => {
+          const fieldError = error.response.data.error.email;
           setError(fieldError);
           setEditing(true);
         })
@@ -142,9 +161,14 @@ const Perfil = () => {
               />
             </IconButton>
             <EditableTextField
-              handleUpdate={handleUpdateFormalName}
+              handleUpdate={handleupdateUserData}
               defaultValue={userData?.formalName ? userData.formalName : ''}
               label='Nome Formal'
+            />
+            <EditableTextField
+              handleUpdate={handleUpdateEmail}
+              defaultValue={userData?.email ? userData.email: ''}
+              label='Email'
             />
             <EditableTextField
               handleUpdate={handleUpdatePassword}

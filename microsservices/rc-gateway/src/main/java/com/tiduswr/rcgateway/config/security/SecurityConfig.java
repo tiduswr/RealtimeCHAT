@@ -23,7 +23,8 @@ public class SecurityConfig {
 	private final AuthenticationManager reactiveManager;
 	private final SecurityContextRepository securityContextRepository;
 	private final List<String> CORS_HOSTS;
-
+	private final String[] PUBLIC_ENDPOINTS;
+	
 	public SecurityConfig(@Value("${cors.hosts}") String corsHosts, 
 		SecurityContextRepository securityContextRepository,
 		AuthenticationManager reactiveManager){
@@ -31,6 +32,16 @@ public class SecurityConfig {
 			this.securityContextRepository = securityContextRepository;
 			this.reactiveManager = reactiveManager;
 			this.CORS_HOSTS = Arrays.asList(corsHosts.split(","));	
+			this.PUBLIC_ENDPOINTS = new String[]{
+				"/apis/auth/v1/auth", 
+				"/apis/auth/v1/signup", 
+				"/apis/auth/v1/refresh_token", 
+				"/apis/auth/v1/quit", 
+				"/apis/auth/v1/recover_password",
+				"/apis/auth/v1/recover_password/validate/**",
+				"/apis/message/v1/ws", 
+				"/apis/message/v1/ws/**"
+			};
 	}
 
     @Bean
@@ -47,8 +58,7 @@ public class SecurityConfig {
 			).formLogin(form -> form.disable())
 			.httpBasic(basic -> basic.disable())
 			.authorizeExchange(auth -> auth
-				.pathMatchers("/apis/auth/v1/auth", "/apis/auth/v1/signup", "/apis/auth/v1/refresh_token", 
-					"/apis/auth/v1/quit", "/apis/message/v1/ws", "/apis/message/v1/ws/**").permitAll()
+				.pathMatchers(PUBLIC_ENDPOINTS).permitAll()
 				.pathMatchers(".*internal.*").denyAll()
                 .anyExchange().authenticated()
 			).authenticationManager(reactiveManager)

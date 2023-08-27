@@ -43,5 +43,4 @@ public class InternalUserService {
     public void updatePassword(@RequestBody UserPasswordRequestDTO request, @PathVariable("username") String username){
         userService.updatePassword(username, request);
     }
-
 }

@@ -21,6 +21,7 @@ public class FeignExceptionHandler{
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<ErrorResponse> handleFeignException(FeignException ex) {
         ErrorResponse errorResponse = null;
+        System.out.println(ex);
         if (ex.responseBody().isPresent() && ex.responseBody().get() != null) {
             try {
                 String content = ex.contentUTF8();

@@ -39,7 +39,8 @@ export default function Register() {
     return form.userName === '' ||
       form.password1 === '' ||
       form.password2 === '' ||
-      form.formalName === '';
+      form.formalName === '' ||
+      form.email === '';
   }
 
   const passwordsNotMatch = (form) => {
@@ -119,7 +120,7 @@ export default function Register() {
   }
 
   const cleanEmailOnChange = (e) => {
-    if (passwordError) {
+    if (emailError) {
       setEmailError(undefined);
     }
   }

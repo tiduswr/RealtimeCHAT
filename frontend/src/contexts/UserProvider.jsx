@@ -37,7 +37,7 @@ const UserProvider = ({ children }) => {
         }
     }, [isAuthenticated])
 
-    const updateFormalName = useCallback(() => {
+    const updateUserData = useCallback(() => {
         if (userData) {
             setUserDataLoading(true);
             Api.get(`${USER_SERVICE_URI}/users/retrieve_profile_info`)
@@ -72,7 +72,7 @@ const UserProvider = ({ children }) => {
     if(userDataLoading) return null;
 
     return (
-        <UserContext.Provider value={{ setUserData, userData, userImage, updateImage, updateFormalName, userDataLoading }}>
+        <UserContext.Provider value={{ setUserData, userData, userImage, updateImage, updateUserData, userDataLoading }}>
             {children}
         </UserContext.Provider>
     );
