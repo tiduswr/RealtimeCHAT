@@ -14,6 +14,7 @@ import com.tiduswr.rcuser.exceptions.UsernameAlreadyExists;
 import com.tiduswr.rcuser.model.EmailTemplateType;
 import com.tiduswr.rcuser.model.User;
 import com.tiduswr.rcuser.model.dto.EmailDTO;
+import com.tiduswr.rcuser.model.dto.EmailRequestDTO;
 import com.tiduswr.rcuser.model.dto.InternalUserDTO;
 import com.tiduswr.rcuser.model.dto.PublicUserDTO;
 import com.tiduswr.rcuser.model.dto.UserDTO;
@@ -22,6 +23,8 @@ import com.tiduswr.rcuser.model.dto.UserFormalNameRequestDTO;
 import com.tiduswr.rcuser.model.dto.UserPasswordRequestDTO;
 import com.tiduswr.rcuser.rabbitmq.EmailPublisher;
 import com.tiduswr.rcuser.repositories.UserRepository;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -140,6 +143,18 @@ public class UserService {
     public User findUserByEmail(String email) {
         return userRepository.findUserByEmail(email)
             .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
+    }
+
+    @Transactional
+    public void updateEmail(String username, EmailRequestDTO dto) {
+        User user = findUserByUsername(username);
+
+        if(userRepository.existsByEmailExceptUser(dto.getEmail(), username))
+            throw new EmailAlreadyExists("Esse email ja está em uso.");
+
+        user.setEmail(dto.getEmail());
+
+        userRepository.save(user);
     }
 
     private EmailDTO generateWelcomeEmail(UserDTO dto, String redirectUrl){

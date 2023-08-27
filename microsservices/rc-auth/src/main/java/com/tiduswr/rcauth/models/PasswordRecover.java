@@ -31,4 +31,8 @@ public class PasswordRecover {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public PasswordRecover(User user){
+        this.user = user;
+    }
+
 }

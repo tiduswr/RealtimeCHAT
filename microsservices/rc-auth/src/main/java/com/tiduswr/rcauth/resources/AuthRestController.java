@@ -40,13 +40,13 @@ public class AuthRestController {
 
     @PostMapping("/recover_password")
     @ResponseStatus(HttpStatus.OK)
-    public void recoverPassword(@RequestBody PasswordRecoverRequest request){
+    public void recoverPassword(@Valid @RequestBody PasswordRecoverRequest request){
         authService.generateRecoverPasswordRequest(request);
     }
 
     @PostMapping("/recover_password/validate/{code}")
     @ResponseStatus(HttpStatus.OK)
-    public void validateRecoverPasswordRequest(@RequestBody UserPasswordRequestDTO request, 
+    public void validateRecoverPasswordRequest(@Valid @RequestBody UserPasswordRequestDTO request, 
         @PathVariable("code") String code){
         authService.validateRecoverPasswordRequest(code, request);
     }

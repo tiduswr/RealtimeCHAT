@@ -1,6 +1,8 @@
 package com.tiduswr.rcuser.resources;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import com.tiduswr.rcuser.feignclients.JwtService;
 import com.tiduswr.rcuser.feignclients.PasswordService;
 import com.tiduswr.rcuser.model.AccessTokenRequest;
 import com.tiduswr.rcuser.model.UploadedImage;
+import com.tiduswr.rcuser.model.dto.EmailRequestDTO;
 import com.tiduswr.rcuser.model.dto.ImageDTO;
 import com.tiduswr.rcuser.model.dto.PublicUserDTO;
 import com.tiduswr.rcuser.model.dto.UserDTO;
@@ -99,6 +102,15 @@ public class UserRestController {
 
         var username = jwtService.decodeAndExtractUsername(new AccessTokenRequest(auth));
         userService.updateFormalName(username, dto);
+    }
+
+    @PostMapping("/edit/email")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateEmail(@RequestHeader("Authorization") String auth,
+                                    @RequestBody @Valid EmailRequestDTO dto){
+
+        var username = jwtService.decodeAndExtractUsername(new AccessTokenRequest(auth));
+        userService.updateEmail(username, dto);
     }
 
     @PostMapping("/edit/password")

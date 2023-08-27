@@ -94,6 +94,11 @@ export default function Login() {
                   {"Não tem uma conta? Cadastrar-se"}
                 </Link>
               </Grid>
+              <Grid item>
+              <Link href="/recover-password" variant="body2">
+                  {"Esqueceu sua senha? Recuperar Senha"}
+                </Link>
+              </Grid>
             </Grid>
           </Box>
         </Box>

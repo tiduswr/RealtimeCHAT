@@ -76,11 +76,10 @@ public class AuthService {
             String generatedCode = UUID.randomUUID().toString();
             String redirectUrl = request.getRedirectPrefix().concat(generatedCode);
 
-            PasswordRecover passwordRecover = PasswordRecover.builder()
-                .code(generatedCode)
-                .user(user)
-                .build();
-
+            PasswordRecover passwordRecover = passwordRecoverRepository.
+                findByUserId(user.getId())
+                .orElse(new PasswordRecover(user));
+            passwordRecover.setCode(generatedCode);
             passwordRecoverRepository.save(passwordRecover);
 
             EmailDTO emailDTO = generateRecoverEmailDTO(redirectUrl, user, request);
@@ -91,10 +90,10 @@ public class AuthService {
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public void validateRecoverPasswordRequest(String code, UserPasswordRequestDTO request){
         PasswordRecover passwordRecover = passwordRecoverRepository.findByCode(code)
-            .orElseThrow(() -> new UnauthorizedException("Código de recuperação inválido!"));
+            .orElseThrow(() -> new UnauthorizedException("Link de recuperação inválido!"));
         
         userService.updatePassword(request, passwordRecover.getUser().getUserName());
         passwordRecoverRepository.delete(passwordRecover);
