@@ -3,10 +3,10 @@ package com.tiduswr.rcgateway.config.security;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -51,9 +51,9 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.exceptionHandling(ex -> 
 				ex.authenticationEntryPoint((swe, e) -> 
-					Mono.fromRunnable(() -> swe.getResponse().setRawStatusCode(HttpStatus.SC_UNAUTHORIZED))
+					Mono.fromRunnable(() -> swe.getResponse().setRawStatusCode(HttpStatus.FORBIDDEN.value()))
 				).accessDeniedHandler((swe, e) -> 
-					Mono.fromRunnable(() -> swe.getResponse().setRawStatusCode(HttpStatus.SC_FORBIDDEN))
+					Mono.fromRunnable(() -> swe.getResponse().setRawStatusCode(HttpStatus.FORBIDDEN.value()))
 				)
 			).formLogin(form -> form.disable())
 			.httpBasic(basic -> basic.disable())
