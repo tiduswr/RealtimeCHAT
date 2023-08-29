@@ -1,4 +1,3 @@
 **/docker-compose.override.yml
 **/secrets.yaml
 **/application-dev.properties
-**/application-prod.properties
