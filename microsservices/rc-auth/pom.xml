@@ -77,9 +77,11 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.13.0</version>
 		</dependency>
 
 		<dependency>
@@ -95,6 +97,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>rc-auth</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

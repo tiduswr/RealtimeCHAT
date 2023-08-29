@@ -2,7 +2,6 @@ package com.tiduswr.rcauth.services;
 
 import java.util.UUID;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

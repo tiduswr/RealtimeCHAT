@@ -43,11 +43,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
@@ -70,6 +65,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>rc-email-worker</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
