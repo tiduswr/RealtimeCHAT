@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-api-gateway
+  name: webchat-api-gateway
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-api-gateway
+  template:
+    metadata:
+      labels:
+        app: webchat-api-gateway
+    spec:
+      containers:
+        - name: webchat-api-gateway
+          image: harllemnascimento/rc-gateway:v1
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "8080"
+
+            - name: USER_SERVICE
+              value: "webchat-svc-user"
+
+            - name: AUTH_SERVICE
+              value: "webchat-svc-auth"
+
+            - name: MESSAGE_SERVICE
+              value: "webchat-svc-message"
+
+            - name: CORS_HOSTS
+              value: "http://localhost,http://192.168.0.101"
+              
+            - name: JWT_SECRET
+              valueFrom: 
+                secretKeyRef:
+                  name: secrets
+                  key: jwt-secret
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "1.5Gi"
+              cpu: "2"
+            requests:
+              memory: "250Mi"
+              cpu: "0.5"

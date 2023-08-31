@@ -1,44 +1,44 @@
-version: '3'
+version: '3.8'
 
 services:
 
-  rc-rabbitmq:
+  webchat-rabbitmq:
     build:
       context: ./rabbitmq
       dockerfile: Dockerfile
     image: harllemnascimento/rc-rabbitmq:v1
 
-  rc-auth:
+  webchat-auth:
     build:
       context: ./rc-auth
       dockerfile: Dockerfile
     image: harllemnascimento/rc-auth:v1
 
-  rc-email-worker:
+  webchat-email-worker:
     build:
       context: ./rc-email-worker
       dockerfile: Dockerfile
     image: harllemnascimento/rc-email-worker:v1
 
-  rc-gateway:
+  webchat-gateway:
     build:
       context: ./rc-gateway
       dockerfile: Dockerfile
     image: harllemnascimento/rc-gateway:v1
 
-  rc-image-worker:
+  webchat-image-worker:
     build:
       context: ./rc-image-worker
       dockerfile: Dockerfile
     image: harllemnascimento/rc-image-worker:v1
 
-  rc-message:
+  webchat-message:
     build:
       context: ./rc-message
       dockerfile: Dockerfile
     image: harllemnascimento/rc-message:v1
 
-  rc-user:
+  webchat-user:
     build:
       context: ./rc-user
       dockerfile: Dockerfile

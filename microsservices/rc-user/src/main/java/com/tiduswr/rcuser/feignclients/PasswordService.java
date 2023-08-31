@@ -11,7 +11,8 @@ import com.tiduswr.rcuser.model.dto.UserPasswordRequestDTO;
 import jakarta.validation.Valid;
 
 @Component
-@FeignClient(contextId = "password-service", name = "rc-auth", path = "/internal/password")
+@FeignClient(contextId = "password-service", name = "${feignclient.auth.service.name}", 
+                url = "${feignclient.auth.service.url}", path = "/internal/password")
 public interface PasswordService {
     
     @PostMapping("/check")

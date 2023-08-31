@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-email-worker
+  name: webchat-email-worker
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-email-worker
+  template:
+    metadata:
+      labels:
+        app: webchat-email-worker
+    spec:
+      containers:
+        - name: webchat-email-worker
+          image: harllemnascimento/rc-email-worker:v1
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "8080"
+
+            - name: DB_NAME
+              value: webchat
+
+            - name: DB_HOST
+              value: webchat-database
+
+            - name: DB_PORT
+              value: "3306"
+
+            - name : RABBITMQ_HOST
+              value: "webchat-rabbitmq"
+
+            - name : DB_USERNAME
+              value: "root"
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-root-pass
+
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: smtp-password
+                  
+            - name: SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: smtp-user
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "2"
+            requests:
+              memory: "250Mi"
+              cpu: "0.5"

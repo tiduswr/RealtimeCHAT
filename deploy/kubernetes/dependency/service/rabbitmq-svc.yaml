@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: webchat-rabbitmq
+  name: webchat-rabbitmq
+  namespace: webchat
+spec:
+  selector:
+    app: webchat-rabbitmq
+  ports:
+    - name: rabbitmq-amqp
+      port: 5672
+      targetPort: 5672
+    - name: rabbitmq-stomp
+      port: 61613
+      targetPort: 61613
+  type: ClusterIP

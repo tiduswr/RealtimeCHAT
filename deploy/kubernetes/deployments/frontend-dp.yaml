@@ -17,6 +17,14 @@ spec:
     spec:
       containers:
         - name: webchat-frontend
-          image: harllemnascimento/webchat-frontend:latest
+          image: harllemnascimento/rc-frontend:v1
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
+          resources:
+            limits:
+              memory: "500Mi"
+              cpu: "1"
+            requests:
+              memory: "200Mi"
+              cpu: "0.5"

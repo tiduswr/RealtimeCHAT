@@ -2,7 +2,7 @@ package com.tiduswr.rcgateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.Buildable;
@@ -15,12 +15,21 @@ public class GatewayRoutesConfig {
 
     private static final int GLOBAL_TIMEOUT = 10000;
 
+    @Value("${route.auth}")
+    private String AUTH_SERVICE;
+
+    @Value("${route.user}")
+    private String USER_SERVICE;
+
+    @Value("${route.message}")
+    private String MESSAGE_SERVICE;
+
     @Bean
     RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("rc-auth-route", r -> buildDeafultPredicateSpec(r, "rc-auth", "auth"))
-            .route("rc-user-route", r -> buildDeafultPredicateSpec(r, "rc-user", "user"))
-            .route("rc-message-route", r -> buildDeafultPredicateSpec(r, "rc-message", "message"))
+            .route("rc-auth-route", r -> buildDeafultPredicateSpec(r, AUTH_SERVICE, "auth"))
+            .route("rc-user-route", r -> buildDeafultPredicateSpec(r, USER_SERVICE, "user"))
+            .route("rc-message-route", r -> buildDeafultPredicateSpec(r, MESSAGE_SERVICE, "message"))
             .build();
     }
     
@@ -30,7 +39,7 @@ public class GatewayRoutesConfig {
                             .rewritePath(String.format("/apis/%s/v1/(?<segment>.*)", apiName), "/$\\{segment}"))          
             .metadata(RouteMetadataUtils.RESPONSE_TIMEOUT_ATTR, GLOBAL_TIMEOUT)
             .metadata(RouteMetadataUtils.CONNECT_TIMEOUT_ATTR, GLOBAL_TIMEOUT)
-            .uri(String.format("lb://%s", serviceName.toUpperCase()));
+            .uri(String.format("http://%s", serviceName));
     }
 
 }

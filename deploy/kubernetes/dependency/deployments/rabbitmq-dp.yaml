@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata: 
+  labels:
+    app: webchat-rabbitmq
+  name: webchat-rabbitmq
+  namespace: webchat
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-rabbitmq
+  template:
+    metadata:
+      labels:
+        app: webchat-rabbitmq
+    spec:
+      containers:
+        - name: webchat-rabbitmq
+          image: harllemnascimento/rc-rabbitmq:v1
+          env:
+            - name: RABBITMQ_USER
+              value: guest
+            - name: RABBITMQ_PASSWORD
+              value: guest
+          ports:
+            - containerPort: 5672
+            - containerPort: 61613
+            - containerPort: 15672
+          volumeMounts:
+            - name: rabbitmq-volume
+              mountPath: /var/lib/rabbitmq
+          resources:
+            limits:
+              memory: "1.5Gi"
+              cpu: "2"
+            requests: 
+              memory: "500Mi"
+              cpu: "1"
+      volumes:
+        - name: rabbitmq-volume
+          persistentVolumeClaim:
+            claimName: rabbitmq-pvc
