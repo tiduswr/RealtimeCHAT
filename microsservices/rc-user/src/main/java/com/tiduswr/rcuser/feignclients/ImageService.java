@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.tiduswr.rcuser.exceptions.ImageNotSupportedException;
 
 @Component
-@FeignClient(name = "rc-image-worker", path = "/internal/images")
+@FeignClient(name = "${feignclient.image.service.name}", url = "${feignclient.image.service.url}", path = "/internal/images")
 public interface ImageService {
     
     @GetMapping("/users/profile_image/{username}")

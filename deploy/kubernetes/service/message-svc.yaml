@@ -2,14 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: webchat-backend
-  name: webchat-backend
+    app: webchat-message
+  name: webchat-svc-message
   namespace: webchat
 spec:
   selector:
-    app: webchat-backend
+    app: webchat-message
   ports:
     - protocol: TCP
-      port: 8080
+      port: 80
       targetPort: 8080
   type: ClusterIP

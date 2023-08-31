@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-message
+  name: webchat-message
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-message
+  template:
+    metadata:
+      labels:
+        app: webchat-message
+    spec:
+      containers:
+        - name: webchat-message
+          image: harllemnascimento/rc-message:v1
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "8080"
+              
+            - name: DB_NAME
+              value: webchat
+
+            - name: DB_HOST
+              value: webchat-database
+
+            - name: DB_PORT
+              value: "3306"
+
+            - name : USER_SERVICE
+              value: "webchat-svc-user"
+
+            - name : AUTH_SERVICE
+              value: "webchat-svc-auth"
+
+            - name : DB_USERNAME
+              value: "root"
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-root-pass
+
+            - name : RABBITMQ_HOST
+              value: "webchat-rabbitmq"
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "1.5Gi"
+              cpu: "2"
+            requests:
+              memory: "250Mi"
+              cpu: "0.5"

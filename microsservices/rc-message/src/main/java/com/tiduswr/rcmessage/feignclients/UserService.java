@@ -9,7 +9,7 @@ import com.tiduswr.rcmessage.exceptions.UserNotFoundException;
 import com.tiduswr.rcmessage.model.User;
 
 @Component
-@FeignClient(contextId = "user-service", name = "rc-user", path = "/internal/user")
+@FeignClient(contextId = "user-service", name = "${feignclient.user.service.name}", url="${feignclient.user.service.url}", path = "/internal/user")
 public interface UserService {
 
     @GetMapping("/find/by/username/{username}")

@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+
+  webchat-database:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: harllemnascimento/rc-proxy:v1

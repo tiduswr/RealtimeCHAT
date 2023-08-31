@@ -17,7 +17,14 @@ spec:
     spec:
       containers:
         - name: webchat-proxy
-          image: harllemnascimento/webchat-proxy:latest
+          image: harllemnascimento/rc-proxy:v1
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
-          
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "2"
+            requests:
+              memory: "200Mi"
+              cpu: "0.5"

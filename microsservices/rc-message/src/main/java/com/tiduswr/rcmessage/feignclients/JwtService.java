@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.tiduswr.rcmessage.model.AccessTokenRequest;
 
 @Component
-@FeignClient(contextId = "jwt-service", name = "rc-auth", path="/internal/decode")
+@FeignClient(contextId = "jwt-service", name = "${feignclient.auth.service.name}", url = "${feignclient.auth.service.url}", path="/internal/decode")
 public interface JwtService {
     
     @PostMapping("/username")

@@ -21,23 +21,23 @@ public class FeignExceptionHandler{
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<ErrorResponse> handleFeignException(FeignException ex) {
         ErrorResponse errorResponse = null;
-        System.out.println(ex);
+
         if (ex.responseBody().isPresent() && ex.responseBody().get() != null) {
             try {
                 String content = ex.contentUTF8();
 
                 if(content.contains("timestamp")){
-                    log.info("Is a GenericFeignException");
+                    log.info("FEIGN ERROR: Is a GenericFeignException");
                     var generic = new ObjectMapper().readValue(content, GenericFeignException.class);
                     errorResponse = new ErrorResponse("error", parseFeignErrorMessage(generic.error()));
                 }else{
-                    log.info("Is probably a ErrorResponseEntity");
+                    log.info("FEIGN ERROR:  Is probably a ErrorResponseEntity");
                     errorResponse = new ObjectMapper().readValue(content, ErrorResponse.class);
                 }
 
                 return ResponseEntity.status(ex.status()).body(errorResponse);
             } catch (IOException e) {
-                log.error("It is an Unexpected Exception");
+                log.error("FEIGN ERROR: It is an Unexpected Exception(Probably Service is Down)");
             }
         }
         errorResponse = new ErrorResponse(HttpStatus.SERVICE_UNAVAILABLE.name(), "Serviço indisponível!");

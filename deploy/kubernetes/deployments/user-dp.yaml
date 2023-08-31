@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  labels:
+    app: webchat-user
+  name: webchat-user
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-user
+  template:
+    metadata:
+      labels:
+        app: webchat-user
+    spec:
+      containers:
+        - name: webchat-user
+          image: harllemnascimento/rc-user:v1
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "8080"
+
+            - name: DB_NAME
+              value: webchat
+
+            - name: DB_HOST
+              value: webchat-database
+
+            - name: DB_PORT
+              value: "3306"
+
+            - name : RABBITMQ_HOST
+              value: "webchat-rabbitmq"
+
+            - name : IMAGE_SERVICE
+              value: "webchat-svc-image-worker"
+
+            - name : AUTH_SERVICE
+              value: "webchat-svc-auth"
+
+            - name : DB_USERNAME
+              value: "root"
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-root-pass
+
+            - name: EMAIL_SENDER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: email-sender
+                  
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "1.5Gi"
+              cpu: "2"
+            requests:
+              memory: "250Mi"
+              cpu: "0.5"

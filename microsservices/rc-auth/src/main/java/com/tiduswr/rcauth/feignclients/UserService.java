@@ -13,7 +13,8 @@ import com.tiduswr.rcauth.models.dto.InternalUserDTO;
 import com.tiduswr.rcauth.models.dto.UserPasswordRequestDTO;
 
 @Component
-@FeignClient(contextId = "user-service", name = "rc-user", path = "/internal/user")
+@FeignClient(contextId = "user-service", name = "${feignclient.user.service.name}", 
+                url="${feignclient.user.service.url}", path = "/internal/user")
 public interface UserService {
 
     @PostMapping("/create")
