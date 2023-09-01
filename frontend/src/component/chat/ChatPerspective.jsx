@@ -11,7 +11,7 @@ const ChatPerspective = () => {
     const [chatMessages, setChatMessages] = useState([]);
     const [tab, setTab] = useState(null);
     const [contacts, setContacts] = useState([])
-    const [connecting, sendPrivateMessagesRead, stompClient] = useWebSockets({ setTab, setContacts, setChatMessages });
+    const [connecting, sendPrivateMessagesRead, stompClient] = useWebSockets({ setTab, contacts, setContacts, setChatMessages });
 
     if (connecting) return null;
     

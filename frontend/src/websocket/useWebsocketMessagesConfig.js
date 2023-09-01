@@ -11,7 +11,7 @@ import { MESSAGE_SERVICE_URI,
           websocketPublicSubscribtionResolver,
           websocketErrorSubscribtionResolver } from '../hostResolver';
 
-export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessages, setStompClient }) => {
+export const useWebsocketMessagesConfig = ({ setTab, contacts, setContacts, setChatMessages, setStompClient }) => {
   const { setMessageCount, setUnreadMessageCount } = useContext(Context);
   const { setAlert } = useContext(NotificationContext);
   const { setUserData, userData } = useContext(UserContext);
@@ -33,51 +33,45 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
     })
   }, [setStompClient])
 
-  const userTabIsNotOpen = useCallback((senderName) => {
-    let userTabIsNotOpen;
-    setTab(tab => {
-      userTabIsNotOpen = senderName !== userData.userName && tab?.userName !== senderName;;
-      return tab;
-    })
-    return userTabIsNotOpen;
-  }, [setTab, userData]);
-
   const onPrivateMessageReceived = useCallback((payload) => {
     let payloadData = JSON.parse(payload.body);
     const senderName = payloadData.sender;
 
-    switch (payloadData.status) {
-      case 'MESSAGE':
-        if (userTabIsNotOpen(senderName)) {
-          setMessageCount(prev => {
-            const newMap = new Map(prev);
-            let prevCount = newMap.get(senderName);
+    setTab(tab => {
+      const userTabIsNotOpen = (senderName !== userData.userName) && (!tab || (tab?.userName !== senderName));
+      
+      switch (payloadData.status) {
+        case 'MESSAGE':
+          if (userTabIsNotOpen) {
+            setMessageCount(prev => {
+              const newMap = new Map(prev);
+              let prevCount = newMap.get(senderName);
 
-            let count = prevCount ? prevCount : 0;
-            count++;
-            newMap.set(senderName, count);
+              let count = prevCount ? prevCount : 0;
+              count++;
+              newMap.set(senderName, count);
 
-            return newMap;
-          })
+              return newMap;
+            })
 
-          setContacts(prev => {
-            if (!prev.some(ctt => ctt.userName === senderName)) {
-              buildContact(senderName).then((data) => {
-                setContacts(contacts => [...contacts, data]);
-              });
-            }
-            return prev;
-          });
+            setContacts(contacts => {
+              const isNewContact = !contacts.some(ctt => ctt.userName === senderName);
+              if (isNewContact) {
+                buildContact(senderName).then((data) => {
+                  setContacts([...contacts, data]);
+                });
+              }
+              return contacts;
+            });
 
-          setUnreadMessageCount(prev => ++prev);
-          setAlert({ message: `${senderName} diz: ${payloadData.message}`, type: 'info' })
+            setUnreadMessageCount(prev => ++prev);
+            setAlert({ message: `${senderName} diz: ${payloadData.message}`, type: 'info' })
 
-        } else {
-          setChatMessages(prev => [...prev, payloadData]);
+          } else if(tab){
+            setChatMessages(prev => [...prev, payloadData]);
 
-          setTab(tab => {
             let receiver = tab.userName;
-            Api.put(`${MESSAGE_SERVICE_URI}//messages/mark_messages_as_read/${receiver}`)
+            Api.put(`${MESSAGE_SERVICE_URI}/messages/mark_messages_as_read/${receiver}`)
               .then(res => {
                 if (res.status === 204) {
                   sendPrivateMessagesRead(userData.userName, receiver)
@@ -89,23 +83,23 @@ export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessage
                   type: 'error'
                 });
               })
-            return tab;
+          }
+          break;
+        case 'READ':
+          setChatMessages(prev => {
+            return prev.map(e => {
+              return e.sender === userData.userName ? { ...e, read: true } : e;
+            });
           })
-        }
-        break;
-      case 'READ':
-        setChatMessages(prev => {
-          return prev.map(e => {
-            return e.sender === userData.userName ? { ...e, read: true } : e;
-          });
-        })
-        break;
-      default:
-        break;
-    }
+          break;
+        default:
+          break;
+      }
+      return tab;
+    })
   }, [sendPrivateMessagesRead, setChatMessages, setContacts,
     setMessageCount, setAlert, setUnreadMessageCount, setTab,
-    userData, userTabIsNotOpen]);
+    userData]);
 
   const onPublicMessageReceived = useCallback((payload) => {
     let payloadData = JSON.parse(payload.body);
