@@ -33,7 +33,7 @@ spec:
               value: "webchat-svc-message"
 
             - name: CORS_HOSTS
-              value: "http://localhost,http://192.168.0.101"
+              value: "http://192.168.49.2:30001,http://192.168.0.101:30001,http://localhost:30001,http://localhost:3000"
               
             - name: JWT_SECRET
               valueFrom: 
