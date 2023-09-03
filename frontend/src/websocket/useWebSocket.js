@@ -12,7 +12,7 @@ import { MESSAGE_SERVICE_URI } from '../hostResolver';
 
 const RECONECT_DELAY = 5000;
 
-export const useWebSockets = ({ setTab, contacts, setContacts, setChatMessages }) => {
+export const useWebSockets = ({ setTab, setContacts, setChatMessages }) => {
   const { userData } = useContext(UserContext);
   const [connecting, setConnecting] = useState(true);
   const [stompClient, setStompClient] = useState(null);
@@ -21,7 +21,7 @@ export const useWebSockets = ({ setTab, contacts, setContacts, setChatMessages }
   const {
     sendPrivateMessagesRead,
     onConnected
-  } = useWebsocketMessagesConfig({ setTab, contacts, setContacts, setChatMessages, setStompClient });
+  } = useWebsocketMessagesConfig({ setTab, setContacts, setChatMessages, setStompClient });
 
   useEffect(() => {
     const connectToStompServer = async () => {

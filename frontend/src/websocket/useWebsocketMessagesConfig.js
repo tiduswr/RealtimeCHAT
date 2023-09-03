@@ -11,7 +11,7 @@ import { MESSAGE_SERVICE_URI,
           websocketPublicSubscribtionResolver,
           websocketErrorSubscribtionResolver } from '../hostResolver';
 
-export const useWebsocketMessagesConfig = ({ setTab, contacts, setContacts, setChatMessages, setStompClient }) => {
+export const useWebsocketMessagesConfig = ({ setTab, setContacts, setChatMessages, setStompClient }) => {
   const { setMessageCount, setUnreadMessageCount } = useContext(Context);
   const { setAlert } = useContext(NotificationContext);
   const { setUserData, userData } = useContext(UserContext);
@@ -58,7 +58,7 @@ export const useWebsocketMessagesConfig = ({ setTab, contacts, setContacts, setC
               const isNewContact = !contacts.some(ctt => ctt.userName === senderName);
               if (isNewContact) {
                 buildContact(senderName).then((data) => {
-                  setContacts([...contacts, data]);
+                  setContacts(prev => [...prev, data]);
                 });
               }
               return contacts;

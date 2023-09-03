@@ -22,9 +22,10 @@ spec:
           ports:
             - containerPort: 80
           resources:
+            resources:
             limits:
               memory: "1Gi"
-              cpu: "2"
+              cpu: "1"
             requests:
-              memory: "200Mi"
+              memory: "500Mi"
               cpu: "0.5"
