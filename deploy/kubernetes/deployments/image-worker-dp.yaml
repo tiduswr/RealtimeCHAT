@@ -6,7 +6,7 @@ metadata:
   name: webchat-image-worker
   namespace: webchat
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: webchat-image-worker
@@ -41,6 +41,9 @@ spec:
             - name : DB_USERNAME
               value: "root"
 
+            - name : IMAGES_FOLDER
+              value: "/app/profile-images/"
+
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -48,10 +51,17 @@ spec:
                   key: db-root-pass
           ports:
             - containerPort: 8080
+          volumeMounts:
+            - name: image-volume
+              mountPath: /app/profile-images
           resources:
             limits:
-              memory: "1.5Gi"
-              cpu: "2"
+              memory: "1Gi"
+              cpu: "1"
             requests:
-              memory: "250Mi"
+              memory: "500Mi"
               cpu: "0.5"
+      volumes:
+        - name: image-volume
+          persistentVolumeClaim:
+            claimName: profile-images-pvc
