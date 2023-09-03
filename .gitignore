@@ -1,4 +1,4 @@
 **/docker-compose.override.yml
 **/secrets.yaml
 **/application-dev.properties
-**/profile-images/
+**/profile-images
