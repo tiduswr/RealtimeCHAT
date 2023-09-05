@@ -9,6 +9,6 @@ import com.tiduswr.rcimageworker.models.ProfileImage;
 import java.util.Optional;
 
 public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long> {
-    @Query("SELECT pi FROM ProfileImage pi WHERE pi.user.userName = :username")
+    @Query("SELECT pi FROM ProfileImage pi WHERE pi.username = :username")
     Optional<ProfileImage> findByUserName(@Param("username") String username);
 }

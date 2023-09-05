@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.tiduswr.rcauth.models.RefreshToken;
-import com.tiduswr.rcauth.models.User;
 
 import java.util.Optional;
 
@@ -20,6 +19,6 @@ public interface TokenRepository extends JpaRepository<RefreshToken, Long> {
     Optional<RefreshToken> findByToken(@Param("token") String token);
 
     @Modifying
-    @Query("DELETE FROM RefreshToken t WHERE t.user = :user")
-    void deleteByUser(@Param("user") User user);
+    @Query("DELETE FROM RefreshToken t WHERE t.username = :username")
+    void deleteByUser(@Param("username") String username);
 }

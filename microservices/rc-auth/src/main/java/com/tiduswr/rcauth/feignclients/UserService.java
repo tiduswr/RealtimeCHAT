@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.tiduswr.rcauth.exceptions.UserNotFoundException;
-import com.tiduswr.rcauth.models.User;
 import com.tiduswr.rcauth.models.dto.InternalUserDTO;
 import com.tiduswr.rcauth.models.dto.UserPasswordRequestDTO;
 
@@ -21,10 +20,10 @@ public interface UserService {
     InternalUserDTO createUser(@RequestBody InternalUserDTO dto);
 
     @GetMapping("/find/by/username/{username}")
-    User findUserByUsername(@PathVariable String username) throws UserNotFoundException;
+    InternalUserDTO findUserByUsername(@PathVariable String username) throws UserNotFoundException;
     
     @GetMapping("/find/by/email/{email}")
-    User findUserByEmail(@PathVariable String email) throws UserNotFoundException;
+    InternalUserDTO findUserByEmail(@PathVariable String email) throws UserNotFoundException;
 
     @PostMapping("/update/password/{username}")
     void updatePassword(@RequestBody UserPasswordRequestDTO request, @PathVariable("username") String username);

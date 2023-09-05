@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.tiduswr.rcauth.exceptions.WeakSecretJWT;
 import com.tiduswr.rcauth.models.JwtToken;
 import com.tiduswr.rcauth.models.JwtTokenType;
-import com.tiduswr.rcauth.models.User;
+import com.tiduswr.rcauth.models.dto.InternalUserDTO;
 
 import java.security.Key;
 import java.time.LocalDateTime;
@@ -54,7 +54,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public Boolean validateToken(String token, User user, JwtTokenType expectedTokenType) {
+    public Boolean validateToken(String token, InternalUserDTO user, JwtTokenType expectedTokenType) {
         try {
             final String username = extractUsername(token);
             final String tokenType = extractClaim(token, claims -> claims.get("tokenType").toString());

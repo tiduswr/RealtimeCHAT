@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,12 +25,11 @@ public class PasswordRecover {
     @Column(nullable = true, length = 36)
     private String code;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false, unique = true, length = 30)
+    private String username;
 
-    public PasswordRecover(User user){
-        this.user = user;
+    public PasswordRecover(String username){
+        this.username = username;
     }
 
 }

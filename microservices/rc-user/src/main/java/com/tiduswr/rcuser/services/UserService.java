@@ -27,6 +27,8 @@ import com.tiduswr.rcuser.repositories.UserRepository;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @SuppressWarnings("unused")
@@ -168,6 +170,11 @@ public class UserService {
             .ownerId(dto.getId())
             .action_url(redirectUrl)
             .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PublicUserDTO> retrieveFormalName(Set<String> usernames) {
+        return userRepository.retrieveFormalNameForUsernames(usernames);
     }
 
 }

@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.tiduswr.rcauth.feignclients.UserService;
-import com.tiduswr.rcauth.models.User;
+import com.tiduswr.rcauth.models.dto.InternalUserDTO;
 
 @Service
 public class SecurityUserDetails implements UserDetailsService{
@@ -17,7 +17,7 @@ public class SecurityUserDetails implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findUserByUsername(username);
+        InternalUserDTO user = userService.findUserByUsername(username);
 
         return org.springframework.security.core.userdetails.User
                 .builder()

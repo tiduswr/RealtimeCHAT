@@ -1,5 +1,8 @@
 package com.tiduswr.rcuser.resources;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tiduswr.rcuser.exceptions.UserNotFoundException;
 import com.tiduswr.rcuser.model.User;
 import com.tiduswr.rcuser.model.dto.InternalUserDTO;
+import com.tiduswr.rcuser.model.dto.PublicUserDTO;
 import com.tiduswr.rcuser.model.dto.UserDTO;
 import com.tiduswr.rcuser.model.dto.UserPasswordRequestDTO;
 import com.tiduswr.rcuser.services.UserService;
@@ -27,6 +31,11 @@ public class InternalUserService {
         UserDTO userDTO = userService.createUser(UserDTO.from(dto), dto.getRedirectUrl());
 
         return InternalUserDTO.from(userDTO);
+    }
+
+    @PostMapping("/find/formalname/by/usernames")
+    public List<PublicUserDTO> retrieveFormalName(@RequestBody Set<String> usernames){
+        return userService.retrieveFormalName(usernames);
     }
 
     @GetMapping("/find/by/username/{username}")

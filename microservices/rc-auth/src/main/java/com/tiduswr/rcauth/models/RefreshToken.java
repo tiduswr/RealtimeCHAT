@@ -16,10 +16,9 @@ public class RefreshToken implements Serializable {
 
     @Column(length = 200, nullable = false)
     private String token;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    
+    @Column(nullable = false, unique = true, length = 30)
+    private String username;
 
     @Override
     public boolean equals(Object o) {

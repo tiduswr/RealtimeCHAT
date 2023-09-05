@@ -24,10 +24,10 @@ spec:
               value: "8080"
 
             - name: DB_NAME
-              value: webchat
+              value: webchat-image
 
             - name: DB_HOST
-              value: webchat-database
+              value: webchat-image-database
 
             - name: DB_PORT
               value: "3306"
