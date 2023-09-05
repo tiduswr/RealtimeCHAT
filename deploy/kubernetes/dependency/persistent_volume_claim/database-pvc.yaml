@@ -2,12 +2,76 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    app: webchat-database
-  name: database-pvc
+    app: webchat-auth-database
+  name: auth-database-pvc
   namespace: webchat
 spec:
   accessModes:
     - "ReadWriteOnce"
   resources:
     requests:
-      storage: "1Gi"
+      storage: "0.5Gi"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: webchat-user-database
+  name: user-database-pvc
+  namespace: webchat
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "0.5Gi"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: webchat-email-database
+  name: email-database-pvc
+  namespace: webchat
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "0.5Gi"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: webchat-image-database
+  name: image-database-pvc
+  namespace: webchat
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "0.5Gi"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: webchat-message-database
+  name: message-database-pvc
+  namespace: webchat
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "0.5Gi"

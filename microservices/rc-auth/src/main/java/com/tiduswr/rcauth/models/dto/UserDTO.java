@@ -1,7 +1,6 @@
 package com.tiduswr.rcauth.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-import com.tiduswr.rcauth.models.User;
 import com.tiduswr.rcauth.models.validation.anotation.ValidPassword;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -37,16 +36,6 @@ public class UserDTO {
         private String email;
 
         private String redirectUrl;
-
-        public static UserDTO from(User u) {
-                return UserDTO.builder()
-                        .email(u.getEmail())
-                        .formalName(u.getFormalName())
-                        .password(u.getPassword())
-                        .userName(u.getUserName())
-                        .id(u.getId())
-                        .build();
-        }
 
         public static UserDTO from(InternalUserDTO u) {
                 return UserDTO.builder()

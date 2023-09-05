@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tiduswr.rcauth.exceptions.UnauthorizedException;
 import com.tiduswr.rcauth.feignclients.UserService;
 import com.tiduswr.rcauth.models.RefreshToken;
-import com.tiduswr.rcauth.models.User;
+import com.tiduswr.rcauth.models.dto.InternalUserDTO;
 import com.tiduswr.rcauth.repositories.TokenRepository;
 
 @Service
@@ -22,16 +22,16 @@ public class RefreshTokenService {
 
     @Transactional
     public void storeRefreshToken(String token, String username){
-        User user = userService.findUserByUsername(username);
+        InternalUserDTO user = userService.findUserByUsername(username);
         RefreshToken refreshToken = RefreshToken.builder()
-                .id(null).token(token).user(user).build();
+                .id(null).token(token).username(username).build();
         tokenRepository.save(refreshToken);
     }
 
     @Transactional
     public void removeAllRefreshTokenByUser(String username) {
-        User user = userService.findUserByUsername(username);
-        tokenRepository.deleteByUser(user);
+        InternalUserDTO user = userService.findUserByUsername(username);
+        tokenRepository.deleteByUser(user.getUserName());;
     }
 
     @Transactional(readOnly = true)

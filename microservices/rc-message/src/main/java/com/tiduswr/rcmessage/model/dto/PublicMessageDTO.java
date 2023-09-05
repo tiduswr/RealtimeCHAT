@@ -39,7 +39,7 @@ public class PublicMessageDTO{
                         .id(message.getId())
                         .message(message.getMessage())
                         .read(message.getRead())
-                        .sender(message.getSender().getUserName())
+                        .sender(message.getSender())
                         .status(message.getStatus())
                         .createdAt(message.getCreatedAt())
                         .build();

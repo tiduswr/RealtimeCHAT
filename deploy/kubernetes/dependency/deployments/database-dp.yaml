@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: webchat-database
-  name: webchat-database
+    app: webchat-auth-database
+  name: webchat-auth-database
   namespace: webchat
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: webchat-database
+      app: webchat-auth-database
   template:
     metadata:
       labels:
-        app: webchat-database
+        app: webchat-auth-database
     spec:
       containers:
-        - name: webchat-database
-          image: harllemnascimento/rc-database:v1
+        - name: webchat-auth-database
+          image: harllemnascimento/rc-auth-database:v1
           env:
             - name: MYSQL_DATABASE
               value: webchat
@@ -43,12 +43,240 @@ spec:
               mountPath: /var/lib/mysql
           resources:
             limits:
-              memory: "3Gi"
-              cpu: "2"
+              memory: "600M"
+              cpu: "0.4"
             requests:
-              memory: "500Mi"
-              cpu: "0.5"
+              memory: "250M"
+              cpu: "0.2"
       volumes:
         - name: database-volume
           persistentVolumeClaim:
-            claimName: database-pvc
+            claimName: auth-database-pvc
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-user-database
+  name: webchat-user-database
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-user-database
+  template:
+    metadata:
+      labels:
+        app: webchat-user-database
+    spec:
+      containers:
+        - name: webchat-user-database
+          image: harllemnascimento/rc-user-database:v1
+          env:
+            - name: MYSQL_DATABASE
+              value: webchat
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-pass
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-root-pass
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: database-volume
+              mountPath: /var/lib/mysql
+          resources:
+            limits:
+              memory: "600M"
+              cpu: "0.4"
+            requests:
+              memory: "250M"
+              cpu: "0.2"
+      volumes:
+        - name: database-volume
+          persistentVolumeClaim:
+            claimName: user-database-pvc
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-email-database
+  name: webchat-email-database
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-email-database
+  template:
+    metadata:
+      labels:
+        app: webchat-email-database
+    spec:
+      containers:
+        - name: webchat-email-database
+          image: harllemnascimento/rc-email-database:v1
+          env:
+            - name: MYSQL_DATABASE
+              value: webchat
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-pass
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-root-pass
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: database-volume
+              mountPath: /var/lib/mysql
+          resources:
+            limits:
+              memory: "600M"
+              cpu: "0.4"
+            requests:
+              memory: "250M"
+              cpu: "0.2"
+      volumes:
+        - name: database-volume
+          persistentVolumeClaim:
+            claimName: email-database-pvc
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-image-database
+  name: webchat-image-database
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-image-database
+  template:
+    metadata:
+      labels:
+        app: webchat-image-database
+    spec:
+      containers:
+        - name: webchat-image-database
+          image: harllemnascimento/rc-image-database:v1
+          env:
+            - name: MYSQL_DATABASE
+              value: webchat
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-pass
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-root-pass
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: database-volume
+              mountPath: /var/lib/mysql
+          resources:
+            limits:
+              memory: "600M"
+              cpu: "0.4"
+            requests:
+              memory: "250M"
+              cpu: "0.2"
+      volumes:
+        - name: database-volume
+          persistentVolumeClaim:
+            claimName: image-database-pvc
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webchat-message-database
+  name: webchat-message-database
+  namespace: webchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webchat-message-database
+  template:
+    metadata:
+      labels:
+        app: webchat-message-database
+    spec:
+      containers:
+        - name: webchat-message-database
+          image: harllemnascimento/rc-message-database:v1
+          env:
+            - name: MYSQL_DATABASE
+              value: webchat
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-pass
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db-root-pass
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: database-volume
+              mountPath: /var/lib/mysql
+          resources:
+            limits:
+              memory: "600M"
+              cpu: "0.4"
+            requests:
+              memory: "250M"
+              cpu: "0.2"
+      volumes:
+        - name: database-volume
+          persistentVolumeClaim:
+            claimName: message-database-pvc

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tiduswr.rcauth.feignclients.UserService;
 import com.tiduswr.rcauth.models.AccessTokenRequest;
 import com.tiduswr.rcauth.models.JwtTokenType;
-import com.tiduswr.rcauth.models.User;
+import com.tiduswr.rcauth.models.dto.InternalUserDTO;
 import com.tiduswr.rcauth.services.JwtService;
 
 @RestController
@@ -34,7 +34,7 @@ public class InternalJwtService {
     @PostMapping("/validby/{username}")
     @ResponseStatus(HttpStatus.OK)
     boolean validateAccessToken(@RequestBody AccessTokenRequest accessToken, @PathVariable String username){
-        User user = userService.findUserByUsername(username);
+        InternalUserDTO user = userService.findUserByUsername(username);
         return jwtService.validateToken(accessToken.getAccessToken(), user, JwtTokenType.ACCESS);
     }
 

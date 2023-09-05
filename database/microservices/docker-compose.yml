@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+
+  webchat-auth-database:
+    build:
+      context: ./auth/
+      dockerfile: Dockerfile
+    image: harllemnascimento/rc-auth-database:v1
+
+  webchat-email-database:
+    build:
+      context: ./email/
+      dockerfile: Dockerfile
+    image: harllemnascimento/rc-email-database:v1
+
+  webchat-image-database:
+    build:
+      context: ./image/
+      dockerfile: Dockerfile
+    image: harllemnascimento/rc-image-database:v1
+
+  webchat-message-database:
+    build:
+      context: ./message/
+      dockerfile: Dockerfile
+    image: harllemnascimento/rc-message-database:v1
+
+  webchat-user-database:
+    build:
+      context: ./user/
+      dockerfile: Dockerfile
+    image: harllemnascimento/rc-user-database:v1

@@ -4,11 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import com.tiduswr.rcuser.model.dto.PublicUserDTO;
-
 import com.tiduswr.rcuser.model.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.userName = :username")
@@ -29,4 +29,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email AND u.userName != :username")
     boolean existsByEmailExceptUser(@Param("email") String email, @Param("username") String username);
+
+    @Query("SELECT DISTINCT new com.tiduswr.rcuser.model.dto.PublicUserDTO(u.userName, u.formalName) FROM User u " 
+            + "WHERE u.userName IN :usernames")
+    List<PublicUserDTO> retrieveFormalNameForUsernames(@Param("usernames") Set<String> usernames);
 }

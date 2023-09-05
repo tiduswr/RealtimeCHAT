@@ -15,8 +15,7 @@ public class ProfileImage {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(length = 30, nullable = false)
+    private String username;
 
 }

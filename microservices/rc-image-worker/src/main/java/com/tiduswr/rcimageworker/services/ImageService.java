@@ -41,7 +41,7 @@ public class ImageService {
         ProfileImage profileImage = profileImageRepository
                 .findByUserName(username)
                 .orElseGet(() ->
-                    profileImageRepository.save(ProfileImage.builder().user(user).build())
+                    profileImageRepository.save(ProfileImage.builder().username(username).build())
                 );
 
         BufferedImage image = convertToPng(getImage(file));

@@ -18,7 +18,11 @@ import com.tiduswr.rcmessage.model.Status;
 import com.tiduswr.rcmessage.model.dto.PublicUserDTO;
 import com.tiduswr.rcmessage.repositories.MessageRepository;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @SuppressWarnings("unused")
@@ -37,7 +41,7 @@ public class MessageService {
 
         newMessage.setMessage(message.getMessage());
         newMessage.setRead(null);
-        newMessage.setSender(sender);
+        newMessage.setSender(sender.getUserName());
         newMessage.setReceiver(null);
         newMessage.setStatus(Status.MESSAGE);
         newMessage = messageRepository.save(newMessage);
@@ -53,8 +57,8 @@ public class MessageService {
 
         newMessage.setMessage(message.getMessage());
         newMessage.setRead(false);
-        newMessage.setSender(sender);
-        newMessage.setReceiver(receiver);
+        newMessage.setSender(sender.getUserName());
+        newMessage.setReceiver(receiver.getUserName());
         newMessage.setStatus(Status.MESSAGE);
         newMessage = messageRepository.save(newMessage);
 
@@ -85,7 +89,22 @@ public class MessageService {
 
     @Transactional(readOnly = true)
     public List<PublicUserDTO> findAllTalkedUsers(String username) {
-        return messageRepository.findAllInteractedUsersByUsername(username);
+        List<Message> messages = messageRepository.findAllInteractedMessagesByUsername(username);
+
+        Set<String> usernames = messages.stream()
+            .map(message -> {
+                Set<String> unique = new HashSet<>();
+                unique.add(message.getSender());
+                unique.add(message.getReceiver());
+                return unique;
+            })
+            .reduce(new HashSet<>(), (set1, set2) -> {
+                set1.addAll(set2);
+                return set1;
+            });
+        usernames.remove(username);
+        
+        return userService.retrieveFormalName(usernames);
     }
 
     @Transactional(readOnly = true)

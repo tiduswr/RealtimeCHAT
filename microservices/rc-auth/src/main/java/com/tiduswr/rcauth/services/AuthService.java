@@ -25,7 +25,6 @@ import com.tiduswr.rcauth.models.JwtTokenType;
 import com.tiduswr.rcauth.models.PasswordRecover;
 import com.tiduswr.rcauth.models.RefreshToken;
 import com.tiduswr.rcauth.models.RefreshTokenRequest;
-import com.tiduswr.rcauth.models.User;
 import com.tiduswr.rcauth.models.dto.EmailDTO;
 import com.tiduswr.rcauth.models.dto.InternalUserDTO;
 import com.tiduswr.rcauth.models.dto.PasswordRecoverRequest;
@@ -71,13 +70,13 @@ public class AuthService {
     @Transactional(readOnly = false)
     public void generateRecoverPasswordRequest(PasswordRecoverRequest request){
         try{
-            User user = userService.findUserByEmail(request.getEmail());
+            InternalUserDTO user = userService.findUserByEmail(request.getEmail());
             String generatedCode = UUID.randomUUID().toString();
             String redirectUrl = request.getRedirectPrefix().concat(generatedCode);
 
             PasswordRecover passwordRecover = passwordRecoverRepository.
-                findByUserId(user.getId())
-                .orElse(new PasswordRecover(user));
+                findByUsername(user.getUserName())
+                .orElse(new PasswordRecover(user.getUserName()));
             passwordRecover.setCode(generatedCode);
             passwordRecoverRepository.save(passwordRecover);
 
@@ -94,11 +93,11 @@ public class AuthService {
         PasswordRecover passwordRecover = passwordRecoverRepository.findByCode(code)
             .orElseThrow(() -> new UnauthorizedException("Link de recuperação inválido!"));
         
-        userService.updatePassword(request, passwordRecover.getUser().getUserName());
+        userService.updatePassword(request, passwordRecover.getUsername());
         passwordRecoverRepository.delete(passwordRecover);
     }
 
-    private EmailDTO generateRecoverEmailDTO(String redirectUrl, User user, PasswordRecoverRequest request){
+    private EmailDTO generateRecoverEmailDTO(String redirectUrl, InternalUserDTO user, PasswordRecoverRequest request){
         return EmailDTO.builder()
             .action_url(redirectUrl)
             .browser_name(request.getBrowserName())
@@ -128,10 +127,10 @@ public class AuthService {
     public AuthResponse refreshToken(RefreshTokenRequest request) throws UnauthorizedException, UsernameNotFoundException {
 
         RefreshToken refreshToken = refreshTokenService.findTokenByToken(request.getRefreshToken());
-        User user = userService.findUserByUsername(refreshToken.getUser().getUserName());
+        InternalUserDTO user = userService.findUserByUsername(refreshToken.getUsername());
 
         if(jwtService.validateToken(refreshToken.getToken(), user, JwtTokenType.REFRESH)){
-            return generateAuthResponse(refreshToken.getUser().getUserName());
+            return generateAuthResponse(refreshToken.getUsername());
         }else{
             throw new UnauthorizedException("Autenticação falhou, Credenciais inválidas!");
         }
