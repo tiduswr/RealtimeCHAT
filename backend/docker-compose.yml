@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
 
-  webchat-database:
+  backend-monolithic:
     build:
       context: .
       dockerfile: Dockerfile
-    image: harllemnascimento/rc-database-monolithic:v1
+    image: harllemnascimento/rc-backend-monolithic:v1

@@ -40,7 +40,8 @@ public class SecurityConfig {
 				"/apis/auth/v1/recover_password",
 				"/apis/auth/v1/recover_password/validate/**",
 				"/apis/message/v1/ws", 
-				"/apis/message/v1/ws/**"
+				"/apis/message/v1/ws/**",
+				"/actuator/health/readiness"
 			};
 	}
 

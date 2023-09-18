@@ -23,8 +23,8 @@ spec:
             - containerPort: 3000
           resources:
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "500M"
+              cpu: "150m"
             requests:
-              memory: "500Mi"
-              cpu: "0.5"
+              memory: "250M"
+              cpu: "50m"

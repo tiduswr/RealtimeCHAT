@@ -1,0 +1,13 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: webchat-message-hpa
+  namespace: webchat
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: webchat-message
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 50

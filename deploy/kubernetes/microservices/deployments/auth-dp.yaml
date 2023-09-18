@@ -61,10 +61,16 @@ spec:
                   key: email-sender
           ports:
             - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
           resources:
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "500M"
+              cpu: "1000m"
             requests:
-              memory: "500Mi"
-              cpu: "0.5"
+              memory: "250M"
+              cpu: "200m"
