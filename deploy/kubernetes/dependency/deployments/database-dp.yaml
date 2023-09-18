@@ -44,10 +44,10 @@ spec:
           resources:
             limits:
               memory: "600M"
-              cpu: "0.4"
+              cpu: "250m"
             requests:
               memory: "250M"
-              cpu: "0.2"
+              cpu: "100m"
       volumes:
         - name: database-volume
           persistentVolumeClaim:
@@ -101,10 +101,10 @@ spec:
           resources:
             limits:
               memory: "600M"
-              cpu: "0.4"
+              cpu: "250m"
             requests:
               memory: "250M"
-              cpu: "0.2"
+              cpu: "100m"
       volumes:
         - name: database-volume
           persistentVolumeClaim:
@@ -158,10 +158,10 @@ spec:
           resources:
             limits:
               memory: "600M"
-              cpu: "0.4"
+              cpu: "250m"
             requests:
               memory: "250M"
-              cpu: "0.2"
+              cpu: "100m"
       volumes:
         - name: database-volume
           persistentVolumeClaim:
@@ -215,10 +215,10 @@ spec:
           resources:
             limits:
               memory: "600M"
-              cpu: "0.4"
+              cpu: "250m"
             requests:
               memory: "250M"
-              cpu: "0.2"
+              cpu: "100m"
       volumes:
         - name: database-volume
           persistentVolumeClaim:
@@ -272,10 +272,10 @@ spec:
           resources:
             limits:
               memory: "600M"
-              cpu: "0.4"
+              cpu: "250m"
             requests:
               memory: "250M"
-              cpu: "0.2"
+              cpu: "100m"
       volumes:
         - name: database-volume
           persistentVolumeClaim:
