@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: webchat-backend
-          image: harllemnascimento/webchat-backend:latest
+          image: harllemnascimento/rc-backend-monolithic:v1
           env:
             - name: DB_NAME
               value: webchat
@@ -51,7 +51,7 @@ spec:
           resources:
             limits:
               memory: "8Gi"
-              cpu: "6"
+              cpu: "5"
             requests:
               memory: "1Gi"
               cpu: "1"

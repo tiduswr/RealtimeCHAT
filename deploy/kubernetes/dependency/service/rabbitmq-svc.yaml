@@ -15,4 +15,7 @@ spec:
     - name: rabbitmq-stomp
       port: 61613
       targetPort: 61613
-  type: ClusterIP
+    - name: rabbitmq-management
+      port: 15672
+      targetPort: 15672
+  type: NodePort

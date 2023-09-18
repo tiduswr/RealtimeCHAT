@@ -32,6 +32,9 @@ spec:
             - name: MESSAGE_SERVICE
               value: "webchat-svc-message"
 
+            - name: GLOBAL_TIMEOUT
+              value: "60000"
+
             - name: CORS_HOSTS
               value: "http://192.168.49.2:30001,http://192.168.0.101:30001,http://localhost:30001,http://localhost:3000"
               
@@ -42,10 +45,16 @@ spec:
                   key: jwt-secret
           ports:
             - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
           resources:
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "500M"
+              cpu: "500m"
             requests:
-              memory: "500Mi"
-              cpu: "0.5"
+              memory: "250M"
+              cpu: "200m"

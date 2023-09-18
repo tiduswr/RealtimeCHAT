@@ -1,0 +1,13 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: webchat-email-worker-hpa
+  namespace: webchat
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: webchat-email-worker
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 50
