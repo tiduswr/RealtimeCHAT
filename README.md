@@ -1,4 +1,4 @@
-# RealTimeChat
+# RealtimeCHAT
 
 ![Java](https://img.shields.io/badge/Java-v17.0-blue)
 ![NodeJS](https://img.shields.io/badge/NodeJS-v18.0-blue)
