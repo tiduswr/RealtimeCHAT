@@ -8,7 +8,7 @@
 
 Este estudo consiste em uma análise comparativa entre as arquiteturas de software monolítica e de microsserviços em uma aplicação de chat, com o propósito de identificar diferenças nas estratégias de escalabilidade, eficiência no uso de recursos e impacto no tempo de resposta. A metodologia incluiu o desenvolvimento de uma aplicação monolítica e sua subsequente decomposição em microsserviços. Foram realizados testes de carga simulando cenários realistas, e os resultados destacaram que as estratégias de escalabilidade variam consideravelmente entre as arquiteturas. A arquitetura de microsserviços possibilitou o escalonamento automático de setores e funcionalidades específicas, conforme a demanda, demonstrando flexibilidade na gestão dos recursos. A eficiência de uso de recursos foi influenciada pela natureza das tarefas e características da carga de trabalho. Em relação à latência e ao tempo de resposta, a arquitetura monolítica superou a de microsserviços em algumas funcionalidades, enquanto a última se destacou em outras. Observou-se que o número de chamadas de APIs internas nas aplicações de microsserviços impactou diretamente a latência e o desempenho global. A pesquisa foi fundamentada principalmente nos estudos de Microsserviços de Martin Fowler, e, espera-se que a mesma possa contribuir para desenvolvedores e tomadores de decisão que buscam selecionar a arquitetura mais apropriada para suas aplicações, destacando áreas para futuras pesquisas.
 
-[TCC (PDF)](https://drive.google.com/file/d/1QuAb9c41EtZGry348lFwD18zjFISJoF2/view?usp=sharing)
+[TCC (Página DSPACE)](http://dspace.bc.uepb.edu.br/jspui/handle/123456789/31019)
 
 ## Pré-requisitos
 
